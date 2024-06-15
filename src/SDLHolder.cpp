@@ -23,7 +23,7 @@ SDLHolder::SDLHolder(const int wFromMain, const int hFromMain)
 	}
 
 	//Create window
-	gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wFromMain, hFromMain, SDL_WINDOW_SHOWN );
+	gWindow = SDL_CreateWindow( "final_pendulum", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, wFromMain, hFromMain, SDL_WINDOW_SHOWN );
 	if( gWindow == NULL )
 	{
 		printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -57,7 +57,7 @@ SDLHolder::SDLHolder(const int wFromMain, const int hFromMain)
 	}
 
 	//Open the font
-	gFont = TTF_OpenFont( "25_capping_frame_rate/lazy.ttf", 18 );
+	gFont = TTF_OpenFont( "font/lazy.ttf", 18 );
 	if( gFont == NULL )
 	{
 		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
