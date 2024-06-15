@@ -1,5 +1,7 @@
 # final_pendulum
 
+![final_pendulum](pendulum.png)
+
 This is a personal project that models and displays a double pendulum. The bones for the SDL implimentation can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/).
 
 ## Dependencies
