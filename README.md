@@ -1,4 +1,4 @@
-# final_pendulum
+# Double Pendulum Project
 
 ![final_pendulum](pendulum.PNG)
 
@@ -33,11 +33,10 @@ sudo apt install libsdl2-image-dev libsdl2-ttf-dev libsdl2-net-dev libsdl2-mixer
 
 ```sh
 # Clone this repo
-git clone https://gitlab.com/aminosbh/basic-c-sdl-project.git
-cd basic-c-sdl-project
+git clone https://github.com/rdbruce/final_pendulum.git
+cd final_pendulum
 
-# Create a build folder
-mkdir build
+# Navigate to build folder
 cd build
 
 # Build
@@ -45,7 +44,7 @@ cmake ..
 make
 
 # Run
-./basic-c-sdl-project
+./final-pendulum-project
 ```
 
 ***Note:*** To use SDL2_image, SDL2_ttf, SDL2_net, SDL2_mixer or SDL2_gfx, you
