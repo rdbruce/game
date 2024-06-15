@@ -1,4 +1,7 @@
-build
 CMakeLists.txt.*
+
+build/*
+!build/font
+build/font/*
 !build/font/lazy.ttf
 
