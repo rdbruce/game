@@ -1,13 +1,6 @@
-# Basic C SDL2 project
+# final_pendulum
 
-This project is a basic C [SDL2][SDL] project that uses [CMake][] as a build system.
-
-
-It could be used as a base for any SDL2 project. Just fork it, clone it and
-execute the `rename_project.sh` script. You will be prompted to enter the new
-project name, the new executable name and the new git repository, but you can
-keep the autodetected values. Finally, just commit and push the result to your
-repository.
+This is a personal project that models and displays a double pendulum. The bones for the SDL implimentation can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/).
 
 ## Dependencies
 
