@@ -7,7 +7,7 @@ This is a personal project that models and displays a double pendulum. The bones
 ## Dependencies
 
 - [Git][]
-- C Compiler (gcc, ...)
+- C++ Compiler (gcc, ...)
 - [CMake][]
 - [SDL2][SDL] library
 
