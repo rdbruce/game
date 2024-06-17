@@ -32,7 +32,7 @@ These are the bones of the SDL implementation I mentioned above. I did not write
 
 ### pMath
 
-I have been saving the best for last
+I have been saving the best for last!
 
 The pen() functions implement the system of ODEs that describe the double pendulum. The functions take a system state struct as an input and return the equation's respective derivatives. 
 ![our odes](ODE_system.png)
