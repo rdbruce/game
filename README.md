@@ -2,7 +2,12 @@
 
 ![final_pendulum](pendulum.PNG)
 
-This is a personal project that models and displays a double pendulum. The bones for the SDL implimentation can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/).
+This is a personal project written in C++ that models and displays a double pendulum. I wrote this program to practice C++ threading, shared pointers, and standard functions. Reading the book Chaos: Making a New Science Book by James Gleick made me want to play with a dynamical system giving me an excuse to practice C++.
+The bones for the SDL implimentation were built upon the frame limiter example that can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/). Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
+
+## Explination
+
+
 
 ## Dependencies
 
@@ -54,14 +59,6 @@ the `make` command.
 ### Open the project with an IDE under Linux
 
 See [IDE_USAGE.md](IDE_USAGE.md) for details.
-
-## License
-
-Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
-
-This project is distributed under the terms of the MIT license
-[&lt;LICENSE&gt;](LICENSE).
-
 
 
 [SDL]: https://www.libsdl.org
