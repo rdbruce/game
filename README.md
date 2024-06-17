@@ -8,7 +8,7 @@ The bones for the SDL implimentation were built upon the frame limiter example t
 
 ## Explination
 
-### final_pendulum.cpp
+### final_pendulum
 
 This is our main file. Here we define both our math and render loops. Keeping these loops seperate via threading is one way of making an accurate and fast model, otherwise the math and rendering could block one another.
 
