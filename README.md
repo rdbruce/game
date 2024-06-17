@@ -34,6 +34,9 @@ These are the bones of the SDL implimentation I mentioned above. I did not write
 
 I have been saving the best for last
 
+peni_j() are functions that impliment the system of ODEs describing the double pendulum.
+![our odes](ODE_system.png)
+
 
 ## Dependencies
 
