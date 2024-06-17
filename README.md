@@ -1,18 +1,20 @@
-# Basic C SDL2 project
+# Double Pendulum Project
 
-This project is a basic C [SDL2][SDL] project that uses [CMake][] as a build system.
+![final_pendulum](pendulum.PNG)
 
+This is a personal project written in C++ that models and displays a double pendulum. I wrote this program to practice C++ threading, shared pointers, and standard functions. Reading the book Chaos: Making a New Science Book by James Gleick made me want to play with a dynamical system, giving me an excuse to practice C++.
 
-It could be used as a base for any SDL2 project. Just fork it, clone it and
-execute the `rename_project.sh` script. You will be prompted to enter the new
-project name, the new executable name and the new git repository, but you can
-keep the autodetected values. Finally, just commit and push the result to your
-repository.
+The bones for the SDL implimentation were built upon the frame limiter example that can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/). Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
+
+## Explination
+
+### final_pendulum.cpp
+
 
 ## Dependencies
 
 - [Git][]
-- C Compiler (gcc, ...)
+- C++ Compiler (gcc, ...)
 - [CMake][]
 - [SDL2][SDL] library
 
@@ -38,11 +40,10 @@ sudo apt install libsdl2-image-dev libsdl2-ttf-dev libsdl2-net-dev libsdl2-mixer
 
 ```sh
 # Clone this repo
-git clone https://gitlab.com/aminosbh/basic-c-sdl-project.git
-cd basic-c-sdl-project
+git clone https://github.com/rdbruce/final_pendulum.git
+cd final_pendulum
 
-# Create a build folder
-mkdir build
+# Navigate to build folder
 cd build
 
 # Build
@@ -50,7 +51,7 @@ cmake ..
 make
 
 # Run
-./basic-c-sdl-project
+./final-pendulum-project
 ```
 
 ***Note:*** To use SDL2_image, SDL2_ttf, SDL2_net, SDL2_mixer or SDL2_gfx, you
@@ -60,14 +61,6 @@ the `make` command.
 ### Open the project with an IDE under Linux
 
 See [IDE_USAGE.md](IDE_USAGE.md) for details.
-
-## License
-
-Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
-
-This project is distributed under the terms of the MIT license
-[&lt;LICENSE&gt;](LICENSE).
-
 
 
 [SDL]: https://www.libsdl.org
