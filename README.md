@@ -16,6 +16,8 @@ Simulator is a generic thread wrapper class that takes a callable to run continu
 
 SafeSharedPtr is a shared pointer wrapper class that gives us a way to safely store and load our math model output pointer by locking it with a mutex, otherwise simulantious storing and accessing could corrupt the program.
 
+Now comes main(). Before we get to the render loop boilerplate variable and class initialization must be done, including the SDL objects, math model, and render model. In the main render loop we first render and correct for framerate. An explination can be found here [lazyfoo]([https://lazyfoo.net/tutorials/SDL/](https://lazyfoo.net/tutorials/SDL/25_capping_frame_rate/index.php)). Second, we fetch the math model output with our load() function defined by SafeSharedPtr
+
 
 ## Dependencies
 
