@@ -4,7 +4,7 @@
 
 This is a personal project written in C++ that models and displays a double pendulum. I wrote this program to practice C++ threading, shared pointers, and standard functions. Reading the book Chaos: Making a New Science Book by James Gleick made me want to play with a dynamical system, giving me an excuse to practice C++.
 
-The bones for the SDL implimentation were taken from the frame limiter example that can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/). Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
+The bones for the SDL implementation were taken from the frame limiter example that can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/). Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
 
 ## Explination
 
@@ -28,15 +28,19 @@ drawPendulum() draws our pendulum using the coordinates stored in the class. Eac
 
 ### SDLHolder LTexture and LTimer
 
-These are the bones of the SDL implimentation I mentioned above. I did not write LTexture LTimer, or the SDLHolder constructor. I simply organized them into seperate files and wrote the SDLHolder class to wrap the SDL initialization.
+These are the bones of the SDL implementation I mentioned above. I did not write LTexture LTimer, or the SDLHolder constructor. I simply organized them into seperate files and wrote the SDLHolder class to wrap the SDL initialization.
 
 ### pMath
 
 I have been saving the best for last
 
-peni_j() are functions that impliment the system of ODEs describing the double pendulum.
+The pen() functions implement the system of ODEs that describe the double pendulum. The functions take a system state struct as an input and return the equation's respective derivatives. 
 ![our odes](ODE_system.png)
+[Decomposition of pendulum ODEs into the ODEs that we use.]
 
+RK4() implements a step of the [Runge Kutta 4 method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods). It takes a time step, one pendulum state value (theta or phi), and a callable for the respective state value pen() equation. RK4() calculates and returns the next pendulum state value in the time series.
+
+simulate() is where we call RK4() to find the pendulum state values and store them in the export pointer. The function stores the state values in temporary variables so that new state values will not influence the calculations of other state values. Once we have all the values we put them into normal variables and store them in the export pointer. The h variable times each calculation so it can be used in the next calculation. h represents the time elapsed in the system that we need to calculate for, as a consequence this program is time accurate.
 
 ## Dependencies
 
