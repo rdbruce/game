@@ -4,7 +4,7 @@
 
 This is a personal project written in C++ that models and displays a double pendulum. I wrote this program to practice C++ threading, shared pointers, and standard functions. Reading the book Chaos: Making a New Science Book by James Gleick made me want to play with a dynamical system, giving me an excuse to practice C++.
 
-The bones for the SDL implimentation were built upon the frame limiter example that can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/). Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
+The bones for the SDL implimentation were taken from the frame limiter example that can be found at [lazyfoo](https://lazyfoo.net/tutorials/SDL/). Author: Amine B. Hassouna [@aminosbh](https://gitlab.com/aminosbh)
 
 ## Explination
 
@@ -16,13 +16,23 @@ Simulator is a generic thread wrapper class that takes a callable to run continu
 
 SafeSharedPtr is a shared pointer wrapper class that gives us a way to safely store and load our math model output pointer by locking it with a mutex, otherwise simulantious storing and accessing could corrupt the program.
 
-Now comes main(). Before we get to the render loop boilerplate variable and class initialization must be done, including the SDL objects, math model, and render model. In the main render loop we first create render our framerate as text. An explination can be found here [lazyfoo](https://lazyfoo.net/tutorials/SDL/25_capping_frame_rate/index.php). Second, we fetch the math model output with our load() function defined in SafeSharedPtr. Third, we update the render model positions with the updatePosition() function defined in pModel (our render model class). Fourth, we draw the pendulum with our drawPendulum() method also definied in pModel. Last in the loop is refreshing the screen and correcting for framerate.
+Now comes main(). Before we get to the render loop boilerplate variable and class initialization must be done, including the SDL objects, math model, and render model. In the main render loop we first create render our framerate as text. An explination can be found [here](https://lazyfoo.net/tutorials/SDL/25_capping_frame_rate/index.php). Second, we fetch the math model output with our load() function defined in SafeSharedPtr. Third, we update the render model positions with the updatePosition() function defined in pModel (our render model class). Fourth, we draw the pendulum with our drawPendulum() method also definied in pModel. Last in the loop is refreshing the screen and correcting for framerate.
 
 ### pModel
 
-### pMath
+updatePendulum() converts our radial pendulum positions to cartesian coordinates and then stores them for later use.
+
+drawCircle() is a method used to draw circles I pulled from a [stack overflow post](https://stackoverflow.com/a/48291620). It takes a center and radius and then draws a circle with them.
+
+drawPendulum() draws our pendulum using the coordinates stored in the class. Each pendulum is represented by a line with a hollow circle at its end. 
 
 ### SDLHolder LTexture and LTimer
+
+These are the bones of the SDL implimentation I mentioned above. I did not write LTexture LTimer, or the SDLHolder constructor. I simply organized them into seperate files and wrote the SDLHolder class to wrap the SDL initialization.
+
+### pMath
+
+I have been saving the best for last
 
 
 ## Dependencies
