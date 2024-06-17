@@ -10,6 +10,12 @@ The bones for the SDL implimentation were built upon the frame limiter example t
 
 ### final_pendulum.cpp
 
+This is our main file. Here we define both our math and render loops. Keeping these loops seperate via threading is one way of making an accurate and fast model, otherwise the math and rendering could block one another.
+
+Simulator is a generic thread wrapper class that takes a callable to run continuously in a thread. Simulator will run our math model loop.
+
+SafeSharedPtr is a shared pointer wrapper class that gives us a way to safely store and load our math model output pointer by locking it with a mutex, otherwise simulantious storing and accessing could corrupt the program.
+
 
 ## Dependencies
 
