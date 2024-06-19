@@ -1,6 +1,6 @@
 # Double Pendulum Project
 
-![final_pendulum](pendulum.PNG)
+![final_pendulum](assets/pendulum.PNG)
 
 This is a personal project written in C++ that models and displays a double pendulum. I wrote this program to practice C++ threading, shared pointers, and standard functions. Reading the book Chaos: Making a New Science Book by James Gleick made me want to play with a dynamical system, giving me an excuse to practice C++.
 
@@ -35,7 +35,7 @@ These are the bones of the SDL implementation I mentioned above. I did not write
 I have been saving the best for last!
 
 The pen() functions implement the system of ODEs that describe the double pendulum. The functions take a system state struct as an input and return the equation's respective derivatives. 
-![our odes](ODE_system.png)
+![our odes](assets/ODE_system.png)
 [Decomposition of pendulum ODEs into the ODEs that we use.]
 
 RK4() implements a step of the [Runge Kutta 4 method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods). It takes a time step, one pendulum state value (theta or phi), and a callable for the respective state value pen() equation. RK4() calculates and returns the next pendulum state value in the time series.
