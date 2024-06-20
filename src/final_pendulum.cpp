@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -19,7 +20,6 @@
 #include <functional>
 #include <memory>
 #include <vector>
-#include <unistd.h>
 
 //Generic thread wrapper
 class Simulator {
