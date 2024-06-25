@@ -86,7 +86,7 @@ cmake --build --preset conan-release
 cd build\Release
 final_pendulum.exe
 ```
-For Windows and macOS if you see an error in the build related to SDL2_ttf edit CMakeLists.txt comment out the SDL2_ttf line and uncomment the sdl_ttf line. 
+If you see an error in the build related to SDL2_ttf edit CMakeLists.txt uncomment out the SDL2_ttf line and comment the sdl_ttf line. 
 
 [SDL]: https://www.libsdl.org
 [CMake]: https://cmake.org
