@@ -65,8 +65,8 @@ git switch conan_enabled
 ```
 
 ### Conan packages
-First run ```sh conan install . --build=missing ```.
-If you are running Linux and some necessary missing system libraries are missing on your system, you may have to add the ```sh -c tools.system.package_manager:mode=install ``` or ```sh -c tools.system.package_manager:sudo=True ```.
+First run ```sh conan install . --build=missing```.
+If you are running Linux and some necessary missing system libraries are missing on your system, you may have to add the ```sh -c tools.system.package_manager:mode=install``` or ```sh -c tools.system.package_manager:sudo=True```.
 
 Since there is a bug in the recipie we need to install our packages seperately. Edit conanfile.py comment out the sdl_ttf requirement and uncomment the sdl_image requirement. Repeat the previous step.
 
@@ -76,16 +76,14 @@ Building on Linux and macOS
 cmake --preset conan-release
 cmake --build --preset conan-release
 cd build/Release
-./final_pendulum
-```
+./final_pendulum```
 
 Building on Windows
 ```sh
 cmake --preset conan-default
 cmake --build --preset conan-release
 cd build\Release
-final_pendulum.exe
-```
+final_pendulum.exe```
 For Windows and macOS if you see an error in the build related to SDL2_ttf edit CMakeLists.txt comment out the SDL2_ttf line and uncomment the sdl_ttf line. 
 
 [SDL]: https://www.libsdl.org
