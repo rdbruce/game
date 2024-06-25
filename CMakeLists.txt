@@ -18,4 +18,5 @@ cmake_minimum_required(VERSION 3.15)
 
 
     # SDL ttf so we can display hello world!
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_ttf::SDL2_ttf)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_ttf::SDL2_ttf) # Linux
+    # target_link_libraries(${PROJECT_NAME} PRIVATE sdl_ttf::sdl_ttf) # Windows and Mac
