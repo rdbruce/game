@@ -7,7 +7,8 @@
 #include <sstream>
 
 #include "LTimer.hpp"
-#include "pMath.hpp"
+#include "LTexture.hpp"
+#include "SDLHolder.hpp"
 
 #include <iostream>
 #include <thread>
