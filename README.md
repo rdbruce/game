@@ -52,25 +52,25 @@ simulate() is where we call RK4() to find the pendulum state values and store th
 ## Build instructions
 These build instructions are an elaboration of [this example](https://blog.conan.io/2023/07/20/introduction-to-game-dev-with-sdl2.html).
 
-# Install dependencies
+### Install dependencies
 Install Conan [here](https://docs.conan.io/1/installation.html)
 
 Install CMake [download here](https://cmake.org/download/)
 
-# Clone this repo and navigate to branch
+### Clone this repo and navigate to branch
 ```sh
 git clone https://github.com/rdbruce/final_pendulum.git
 cd final_pendulum
 git switch conan_enabled
 ```
 
-# Conan packages
+### Conan packages
 First run ```sh conan install . --build=missing ```.
 If you are running Linux and some necessary missing system libraries are missing on your system, you may have to add the ```sh -c tools.system.package_manager:mode=install ``` or ```sh -c tools.system.package_manager:sudo=True ```.
 
 Since there is a bug in the recipie we need to install our packages seperately. Edit conanfile.py comment out the sdl_ttf requirement and uncomment the sdl_image requirement. Repeat the previous step.
 
-#Build and Run
+### Build and Run
 Building on Linux and macOS
 ```sh
 cmake --preset conan-release
