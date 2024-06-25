@@ -6,10 +6,7 @@
 #include <string>
 #include <sstream>
 
-#include "SDLHolder.hpp"
-#include "LTexture.hpp"
 #include "LTimer.hpp"
-#include "pModel.hpp"
 #include "pMath.hpp"
 
 #include <iostream>
