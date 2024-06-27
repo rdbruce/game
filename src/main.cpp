@@ -86,7 +86,7 @@ int main(
   auto gHolder = std::make_shared<SDLHolder>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // Scene textures
-  LTexture gFPSTextTexture(gHolder);
+  auto gFPSTextTexture = std::make_shared<LTexture>(gHolder);
 
   // Main loop flag
   bool quit = false;
@@ -134,7 +134,7 @@ int main(
     timeText << "Average Frames Per Second (With Cap) " << avgFPS;
 
     // Render text
-    if (!gFPSTextTexture.loadFromRenderedText(timeText.str().c_str(),
+    if (!gFPSTextTexture->loadFromRenderedText(timeText.str().c_str(),
                                               textColor)) {
       printf("Unable to render FPS texture!\n");
     }
@@ -144,7 +144,7 @@ int main(
     SDL_RenderClear(gHolder->gRenderer);
 
     // Render textures
-    gFPSTextTexture.render(0, 0);
+    gFPSTextTexture->render(0, 0);
 
     // Update screen
     SDL_RenderPresent(gHolder->gRenderer);
@@ -157,9 +157,6 @@ int main(
       SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
     }
   }
-
-  // Free loaded images
-  gFPSTextTexture.free();
 
   return 0;
 }
