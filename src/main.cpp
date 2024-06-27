@@ -2,206 +2,161 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <sstream>
 #include <stdio.h>
 #include <string>
-#include <sstream>
 
-#include "LTimer.hpp"
 #include "LTexture.hpp"
+#include "LTimer.hpp"
 #include "SDLHolder.hpp"
 
-#include <iostream>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
 #include <chrono>
+#include <condition_variable>
 #include <functional>
+#include <iostream>
 #include <memory>
+#include <mutex>
+#include <thread>
 #include <vector>
+#include <memory>
 
-//Generic thread wrapper
+// Generic thread wrapper
 class Simulator {
 public:
-    using Callback = std::function<void ()>;
+  using Callback = std::function<void()>;
+
 private:
-    Callback callback;
-    bool die;
-    std::thread tid;
-    std::string name;
+  Callback callback;
+  bool die;
+  std::thread tid;
+  std::string name;
+
 public:
-	//Construct std function from provided callable
-    Simulator(Callback _callback) : callback(_callback), die(false)
-    {
-		//Create thread
-        tid = std::thread([this]() { this->worker(); });
-    }
+  // Construct std function from provided callable
+  Simulator(Callback _callback) : callback(_callback), die(false) {
+    // Create thread
+    tid = std::thread([this]() { this->worker(); });
+  }
 
-    ~Simulator()
-    {
-        {
-            die = true;
-        }
-        tid.join();
-    }
+  ~Simulator() {
+    { die = true; }
+    tid.join();
+  }
 
-	//Generic run loop that pMath exists in
-    void worker()
-    {
-        using namespace std;
-        for (;;) {
-            callback();
-            if (die) return;
-        }
+  // Generic run loop that pMath exists in
+  void worker() {
+    using namespace std;
+    for (;;) {
+      callback();
+      if (die)
+        return;
     }
+  }
 };
 
-//Generic SafeSharedPtr
-template <typename T>
-class SafeSharedPtr {
-    std::mutex  mtx;
-    std::shared_ptr<T>  ptr;
+// Generic SafeSharedPtr
+template <typename T> class SafeSharedPtr {
+  std::mutex mtx;
+  std::shared_ptr<T> ptr;
+
 public:
-    SafeSharedPtr() : ptr(nullptr) {}
+  SafeSharedPtr() : ptr(nullptr) {}
 
-    void store(std::shared_ptr<T> arg)
-    {
-        std::unique_lock<std::mutex> lock(mtx);
-        ptr = arg;
-    }
+  void store(std::shared_ptr<T> arg) {
+    std::unique_lock<std::mutex> lock(mtx);
+    ptr = arg;
+  }
 
-    std::shared_ptr<T> load()
-    {
-        std::unique_lock<std::mutex> lock(mtx);
-        return ptr;
-    }
+  std::shared_ptr<T> load() {
+    std::unique_lock<std::mutex> lock(mtx);
+    return ptr;
+  }
 };
 
-int main( 
-	// int argc, char* args[] 
-	)
-{
-	//Screen dimension constants
-	const int SCREEN_FPS = 60;
-	const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
-	const int SCREEN_WIDTH = 640;
-	const int SCREEN_HEIGHT = 480;
+int main(
+    // int argc, char* args[]
+) {
+  // Screen dimension constants
+  const int SCREEN_FPS = 60;
+  const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
+  const int SCREEN_WIDTH = 640;
+  const int SCREEN_HEIGHT = 480;
 
-	//Initialize SDL
-	SDLHolder gHolder(SCREEN_WIDTH, SCREEN_HEIGHT);
+  // Initialize SDL
+  auto gHolder = std::make_shared<SDLHolder>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	//Scene textures
-	LTexture gFPSTextTexture(gHolder.gRenderer, gHolder.gFont);
+  // Scene textures
+  auto gFPSTextTexture = std::make_shared<LTexture>(gHolder);
 
-	//Main loop flag
-	bool quit = false;
+  // Main loop flag
+  bool quit = false;
 
-	//Event handler
-	SDL_Event e;
+  // Event handler
+  SDL_Event e;
 
-	//Set text color as black
-	SDL_Color textColor = { 0, 0, 0, 255 };
+  // Set text color as black
+  SDL_Color textColor = {0, 0, 0, 255};
 
-	//The frames per second timer
-	LTimer fpsTimer;
+  // The frames per second timer
+  LTimer fpsTimer;
 
-	//The frames per second cap timer
-	LTimer capTimer;
+  // The frames per second cap timer
+  LTimer capTimer;
 
-	//In memory text stream
-	std::stringstream timeText;
+  // In memory text stream
+  std::stringstream timeText;
 
-	//Start counting frames per second
-	int countedFrames = 0;
-	fpsTimer.start();
+  // Start counting frames per second
+  int countedFrames = 0;
+  fpsTimer.start();
 
-	//Initialize double pendulum 1
-	//Initialize pendulum render object
-	pModel ourP(gHolder.gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-	//Initialize pendulum position structure pointer
-	SafeSharedPtr<pData> latch;
-	//Initialize mathematical model 
-	pMath ourPm(3.1415, 3.1415); //Input thetas
-	//Call generic thread creator and initialize with our callable
-    Simulator s([&]() { auto ptr = ourPm.simulate(); latch.store(ptr); });
+  // While application is running
+  while (!quit) {
+    // Start cap timer
+    capTimer.start();
 
-	//Initialize double pendulum 2
-	//Initialize pendulum render object
-	pModel ourP2(gHolder.gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-	//Initialize pendulum position structure pointer
-	SafeSharedPtr<pData> latch2;
-	//Initialize mathematical model 
-	//Notice initial condition similarity
-	pMath ourPm2(3.141, 3.141); //Input thetas
-	//Call generic thread creator and initialize with our callable
-    Simulator s2([&]() { auto ptr2 = ourPm2.simulate(); latch2.store(ptr2); });
+    // Handle events on queue
+    while (SDL_PollEvent(&e) != 0) {
+      // User requests quit
+      if (e.type == SDL_QUIT) {
+        quit = true;
+      }
+    }
 
-	//While application is running
-	while( !quit )
-	{
-		//Start cap timer
-		capTimer.start();
+    // Calculate and correct fps
+    float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
+    if (avgFPS > 2000000) {
+      avgFPS = 0;
+    }
 
-		//Handle events on queue
-		while( SDL_PollEvent( &e ) != 0 )
-		{
-			//User requests quit
-			if( e.type == SDL_QUIT )
-			{
-				quit = true;
-			}
-		}
+    // Set text to be rendered
+    timeText.str("");
+    timeText << "Average Frames Per Second (With Cap) " << avgFPS;
 
-		//Calculate and correct fps
-		float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
-		if( avgFPS > 2000000 )
-		{
-			avgFPS = 0;
-		}
+    // Render text
+    if (!gFPSTextTexture->loadFromRenderedText(timeText.str().c_str(),
+                                              textColor)) {
+      printf("Unable to render FPS texture!\n");
+    }
 
-		//Set text to be rendered
-		timeText.str( "" );
-		timeText << "Average Frames Per Second (With Cap) " << avgFPS; 
+    // Clear screen
+    SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(gHolder->gRenderer);
 
-		//Render text
-		if( !gFPSTextTexture.loadFromRenderedText( timeText.str().c_str(), textColor ) )
-		{
-			printf( "Unable to render FPS texture!\n" );
-		}
+    // Render textures
+    gFPSTextTexture->render(0, 0);
 
-		//Clear screen
-		SDL_SetRenderDrawColor( gHolder.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-		SDL_RenderClear( gHolder.gRenderer );
+    // Update screen
+    SDL_RenderPresent(gHolder->gRenderer);
+    ++countedFrames;
 
-		//Fetch pendulum position structure pointers
-		auto ptr = latch.load();
-		auto ptr2 = latch2.load();
+    // If frame finished early
+    int frameTicks = capTimer.getTicks();
+    if (frameTicks < SCREEN_TICK_PER_FRAME) {
+      // Wait remaining time
+      SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
+    }
+  }
 
-		// printf("Theta %f Phi %f \n", ptr->t, ptr->dt);
-
-		//Render textures
-		gFPSTextTexture.render( 0, 0 );
-		//Update pendulum render objects with current mathematical positions
-		ourP.updatePendulum(ptr->t, ptr->t2);
-		ourP2.updatePendulum(ptr2->t, ptr2->t2);
-		//Draw pendulums
-		ourP.drawPendulum();
-		ourP2.drawPendulum();
-
-		//Update screen
-		SDL_RenderPresent( gHolder.gRenderer );
-		++countedFrames;
-
-		//If frame finished early
-		int frameTicks = capTimer.getTicks();
-		if( frameTicks < SCREEN_TICK_PER_FRAME )
-		{
-			//Wait remaining time
-			SDL_Delay( SCREEN_TICK_PER_FRAME - frameTicks );
-		}
-	}
-
-	//Free loaded images
-	gFPSTextTexture.free();
-
-	return 0;
+  return 0;
 }
