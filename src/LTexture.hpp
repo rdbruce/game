@@ -1,15 +1,17 @@
+#include "SDLHolder.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#include <memory>
 
 // Texture wrapper class
 class LTexture {
 public:
   // Initializes variables
-  LTexture(SDL_Renderer *gRenderer_from_main, TTF_Font *gFont_from_main);
+  LTexture(std::shared_ptr<SDLHolder> gHolder);
 
   // Deallocates memory
   ~LTexture();
@@ -46,9 +48,7 @@ private:
   // The actual hardware texture
   SDL_Texture *mTexture;
 
-  SDL_Renderer *gRenderer;
-
-  TTF_Font *gFont = NULL;
+  std::shared_ptr<SDLHolder> gHolder;
 
   // Image dimensions
   int mWidth;

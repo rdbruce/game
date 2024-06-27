@@ -18,6 +18,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <memory>
 
 // Generic thread wrapper
 class Simulator {
@@ -82,10 +83,10 @@ int main(
   const int SCREEN_HEIGHT = 480;
 
   // Initialize SDL
-  SDLHolder gHolder(SCREEN_WIDTH, SCREEN_HEIGHT);
+  auto gHolder = std::make_shared<SDLHolder>(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // Scene textures
-  LTexture gFPSTextTexture(gHolder.gRenderer, gHolder.gFont);
+  LTexture gFPSTextTexture(gHolder);
 
   // Main loop flag
   bool quit = false;
@@ -139,14 +140,14 @@ int main(
     }
 
     // Clear screen
-    SDL_SetRenderDrawColor(gHolder.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(gHolder.gRenderer);
+    SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(gHolder->gRenderer);
 
     // Render textures
     gFPSTextTexture.render(0, 0);
 
     // Update screen
-    SDL_RenderPresent(gHolder.gRenderer);
+    SDL_RenderPresent(gHolder->gRenderer);
     ++countedFrames;
 
     // If frame finished early

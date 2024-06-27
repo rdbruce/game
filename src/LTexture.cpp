@@ -7,16 +7,11 @@
 
 #include "LTexture.hpp"
 
-LTexture::LTexture(SDL_Renderer *gRenderer_from_main,
-                   TTF_Font *gFont_from_main) {
+LTexture::LTexture(std::shared_ptr<SDLHolder> gHolder) : gHolder(gHolder) {
   // Initialize
   mTexture = NULL;
   mWidth = 0;
   mHeight = 0;
-
-  // Pass ptrs
-  gRenderer = gRenderer_from_main;
-  gFont = gFont_from_main;
 }
 
 LTexture::~LTexture() {
@@ -32,10 +27,10 @@ bool LTexture::loadFromRenderedText(std::string textureText,
 
   // Render text surface
   SDL_Surface *textSurface =
-      TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+      TTF_RenderText_Solid(gHolder->gFont, textureText.c_str(), textColor);
   if (textSurface != NULL) {
     // Create texture from surface pixels
-    mTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+    mTexture = SDL_CreateTextureFromSurface(gHolder->gRenderer, textSurface);
     if (mTexture == NULL) {
       printf("Unable to create texture from rendered text! SDL Error: %s\n",
              SDL_GetError());
@@ -75,7 +70,7 @@ bool LTexture::loadFromFile(std::string path) {
                     SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
     // Create texture from surface pixels
-    newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+    newTexture = SDL_CreateTextureFromSurface(gHolder->gRenderer, loadedSurface);
     if (newTexture == NULL) {
       printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(),
              SDL_GetError());
@@ -131,7 +126,7 @@ void LTexture::render(int x, int y, SDL_Rect *clip, double angle,
   }
 
   // Render to screen
-  SDL_RenderCopyEx(gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
+  SDL_RenderCopyEx(gHolder->gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
 
 int LTexture::getWidth() { return mWidth; }
