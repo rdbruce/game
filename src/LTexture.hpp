@@ -1,3 +1,5 @@
+#pragma once
+
 #include "SDLHolder.hpp"
 #include <SDL.h>
 #include <SDL_image.h>

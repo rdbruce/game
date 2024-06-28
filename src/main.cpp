@@ -9,6 +9,7 @@
 #include "LTexture.hpp"
 #include "LTimer.hpp"
 #include "SDLHolder.hpp"
+#include "Dot.hpp"
 
 #include <chrono>
 #include <condition_variable>
@@ -76,6 +77,11 @@ public:
 int main(
     // int argc, char* args[]
 ) {
+
+	//The dimensions of the level
+	const int LEVEL_WIDTH = 1280;
+	const int LEVEL_HEIGHT = 960;
+
   // Screen dimension constants
   const int SCREEN_FPS = 60;
   const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
@@ -87,9 +93,26 @@ int main(
 
   // Scene textures
   auto gFPSTextTexture = std::make_shared<LTexture>(gHolder);
+  auto gDotTexture = std::make_shared<LTexture>(gHolder);
+  auto gBGTexture = std::make_shared<LTexture>(gHolder);
 
-  // Main loop flag
-  bool quit = false;
+	//Load dot texture
+	if( !gDotTexture->loadFromFile( "../../assets/dot.bmp" ) )
+	{
+		printf( "Failed to load dot texture!\n" );
+	}
+
+	//Load background texture
+	if( !gBGTexture->loadFromFile( "../../assets/bg.png" ) )
+	{
+		printf( "Failed to load background texture!\n" );
+	}
+
+	//The dot that will be moving around on the screen
+	Dot dot(gDotTexture);
+
+	//The camera area
+	SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
   // Event handler
   SDL_Event e;
@@ -106,6 +129,9 @@ int main(
   // In memory text stream
   std::stringstream timeText;
 
+  // Main loop flag
+  bool quit = false;
+
   // Start counting frames per second
   int countedFrames = 0;
   fpsTimer.start();
@@ -121,7 +147,35 @@ int main(
       if (e.type == SDL_QUIT) {
         quit = true;
       }
+
+	  //Handle input for the dot
+		dot.handleEvent( e );
     }
+
+	//Move the dot
+	dot.move();
+
+	//Center the camera over the dot
+	camera.x = ( dot.getPosX() + Dot::DOT_WIDTH / 2 ) - SCREEN_WIDTH / 2;
+	camera.y = ( dot.getPosY() + Dot::DOT_HEIGHT / 2 ) - SCREEN_HEIGHT / 2;
+
+	//Keep the camera in bounds
+	if( camera.x < 0 )
+	{ 
+		camera.x = 0;
+	}
+	if( camera.y < 0 )
+	{
+		camera.y = 0;
+	}
+	if( camera.x > LEVEL_WIDTH - camera.w )
+	{
+		camera.x = LEVEL_WIDTH - camera.w;
+	}
+	if( camera.y > LEVEL_HEIGHT - camera.h )
+	{
+		camera.y = LEVEL_HEIGHT - camera.h;
+	}
 
     // Calculate and correct fps
     float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
@@ -143,7 +197,11 @@ int main(
     SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(gHolder->gRenderer);
 
-    // Render textures
+	//Render background
+	gBGTexture->render( 0, 0, &camera );
+
+	//Render objects
+	dot.render( camera.x, camera.y );
     gFPSTextTexture->render(0, 0);
 
     // Update screen
@@ -157,6 +215,5 @@ int main(
       SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
     }
   }
-
   return 0;
 }
