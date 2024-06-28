@@ -70,7 +70,8 @@ bool LTexture::loadFromFile(std::string path) {
                     SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
     // Create texture from surface pixels
-    newTexture = SDL_CreateTextureFromSurface(gHolder->gRenderer, loadedSurface);
+    newTexture =
+        SDL_CreateTextureFromSurface(gHolder->gRenderer, loadedSurface);
     if (newTexture == NULL) {
       printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(),
              SDL_GetError());
@@ -126,7 +127,8 @@ void LTexture::render(int x, int y, SDL_Rect *clip, double angle,
   }
 
   // Render to screen
-  SDL_RenderCopyEx(gHolder->gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
+  SDL_RenderCopyEx(gHolder->gRenderer, mTexture, clip, &renderQuad, angle,
+                   center, flip);
 }
 
 int LTexture::getWidth() { return mWidth; }
