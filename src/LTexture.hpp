@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SDLHolder.hpp"
+#include "LWindow.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -10,10 +10,11 @@
 #include <memory>
 
 // Texture wrapper class
-class LTexture {
+class LTexture
+{
 public:
   // Initializes variables
-  LTexture(std::shared_ptr<SDLHolder> gHolder);
+  LTexture(std::shared_ptr<LWindow> gHolder);
 
   // Deallocates memory
   ~LTexture();
@@ -50,7 +51,7 @@ private:
   // The actual hardware texture
   SDL_Texture *mTexture;
 
-  std::shared_ptr<SDLHolder> gHolder;
+  std::shared_ptr<LWindow> gHolder;
 
   // Image dimensions
   int mWidth;

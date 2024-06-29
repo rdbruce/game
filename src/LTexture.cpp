@@ -7,34 +7,41 @@
 
 #include "LTexture.hpp"
 
-LTexture::LTexture(std::shared_ptr<SDLHolder> gHolder) : gHolder(gHolder) {
+LTexture::LTexture(std::shared_ptr<LWindow> gHolder) : gHolder(gHolder)
+{
   // Initialize
   mTexture = NULL;
   mWidth = 0;
   mHeight = 0;
 }
 
-LTexture::~LTexture() {
+LTexture::~LTexture()
+{
   // Deallocate
   free();
 }
 
 #if defined(SDL_TTF_MAJOR_VERSION)
 bool LTexture::loadFromRenderedText(std::string textureText,
-                                    SDL_Color textColor) {
+                                    SDL_Color textColor)
+{
   // Get rid of preexisting texture
   free();
 
   // Render text surface
   SDL_Surface *textSurface =
       TTF_RenderText_Solid(gHolder->gFont, textureText.c_str(), textColor);
-  if (textSurface != NULL) {
+  if (textSurface != NULL)
+  {
     // Create texture from surface pixels
     mTexture = SDL_CreateTextureFromSurface(gHolder->gRenderer, textSurface);
-    if (mTexture == NULL) {
+    if (mTexture == NULL)
+    {
       printf("Unable to create texture from rendered text! SDL Error: %s\n",
              SDL_GetError());
-    } else {
+    }
+    else
+    {
       // Get image dimensions
       mWidth = textSurface->w;
       mHeight = textSurface->h;
@@ -42,7 +49,9 @@ bool LTexture::loadFromRenderedText(std::string textureText,
 
     // Get rid of old surface
     SDL_FreeSurface(textSurface);
-  } else {
+  }
+  else
+  {
     printf("Unable to render text surface! SDL_ttf Error: %s\n",
            TTF_GetError());
   }
@@ -52,7 +61,8 @@ bool LTexture::loadFromRenderedText(std::string textureText,
 }
 #endif
 
-bool LTexture::loadFromFile(std::string path) {
+bool LTexture::loadFromFile(std::string path)
+{
   // Get rid of preexisting texture
   free();
 
@@ -61,10 +71,13 @@ bool LTexture::loadFromFile(std::string path) {
 
   // Load image at specified path
   SDL_Surface *loadedSurface = IMG_Load(path.c_str());
-  if (loadedSurface == NULL) {
+  if (loadedSurface == NULL)
+  {
     printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(),
            IMG_GetError());
-  } else {
+  }
+  else
+  {
     // Color key image
     SDL_SetColorKey(loadedSurface, SDL_TRUE,
                     SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
@@ -72,10 +85,13 @@ bool LTexture::loadFromFile(std::string path) {
     // Create texture from surface pixels
     newTexture =
         SDL_CreateTextureFromSurface(gHolder->gRenderer, loadedSurface);
-    if (newTexture == NULL) {
+    if (newTexture == NULL)
+    {
       printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(),
              SDL_GetError());
-    } else {
+    }
+    else
+    {
       // Get image dimensions
       mWidth = loadedSurface->w;
       mHeight = loadedSurface->h;
@@ -90,9 +106,11 @@ bool LTexture::loadFromFile(std::string path) {
   return mTexture != NULL;
 }
 
-void LTexture::free() {
+void LTexture::free()
+{
   // Free texture if it exists
-  if (mTexture != NULL) {
+  if (mTexture != NULL)
+  {
     SDL_DestroyTexture(mTexture);
     mTexture = NULL;
     mWidth = 0;
@@ -100,28 +118,33 @@ void LTexture::free() {
   }
 }
 
-void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue) {
+void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
+{
   // Modulate texture rgb
   SDL_SetTextureColorMod(mTexture, red, green, blue);
 }
 
-void LTexture::setBlendMode(SDL_BlendMode blending) {
+void LTexture::setBlendMode(SDL_BlendMode blending)
+{
   // Set blending function
   SDL_SetTextureBlendMode(mTexture, blending);
 }
 
-void LTexture::setAlpha(Uint8 alpha) {
+void LTexture::setAlpha(Uint8 alpha)
+{
   // Modulate texture alpha
   SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
 void LTexture::render(int x, int y, SDL_Rect *clip, double angle,
-                      SDL_Point *center, SDL_RendererFlip flip) {
+                      SDL_Point *center, SDL_RendererFlip flip)
+{
   // Set rendering space and render to screen
   SDL_Rect renderQuad = {x, y, mWidth, mHeight};
 
   // Set clip rendering dimensions
-  if (clip != NULL) {
+  if (clip != NULL)
+  {
     renderQuad.w = clip->w;
     renderQuad.h = clip->h;
   }
