@@ -125,6 +125,8 @@ int main(
 
   // In memory text stream
   std::stringstream timeText;
+  std::stringstream mouseText;
+  bool button;
 
   // Main loop flag
   bool quit = false;
@@ -147,6 +149,17 @@ int main(
 
       // Handle input for the dot
       dot.handleEvent(e);
+
+      switch( e.type )
+			{
+				case SDL_MOUSEBUTTONDOWN:
+				button = 1;
+				break;
+				
+				case SDL_MOUSEBUTTONUP:
+				button = 0;
+				break;
+			}
     }
 
     // Move the dot
@@ -176,12 +189,6 @@ int main(
       avgFPS = 0;
     }
 
-    // Render text
-    if (!gFPSTextTexture->loadFromRenderedText(timeText.str().c_str(),
-                                               textColor)) {
-      printf("Unable to render FPS texture!\n");
-    }
-
     // Clear screen
     SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(gHolder->gRenderer);
@@ -196,7 +203,25 @@ int main(
     timeText.str("");
     timeText << "Average Frames Per Second (With Cap) " << avgFPS;
     // Render text
+    if (!gFPSTextTexture->loadFromRenderedText(timeText.str().c_str(),
+                                               textColor)) {
+      printf("Unable to render FPS texture!\n");
+    }
+
     gFPSTextTexture->render(0, 0);
+
+    // Set text to be rendered
+    mouseText.str("");
+    int x, y;
+		SDL_GetMouseState( &x, &y );
+    mouseText << "Mouse is at (" << x << "," << y << ") " << button;
+    // Render text
+    if (!gFPSTextTexture->loadFromRenderedText(mouseText.str().c_str(),
+                                               textColor)) {
+      printf("Unable to render FPS texture!\n");
+    }
+
+    gFPSTextTexture->render(0, 30);
 
     // Update screen
     SDL_RenderPresent(gHolder->gRenderer);
