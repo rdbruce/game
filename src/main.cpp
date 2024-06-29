@@ -101,7 +101,7 @@ int main(
   auto gBGTexture = std::make_shared<LTexture>(gHolder);
 
   // Load background texture
-  if (!gBGTexture->loadFromFile("../../assets/bg.png"))
+  if (!gBGTexture->loadFromFile("../../assets/Bert.png"))
   {
     printf("Failed to load background texture!\n");
   }

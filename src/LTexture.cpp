@@ -137,7 +137,7 @@ void LTexture::setAlpha(Uint8 alpha)
 }
 
 void LTexture::renderAsBackground(SDL_Rect *clip, double angle,
-                      SDL_Point *center, SDL_RendererFlip flip)
+                                  SDL_Point *center, SDL_RendererFlip flip)
 {
   // Set rendering space and render to screen
   SDL_Rect renderQuad = {0, 0, gHolder->getWidth(), gHolder->getHeight()};
