@@ -197,7 +197,7 @@ int main(
       SDL_RenderClear(gHolder->gRenderer);
 
       // Render background
-      gBGTexture->render(0, 0);
+      gBGTexture->renderAsBackground();
       gFPSTextTexture->render(0, 0);
       gMouseTextTexture->render(0, 30);
 

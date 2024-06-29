@@ -15,8 +15,8 @@ LWindow::LWindow()
   wKeyboardFocus = false;
   wFullScreen = false;
   wMinimized = false;
-  wWidth = 0;
-  wHeight = 0;
+  wWidth = 1280;
+  wHeight = 720;
 
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -33,7 +33,7 @@ LWindow::LWindow()
 
   // Create window
   gWindow = SDL_CreateWindow("final_pendulum", SDL_WINDOWPOS_UNDEFINED,
-                             SDL_WINDOWPOS_UNDEFINED, 640, 480,
+                             SDL_WINDOWPOS_UNDEFINED, wWidth, wHeight,
                              SDL_WINDOW_SHOWN);
   if (gWindow == NULL)
   {
