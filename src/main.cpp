@@ -92,6 +92,8 @@ int main(
   const int SCREEN_FPS = 60;
   const int SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
 
+  double angle = 0;
+
   // Initialize SDL
   auto gHolder = std::make_shared<LWindow>();
 
@@ -135,6 +137,8 @@ int main(
   {
     // Start cap timer
     capTimer.start();
+
+    angle += 0.1;
 
     // Handle events on queue
     while (SDL_PollEvent(&e) != 0)
@@ -197,7 +201,7 @@ int main(
       SDL_RenderClear(gHolder->gRenderer);
 
       // Render background
-      gBGTexture->renderAsBackground();
+      gBGTexture->renderAsBackground(NULL, angle);
       gFPSTextTexture->render(0, 0);
       gMouseTextTexture->render(0, 30);
 
