@@ -1,7 +1,6 @@
-#ifndef L_TEXTURE_HPP
-#define L_TEXTURE_HPP
+#pragma once
 
-#include "SDLHolder.hpp"
+#include "LWindow.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -11,10 +10,11 @@
 #include <memory>
 
 // Texture wrapper class
-class LTexture {
+class LTexture
+{
 public:
   // Initializes variables
-  LTexture(std::shared_ptr<SDLHolder> gHolder);
+  LTexture(std::shared_ptr<LWindow> gHolder);
   LTexture();
 
   // Deallocates memory
@@ -40,6 +40,10 @@ public:
   // Set alpha modulation
   void setAlpha(Uint8 alpha);
 
+  // Renders to fit the whole background
+  void LTexture::renderAsBackground(SDL_Rect *clip = NULL, double angle = 0.0,
+                                    SDL_Point *center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
   // Renders texture at given point
   void render(int x, int y, SDL_Rect *clip = NULL, double angle = 0.0,
               SDL_Point *center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -52,11 +56,9 @@ private:
   // The actual hardware texture
   SDL_Texture *mTexture;
 
-  std::shared_ptr<SDLHolder> gHolder;
+  std::shared_ptr<LWindow> gHolder;
 
   // Image dimensions
   int mWidth;
   int mHeight;
 };
-
-#endif

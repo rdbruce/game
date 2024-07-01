@@ -5,6 +5,14 @@
 
 namespace Math
 {
+    // initialise the global vectors
+    Vector2 Vector2_Zero( 0.0f, 0.0f );
+    Vector2 Vector2_One( 1.0f, 1.0f );
+    Vector2Int Vector2Int_Zero( 0, 0 );
+    Vector2Int Vector2Int_One( 1, 1 );
+
+
+
     // constructors: assign x and y
     Vector2::Vector2(float X, float Y) : x(X), y(Y) {}
     // make x and y both 0 by default

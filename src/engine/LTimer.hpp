@@ -1,5 +1,4 @@
-#ifndef TIMER_HPP
-#define TIMER_HPP
+#pragma once
 
 // The application time based timer
 class LTimer {
@@ -31,5 +30,3 @@ private:
   bool mPaused;
   bool mStarted;
 };
-
-#endif

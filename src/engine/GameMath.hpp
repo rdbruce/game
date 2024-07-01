@@ -50,10 +50,11 @@ namespace Math
         void    operator*=( float const& k );
 
 
+    };
+
     // global 2D vectors, Vector2_Zero = zero magnitude vector, Vector2_One = (1, 1)
-    } Vector2_Zero( 0.0f, 0.0f ), Vector2_One( 1.0f, 1.0f );
-
-
+    extern Vector2 Vector2_Zero;
+    extern Vector2 Vector2_One;
 
 
 
@@ -89,8 +90,14 @@ namespace Math
         void       operator*=( float const& k );
 
 
+    };
+
     // global Vector2Ints
-    } Vector2Int_Zero( 0, 0 ), Vector2Int_One( 1, 1 );
+    extern Vector2Int Vector2Int_Zero;
+    extern Vector2Int Vector2Int_One;
+
+
+
 
 
 
