@@ -6,9 +6,14 @@
 #include <stdio.h>
 #include <string>
 
-#include "LTexture.hpp"
-#include "LTimer.hpp"
-#include "LWindow.hpp"
+#include "engine/LTexture.hpp"
+#include "engine/LTimer.hpp"
+#include "engine/LWindow.hpp"
+#include "engine/GameMath.hpp"
+
+#include "game/Game.hpp"
+
+#include "gameObject/GameObject.hpp"
 
 #include <chrono>
 #include <condition_variable>
@@ -108,6 +113,8 @@ int main(
     printf("Failed to load background texture!\n");
   }
 
+  Game game(gHolder);
+
   // Event handler
   SDL_Event e;
 
@@ -123,7 +130,6 @@ int main(
   // In memory text stream
   std::stringstream timeText;
   std::stringstream mouseText;
-  bool button;
 
   // Main loop flag
   bool quit = false;
@@ -151,18 +157,13 @@ int main(
 
       // Handle window events
       gHolder->handleEvent(e);
-
-      switch (e.type)
-      {
-      case SDL_MOUSEBUTTONDOWN:
-        button = 1;
-        break;
-
-      case SDL_MOUSEBUTTONUP:
-        button = 0;
-        break;
-      }
+      game.handle_events(e);
     }
+
+
+    game.update_deltaTime();
+
+    game.update_gameobjects();
 
     // Calculate and correct fps
     float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
@@ -185,7 +186,7 @@ int main(
     mouseText.str("");
     int x, y;
     SDL_GetMouseState(&x, &y);
-    mouseText << "Mouse is at (" << x << "," << y << ") " << button;
+    mouseText << "Mouse is at (" << x << "," << y << ")";
     // Render text
     if (!gMouseTextTexture->loadFromRenderedText(mouseText.str().c_str(),
                                                  textColor))
@@ -200,8 +201,12 @@ int main(
       SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
       SDL_RenderClear(gHolder->gRenderer);
 
+
       // Render background
-      gBGTexture->renderAsBackground(NULL, angle);
+      game.render_background();
+      game.render_gameobjects();
+
+
       gFPSTextTexture->render(0, 0);
       gMouseTextTexture->render(0, 30);
 
