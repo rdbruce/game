@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.15)
     find_package(SDL2_image REQUIRED CONFIG)
     find_package(SDL2_ttf REQUIRED CONFIG)
 
-    file(GLOB SOURCES "src/*.cpp")
+    file(GLOB_RECURSE SOURCES "src/*.cpp")
     add_executable(${PROJECT_NAME} ${SOURCES})
 
 
