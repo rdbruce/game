@@ -1,0 +1,154 @@
+#ifndef GAME_HPP
+#define GAME_HPP
+
+#include "../engine/LTexture.hpp"
+#include "../engine/LTimer.hpp"
+#include "../engine/LWindow.hpp"
+#include "../engine/GameMath.hpp"
+#include "../engine/TextureManipulator.hpp"
+#include "../gameObject/GameObject.hpp"
+#include "Scene.hpp"
+#include "CellTypes.hpp"
+
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_events.h>
+
+#include <ctime>
+#include <vector>
+#include <random>
+
+using namespace Math;
+
+
+
+class Game
+{
+    // declare GameObject as a friend of Game, so the private members can be accessed
+    friend class GameObject;
+    friend class EntityFunctions;
+
+    public:
+
+        // constructor
+        Game( std::shared_ptr<LWindow> Window );
+
+
+        // handle events like player input
+        void handle_events( SDL_Event& e );
+
+        // updates all the game objects
+        void update_gameobjects();
+
+
+
+        // rendering functions
+
+        void center_camera_on_player();
+        // renders the scene's background
+        void render_background();
+        // renders all the game objects
+        void render_gameobjects();
+
+
+        // finds the time elapsed between frames
+        void update_deltaTime();
+
+        // finds the position of the mouse (on the map)
+        Vector2 find_mouse_pos();
+
+
+        // adds a game object and returns a pointer to it
+        std::shared_ptr<GameObject> Instantiate( Vector2 pos, int type, int hp, Scene *level );
+        std::shared_ptr<GameObject> Instantiate( Vector2 pos, int type, int hp ); // for convenience
+
+        // deletes the specified object
+        void Destroy( std::shared_ptr<GameObject> obj, std::vector<std::shared_ptr<GameObject>> *vec );
+        void Destroy( std::shared_ptr<GameObject> obj ); // for convenience
+
+        // spawns an item stack with random velocity. returns a pointer to the item created
+        std::shared_ptr<GameObject> spawnItemStack( int type, Vector2 pos, int count );
+
+        // when throwing two different item stacks together, they may combine, and produce
+        // a third, different item. returns a pointer to the crafted item
+        std::shared_ptr<GameObject> craftTwoItems( std::shared_ptr<GameObject> item1, std::shared_ptr<GameObject> item2 );
+
+        // moves the player into the specified level, and makes said level the active scene
+        void movePlayerToLevel( Scene *level, Vector2 newPlayerPos );
+
+        // moves an entity into the specified level
+        std::shared_ptr<GameObject> moveEntityToLevel( std::shared_ptr<GameObject> obj, Scene *level, Vector2 newPos );
+
+        // deals a specified amount of damage to a cell
+        void damageCell( Vector2Int cell, int damage );
+
+
+    private:
+
+        // returns true if the type represents an Item
+        bool is_item( int type );
+        // returns true if the specified cell is a barrier
+        bool is_barrier( Vector2Int cell );
+
+
+        // for tracking player input
+        // tracks which keys the player has held down
+        Uint8 inputKeys = 0;
+
+
+
+        // dimensions of the current map
+        SDL_Rect map;
+
+
+        // the time elapsed between frames
+        float deltaTime = 0.0f;
+        clock_t begin_time = 0; // used for calculating deltaTime
+
+
+
+
+        // position and dimensions of the camera
+        SDL_Rect camera;
+
+
+
+        // all the levels in the game
+        Scene *currLevel;
+        Scene testLevel;
+
+        
+
+        // images/textures
+
+        // used for editing textures
+        TextureManipulator tEditor;
+
+        // loads all of the games textures from file
+        void load_textures();
+
+        // background texture
+        std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr;
+        std::shared_ptr<LTexture> Bert = nullptr;
+        std::shared_ptr<LTexture>   logTex, bridgeTex, waterTex, grassTex, treeTex,
+                                    stumpTex, saplingTex,
+                                    shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
+                                    shoreline4Tex, closed_doorTex, open_doorTex, CRT_Tex;
+        
+        // the window the game will be rendered to
+        std::shared_ptr<LWindow> window = nullptr;
+
+
+
+
+        // functions for editing the grid (defined in Grid.cpp NOT Game.cpp!!!!)
+
+        // place an object into a cell in the global grid
+        int PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement);
+
+        // renders every cell in the level, to be used when loading levels
+        void initialise_BGTexture();
+};
+
+#endif
