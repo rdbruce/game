@@ -199,6 +199,29 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             moveSpeed = 0.5f;
             break;
         }
+
+        case Fox_NPC:
+            // assign the texture
+            tex = game->foxTex;
+            altTex = std::make_shared<LTexture>(game->window);
+            renderingFunc = &GameObject::foxRenderFunc;
+
+            // set up the hitbox
+            Vector2Int size(sideLen-2, sideLen-2);
+            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+            hitbox = { p.x, p.y, size.x, size.y };
+            radius = Max(size.x/2, size.y/2);
+
+            // assign behaviour functions
+            positionFunc = &GameObject::defaultPositionFunc;
+            velocityFunc = &GameObject::deccelerateVelocityFunc;
+            collisionFunc = &GameObject::defaultCollisionFunction;
+
+            // other attributes
+            max_hp = 255;
+            hp = Health;
+            hasCollision = true;
+            break;
     }
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}
@@ -241,7 +264,7 @@ void GameObject::make_thrown( Vector2 newVelocity, Vector2 newAcceleration )
 }
 
 
-bool GameObject::is_item() { return type>=Log_Item; }
+bool GameObject::is_item() { return type>=Log_Item && type<=Door_Item; }
 bool GameObject::is_enemy() { return type>=Wolf && type<=Wolf; }
 
 

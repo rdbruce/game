@@ -74,7 +74,7 @@ LWindow::LWindow()
   }
 
   // Open the font
-  gFont = TTF_OpenFont("../../assets/lazy.ttf", 18);
+  gFont = TTF_OpenFont("../../assets/lazy.ttf", 36);
   if (gFont == NULL)
   {
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());

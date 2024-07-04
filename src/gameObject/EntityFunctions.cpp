@@ -323,3 +323,33 @@ void GameObject::fallingTreeRenderFunc( int camX, int camY )
     tex->render(p.x, p.y, &hitbox, NULL, theta, &centre);
     timer -= get_deltaTime();
 }
+
+void GameObject::foxRenderFunc( int camX, int camY )
+{
+    Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    tex->render( p.x, p.y, &hitbox );
+
+    switch (hp)
+    {
+        case 2: { // first dialogue option
+            std::string rend;
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+            } else rend = txt;
+
+            // load text to be rendered
+            if (!altTex->loadFromRenderedText(rend, {255,255,255,255})) {
+                std::cerr << "Unable to render text!" << std::endl;
+            }
+            int w = altTex->getWidth(), h = altTex->getHeight(), dx = (hitbox.w-w)/2;
+            altTex->render( p.x + dx, p.y-h );
+            break;
+        }
+        case 3: // reset
+            hp = 1; break;
+    }
+    // decrement the timer
+    timer -= get_deltaTime();
+}

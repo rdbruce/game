@@ -80,6 +80,18 @@ void Game::handle_events( SDL_Event& e )
 }
 
 
+void Game::render_framerate()
+{
+    int newFPS = 1.0f / deltaTime;
+    fps = (newFPS == Clamp(0, 5000, newFPS))? newFPS : fps;
+    std::string txt = std::to_string(fps) + "FPS";
+    if (!fpsTex->loadFromRenderedText(txt, {255,255,255,255})) {
+        std::cerr << "couldn't render FPS!" << std::endl;
+        return;
+    }
+    fpsTex->render(0, 0);
+}
+
 
 // updates all the game objects
 void Game::update_gameobjects()
@@ -520,11 +532,16 @@ void Game::leftClickFunc()
                 for (int i =0; i < n; i++) {
                     auto obj = currLevel->gameObjects[i];
 
-                    if (obj->is_item() && isInRegion(mPos, obj->get_hitbox()))
-                    {
-                        // make the player pick up the object and exit the function
-                        setHeldObject(obj);
-                        return;
+                    if (isInRegion(mPos, obj->get_hitbox())) {
+                        if (obj->is_item() && isInRegion(mPos, obj->get_hitbox()))
+                        {
+                            // make the player pick up the object and exit the function
+                            setHeldObject(obj);
+                            return;
+                        } else if (obj->get_type() == Fox_NPC) {
+                            obj->set_HP( obj->get_hp()+1 );
+                            obj->set_timer( 0.25f );
+                        }
                     }
                 }
             // if an item IS held, throw it :)
@@ -625,6 +642,7 @@ void Game::load_levels()
 
 void Game::load_textures()
 {
+    fpsTex = std::make_unique<LTexture>(window);
     // load all the textures from their image files
 
     grassTex = std::make_shared<LTexture>(window);
@@ -710,6 +728,12 @@ void Game::load_textures()
     if (!plankTex->loadFromFile("../../assets/Items/Plank.png")) {
         std::cerr << "Failed to load texture for plank!" << std::endl;
     }
+
+    foxTex = std::make_shared<LTexture>(window);
+    if (!foxTex->loadFromFile("../../assets/Entities/Fox.png")) {
+        std::cerr << "Failed to load texture for fox!" << std::endl;
+    }
+
     CRT_Tex = std::make_shared<LTexture>(window);
     if (!CRT_Tex->loadFromFile("../../assets/CRT_Base_Texture.png")) {
         std::cerr << "Failed to load texture for CRT effect!" <<std::endl;

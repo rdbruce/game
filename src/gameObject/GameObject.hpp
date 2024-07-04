@@ -9,6 +9,7 @@
 #include <SDL_image.h>
 
 #include <iostream>
+#include <string>
 
 
 // forwards declarations (i hate ts)
@@ -22,16 +23,26 @@ using namespace Math;
 // entity types
 enum EntityType
 {
-    Player, // 0
-    Wolf,    // 1
-    Falling_Tree, // 2
+    Player,             // 0
 
-    // item stack entities
-    Log_Item, // 3
-    Pine_Cone_Item, // 4
-    Plank_Item, // 5
-    Bridge_Item, // 6
-    Door_Item, // 7
+    // enemy types
+    Wolf,               // 1
+
+    // end of enemy types
+
+    Falling_Tree,       // 2
+
+    // item types
+    Log_Item,           // 3
+    Pine_Cone_Item,     // 4
+    Plank_Item,         // 5
+    Bridge_Item,        // 6
+    Door_Item,          // 7
+
+    // end of item types
+
+    // NPC types
+    Fox_NPC,            // 8
 };
 
 
@@ -143,9 +154,13 @@ class GameObject
         // how many nodes are in the path linked list
         int pathfindingLength = 0;
 
+        
+        // text the object will say, in dialogue, for instance
+        std::string txt = "this is a longer test";
+
 
         // the image to be drawn
-        std::shared_ptr<LTexture> tex;
+        std::shared_ptr<LTexture> tex, altTex;
 
 
 
@@ -278,6 +293,8 @@ class GameObject
         // rendering functions
         void defaultRenderFunc( int camX, int camY );
         void fallingTreeRenderFunc( int camX, int camY );
+
+        void foxRenderFunc( int camX, int camY );
 };
 
 #endif

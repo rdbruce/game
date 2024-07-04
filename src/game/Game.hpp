@@ -52,6 +52,8 @@ class Game
         void render_gameobjects();
         // renders trees
         void render_overlay();
+        // shows the current frame rate
+        void render_framerate();
 
 
         // finds the time elapsed between frames
@@ -124,6 +126,8 @@ class Game
         // the time elapsed between frames
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
+        int fps;
+        std::unique_ptr<LTexture> fpsTex;
         // tracking the time of day/night
         float g_time = 0.0f;
         // whether or not it is currently night time
@@ -157,7 +161,7 @@ class Game
         std::shared_ptr<LTexture> Bert = nullptr;
         std::shared_ptr<LTexture>   logTex, bridgeTex, waterTex, grassTex, treeTex,
                                     stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
-                                    pine_coneTex, plankTex,
+                                    pine_coneTex, plankTex, foxTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex;
         
