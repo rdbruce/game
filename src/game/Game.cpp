@@ -714,5 +714,5 @@ void Game::load_textures()
     if (!CRT_Tex->loadFromFile("../../assets/CRT_Base_Texture.png")) {
         std::cerr << "Failed to load texture for CRT effect!" <<std::endl;
     }
-    CRT_Tex->setAlpha(40);
+    CRT_Tex->setAlpha(50);
 }

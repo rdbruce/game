@@ -167,7 +167,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             {
                 case 1: { // log
                     // spawn a log
-                    Vector2 pos(x, y);
+                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Log_Item, pos, 1);
 
                     if (draw) {
@@ -180,7 +180,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
                 case 2: { // bridge
                     // spawn a bridge
-                    Vector2 pos(x, y);
+                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Bridge_Item, pos, 1);
 
                     if (draw) {
@@ -210,7 +210,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
                 case 4: { // stump
                     // spawn a log
-                    Vector2 pos(x, y);
+                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Log_Item, pos, 1);
 
                     if (draw) {
@@ -223,7 +223,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
                 case 5: { // sapling
                     // spawn a pine cone
-                    Vector2 pos(x, y);
+                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Pine_Cone_Item, pos, 1);
 
                     if (draw) {
@@ -238,7 +238,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
                 case 7: { // closed door
                     // spawn a door
-                    Vector2 pos(x, y);
+                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Door_Item, pos, 1);
 
                     if (draw) {
@@ -251,7 +251,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
                 case 8: { // open door
                     // spawn a door
-                    Vector2 pos(x, y);
+                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Door_Item, pos, 1);
 
                     if (draw) {

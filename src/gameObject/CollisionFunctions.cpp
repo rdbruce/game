@@ -70,7 +70,7 @@ void GameObject::defaultHandleCollisionsWithGameObjects()
     {
         std::shared_ptr<GameObject> other = gameObjects[i];
         // doesn't collide with itself or objects that have no collision
-        if (idx == i || !other->has_collision()) return;
+        if (idx == i || !other->has_collision()) continue;
 
         // find the displacement between the two objects
         Vector2 disp = other->get_pos() - pos;
@@ -84,21 +84,25 @@ void GameObject::defaultHandleCollisionsWithGameObjects()
         // if d < r, the objects are too close to each other and need to be pushed apart
         if ( d < r )
         {
-            // normalise the displacement to find the direction the objects need to move
-            disp.normalise();
+            // player will not collide with held object
+            if (type != Player || !other->is_held()) {
+                // normalise the displacement to find the direction the objects need to move
+                disp.normalise();
 
-            // knock objects apart
-            velocity += disp * -15.0f;
-            acceleration = velocity * -1.5f;
+                // knock objects apart
+                float sideLen = game->currLevel->cell_sideLen;
+                velocity += disp * (-0.266667 * sideLen);
+                acceleration = velocity * -1.5f;
 
-            Vector2 newVel = other->get_velocity() + (disp * 15.0f);
-            other->set_velocity(newVel);
-            other->set_acceleration(newVel * -1.5f);
+                Vector2 newVel = other->get_velocity() + (disp * (0.266667 * sideLen));
+                other->set_velocity(newVel);
+                other->set_acceleration(newVel * -1.5f);
 
-            // objects damage each other
-            if (!other->is_enemy()) {
-                hp -= other->get_damage();
-                other->set_HP( other->get_hp() - damage );
+                // objects damage each other
+                if (!other->is_enemy()) {
+                    hp -= other->get_damage();
+                    other->set_HP( other->get_hp() - damage );
+                }
             }
         }
     }
@@ -115,7 +119,9 @@ void GameObject::itemsHandleCollisionsWithGameObjects()
     {
         std::shared_ptr<GameObject> other = gameObjects[i];
         // doesn't collide with itself or objects that have no collision
-        if (idx == i || !other->has_collision()) return;
+        if (idx == i || !other->has_collision()) continue;
+        // held item won't collide with player, other items won't collide with held item
+        if ((is_held() && other->get_type() == Player) || other->is_held()) continue;
 
         // find the displacement between the two objects
         Vector2 disp = other->get_pos() - pos;
@@ -164,10 +170,11 @@ void GameObject::itemsHandleCollisionsWithGameObjects()
                 timer = 0.75f;
             }
             // knock objects apart
-            velocity += disp * -15.0f;
+            float sideLen = game->currLevel->cell_sideLen;
+            velocity += disp * (-0.266667 * sideLen);
             acceleration = velocity * -1.5f;
 
-            Vector2 newVel = other->get_velocity() + (disp * 15.0f);
+            Vector2 newVel = other->get_velocity() + (disp * (0.266667 * sideLen));
             other->set_velocity(newVel);
             other->set_acceleration(newVel * -1.5f);
         }
