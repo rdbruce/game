@@ -20,7 +20,9 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
         std::istringstream iss( line );
 
         int idxPlayer, idxHeld;
-        iss >> std::dec>>idxPlayer >> idxHeld >> cell_sideLen;
+        iss >> std::dec>>idxPlayer >> idxHeld >> cell_sideLen >> night;
+        // if there is no player, there also shouldn't be a held object
+        if (idxPlayer == -1) idxHeld = -1;
 
 
         // next line
@@ -126,7 +128,7 @@ void Scene::Save( std::string directory )
     int idxPlayer = (player == nullptr)? -1 : player->get_idx(),
         idxHeld = (held == nullptr)? -1 : held->get_idx();
 
-    file << std::dec<<idxPlayer <<'\t'<< idxHeld <<'\t'<< cell_sideLen <<'\n';
+    file << std::dec<<idxPlayer <<'\t'<< idxHeld <<'\t'<< cell_sideLen <<'\t'<< night <<'\n';
 
 
     int n = gameObjects.size();
@@ -138,7 +140,7 @@ void Scene::Save( std::string directory )
 
     file << gridDimensions.x <<'\t'<< gridDimensions.y <<'\n';
     for (int i = 0; i < gridDimensions.x; i++) {
-        for (int j = 0; i < gridDimensions.y; j++) {
+        for (int j = 0; j < gridDimensions.y; j++) {
             file << std::hex << grid[i][j] <<'\t';
         }
         file << '\n';

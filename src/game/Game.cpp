@@ -1,4 +1,7 @@
 #include "Game.hpp"
+#include "../gameObject/AStarPathfinding.hpp"
+
+int barrier = BARRIER;
 
 // constructor
 Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
@@ -18,6 +21,9 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 
     // load levels
     load_levels();
+
+    // set up pathfinding
+    AStar::Open(&currLevel->grid, &barrier);
 
     initialise_BGTexture();
 }
@@ -40,6 +46,8 @@ void Game::handle_events( SDL_Event& e )
                         inputKeys |= 2; break;
                     case SDLK_d:
                         inputKeys |= 1; break;
+                    case SDLK_LSHIFT:
+                        inputKeys |= 16; break;
                 }
             }
             break;
@@ -57,6 +65,8 @@ void Game::handle_events( SDL_Event& e )
                         inputKeys &= ~2; break;
                     case SDLK_d:
                         inputKeys &= ~1; break;
+                    case SDLK_LSHIFT:
+                        inputKeys &= ~16; break;
                 }
             }
             break;
@@ -102,6 +112,7 @@ void Game::render_background() {
 
 void Game::render_overlay() {
     overlayTexture->render(0, 0, &camera, &camera);
+    CRT->renderAsBackground();
 }
 
 
@@ -131,6 +142,94 @@ Vector2 Game::find_mouse_pos()
     return Vector2(x+camera.x, y+camera.y);
 }
 
+
+void Game::attempt_enemy_spawn()
+{
+    // nothing will happen if the spawning attempt is invalid
+    bool validAttempt = false;
+
+    // enemies may only spawn after 10 seconds into the night
+    if (isNight && g_time >= 10.0f) {
+        // spawn an enemy every 10 seconds
+        if ((int(g_time)%10) == 0 && (int(g_time-deltaTime)%10) != 0) {
+            validAttempt = true;
+        }
+    }
+
+    if (validAttempt) {
+        // choose an enemy type to spawn in
+        int range = Wolf - Wolf + 1;
+        int type = (rand() % range) + Wolf;
+
+        switch (type)
+        {
+            case Wolf:
+                spawnWolf();
+                break;
+
+            default: break; // invalid spawn type
+        }
+    }
+}
+
+
+std::shared_ptr<GameObject> Game::spawnWolf()
+{
+    // choose a random world edge to spawn on
+    int edge = rand() % 4;
+    float x, y; // coordinates the wolf will spawn at
+
+    // set to true when a valid spawning location has been chosen
+    bool validLocation = false;
+
+    switch (edge)
+    {
+        case 0: { // top edge of the map
+            y = 0.0f;
+            // make x a random number between 0 and len
+            x = rand()%map.w;
+
+            // check cell below to make sure it's not water
+            int sideLen = currLevel->cell_sideLen;
+            Vector2Int cell(x/sideLen, y/sideLen);
+            if (!(currLevel->grid[cell.x][cell.y+1]&WATER)) validLocation = true;
+            break;
+        }
+        case 1: { // left edge
+            x = 0.0f;
+            y = rand() % map.h;
+
+            // check the cell to the right to make sure it's not water
+            int sideLen = currLevel->cell_sideLen;
+            Vector2Int cell(x/sideLen, y/sideLen);
+            if (!(currLevel->grid[cell.x+1][cell.y]&WATER)) validLocation = true;
+            break;
+        }
+        case 2: { // bottom edge
+            y = map.h;
+            x = rand() % map.w;
+
+            // check the cell above to make sure it's not water
+            int sideLen = currLevel->cell_sideLen;
+            Vector2Int cell(x/sideLen, y/sideLen);
+            if (!(currLevel->grid[cell.x][cell.y-1]&WATER)) validLocation = true;
+            break;
+        }
+        case 3: { // right edge
+            x = map.w;
+            y = rand() % map.h;
+
+            // check the cell to the left to make sure it's not water
+            int sideLen = currLevel->cell_sideLen;
+            Vector2Int cell(x/sideLen, y/sideLen);
+            if (!(currLevel->grid[cell.x-1][cell.y]&WATER)) validLocation = true;
+            break;
+        }
+    }
+    // spawn a wolf at the chosen location
+    if (validLocation) return Instantiate(Vector2(x,y), Wolf, -1);
+    return nullptr;
+}
 
 
 // adds a game object and returns a pointer to it
@@ -297,6 +396,9 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     currLevel = level;
     interactRange = 3.0f * currLevel->cell_sideLen;
 
+    // update pathfinding variables
+    AStar::Open(&currLevel->grid, &barrier);
+
     initialise_BGTexture();
 }
 
@@ -311,6 +413,57 @@ std::shared_ptr<GameObject> Game::moveEntityToLevel( std::shared_ptr<GameObject>
     auto res = Instantiate(newPos, obj->get_type(), obj->get_hp(), level);
     Destroy(obj);
     return res;
+}
+
+
+void Game::dayNightCycle()
+{
+    // after x seconds
+    if (g_time >= 300.0f) {
+        // toggle night, and make sure all scene objects get updated
+        isNight = !isNight;
+        testLevel.night = belowLevel.night = isNight;
+
+        // autosave the game
+        save_game();
+        // reset g_time to 0
+        g_time = 0.0f;
+        return;
+    } 
+    update_CRT();
+
+    // update time
+    g_time += deltaTime;
+}
+
+void Game::update_CRT()
+{
+    if (g_time < 10.0f || CRT == nullptr) {
+        CRT = tEditor.createEmptyTexture(camera.w, camera.h, window);
+
+        float t = g_time / 10.0f;
+        Uint8 alpha = (isNight)? 100.0f * t : 100.0f * (1.0f-t);
+        std::shared_ptr<LTexture> dark = tEditor.createSolidColour(camera.w, camera.h, alpha, window);
+        tEditor.renderTextureToTexture(CRT, dark, NULL);
+
+        SDL_Rect rect = {0, 0, CRT_Tex->getWidth(), CRT_Tex->getHeight()};
+        int nx = camera.w/rect.w + 1, ny = camera.h/rect.h + 1;
+
+        for (int i = 0; i < nx; i++) {
+            rect.x = rect.w*i;
+            for (int j = 0; j < ny; j++) {
+                rect.y = rect.h*j;
+                tEditor.renderTextureToTexture(CRT, CRT_Tex, &rect);
+            }
+        }
+    }
+}
+
+
+void Game::save_game()
+{
+    testLevel.Save("../../saves/");
+    belowLevel.Save("../../saves/");
 }
 
 
@@ -440,6 +593,7 @@ void Game::throwHeldObject()
 
     // copied from player position func
     float s = currLevel->player->get_moveSpeed();
+    if (inputKeys & 16) s *= 2.0f;
     Math::Vector2 vel((bool(inputKeys&1)-bool(inputKeys&4)), (bool(inputKeys&2)-bool(inputKeys&8)));
     vel.normalise(); vel *= s;
 
@@ -461,6 +615,8 @@ void Game::load_levels()
     // set up pointers to adjacent levels
     testLevel.assignNeighbours(nullptr, &belowLevel);
     belowLevel.assignNeighbours(&testLevel);
+
+    isNight = currLevel->night;
 
     interactRange = 3.0f * currLevel->cell_sideLen;
 }
@@ -534,28 +690,29 @@ void Game::load_textures()
     if (!open_doorTex->loadFromFile("../../assets/Buildings/Open_Door.png")) {
         std::cerr << "Failed to load open door texture!" << std::endl;
     }
-    CRT_Tex = std::make_shared<LTexture>(window);
-    if (!CRT_Tex->loadFromFile("../../assets/CRT_Base_Texture.png")) {
-        std::cerr << "Failed to load CRT texture!" << std::endl;
-    }
     playerTex = std::make_shared<LTexture>(window);
     if (!playerTex->loadFromFile("../../assets/Entities/Player/front/0.png")) {
-        std::cerr << "Failed to load texture for player!\n" << std::endl;
+        std::cerr << "Failed to load texture for player!" << std::endl;
     }
     wolfTex = std::make_shared<LTexture>(window);
     if (!wolfTex->loadFromFile("../../assets/Entities/Wolf.png")) {
-        std::cerr << "Failed to load texture for wolf!\n" << std::endl;
+        std::cerr << "Failed to load texture for wolf!" << std::endl;
     }
     falling_treeTex = std::make_shared<LTexture>(window);
     if (!falling_treeTex->loadFromFile("../../assets/Tree/Falling_Tree.png")) {
-        std::cerr << "Failed to load texture for falling tree!\n" << std::endl;
+        std::cerr << "Failed to load texture for falling tree!" << std::endl;
     }
     pine_coneTex = std::make_shared<LTexture>(window);
     if (!pine_coneTex->loadFromFile("../../assets/Items/Pine_Cone.png")) {
-        std::cerr << "Failed to load texture for pine cone!\n" << std::endl;
+        std::cerr << "Failed to load texture for pine cone!" << std::endl;
     }
     plankTex = std::make_shared<LTexture>(window);
     if (!plankTex->loadFromFile("../../assets/Items/Plank.png")) {
-        std::cerr << "Failed to load texture for plank!\n" << std::endl;
+        std::cerr << "Failed to load texture for plank!" << std::endl;
     }
+    CRT_Tex = std::make_shared<LTexture>(window);
+    if (!CRT_Tex->loadFromFile("../../assets/CRT_Base_Texture.png")) {
+        std::cerr << "Failed to load texture for CRT effect!" <<std::endl;
+    }
+    CRT_Tex->setAlpha(40);
 }

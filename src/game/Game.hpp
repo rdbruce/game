@@ -88,6 +88,18 @@ class Game
         // deals a specified amount of damage to a cell
         void damageCell( Vector2Int cell, int damage );
 
+        // toggles day/night, when the appropriate amount of time has passed
+        void dayNightCycle();
+
+        // updates any cells dependent on time
+        void update_cells();
+
+        // attempts to spawn enemies
+        void attempt_enemy_spawn();
+
+        // saves all scenes to file
+        void save_game();
+
 
     private:
 
@@ -112,13 +124,14 @@ class Game
         // the time elapsed between frames
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
-
-
+        // tracking the time of day/night
+        float g_time = 0.0f;
+        // whether or not it is currently night time
+        bool isNight;
 
 
         // position and dimensions of the camera
         SDL_Rect camera;
-
 
 
         // all the levels in the game
@@ -140,24 +153,29 @@ class Game
         void load_levels();
 
         // background texture
-        std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr;
+        std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr, CRT_Tex = nullptr, CRT = nullptr;
         std::shared_ptr<LTexture> Bert = nullptr;
         std::shared_ptr<LTexture>   logTex, bridgeTex, waterTex, grassTex, treeTex,
                                     stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
                                     pine_coneTex, plankTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
-                                    shoreline4Tex, closed_doorTex, open_doorTex, CRT_Tex;
+                                    shoreline4Tex, closed_doorTex, open_doorTex;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;
 
 
+        // updates the CRT_texture, making it brighter/darker depending on time
+        void update_CRT();
 
 
         // functions for editing the grid (defined in Grid.cpp NOT Game.cpp!!!!)
 
+        // updates any cells dependent on time in a level
+        void update_cells( Scene *level );
+
         // place an object into a cell in the global grid
-        int PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement);
+        int PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, Scene *level = NULL);
 
         // renders a tree texture into the overlay texture
         void AddTreeToOverlay( Vector2Int cell );
@@ -189,6 +207,10 @@ class Game
         void setHeldObject( std::shared_ptr<GameObject> obj );
         // throw the object the player is currently holding
         void throwHeldObject();
+
+
+        // spawns a wolf at a random location on the maps edge
+        std::shared_ptr<GameObject> spawnWolf();
 };
 
 #endif

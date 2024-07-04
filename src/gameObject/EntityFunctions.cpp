@@ -129,6 +129,8 @@ void GameObject::playerPositionFunc()
     float dt = get_deltaTime();
     Vector2Int map = get_mapDimensions();
 
+    if (inputs&16) s *= 2.0f;
+
     Vector2 vel(
         // horizontal velocity: bit 1=d; move right (+x), bit 3=a; move left (-x)
         (bool(inputs&1)-bool(inputs&4)),
@@ -140,9 +142,7 @@ void GameObject::playerPositionFunc()
     vel.normalise(); 
     vel *= s; // multiply the unit vector by movement speed
 
-    Vector2 p = pos + (vel*dt);
-
-    int w = hitbox.w/2, h = hitbox.h/2;
+    Vector2 p = pos + (velocity+vel)*dt;
 
     set_pos(p);
 }
@@ -276,7 +276,7 @@ void GameObject::pathfindToPlayer( int searchDepth )
     // create a new pathfinding object
     Vector2Int  start = get_cell(), 
                 end = game->currLevel->player->get_cell(),
-                dimensions = get_mapDimensions();
+                dimensions(game->currLevel->gridDimensions.x, game->currLevel->gridDimensions.y);
 
     AStar::Pathfinding pathfinding(start, end, dimensions, searchDepth);
 

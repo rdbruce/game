@@ -165,6 +165,13 @@ int main(
 
     game.update_gameobjects();
 
+    // call update_cells first
+    game.update_cells();
+    game.dayNightCycle();
+
+    game.attempt_enemy_spawn();
+
+
     // Calculate and correct fps
     float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
     if (avgFPS > 2000000)

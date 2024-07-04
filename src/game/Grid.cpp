@@ -14,16 +14,19 @@ bool Game::is_barrier( Vector2Int cell ) {
 
 
 // place an object into a cell in the global grid
-int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
+int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, Scene *level)
 {
-    // cell is out of bounds and doesn't exist
-    if (cell.x<0 || cell.x>=currLevel->gridDimensions.x ||
-        cell.y<0 || cell.y>=currLevel->gridDimensions.y) return -1;
+    if (level == NULL) level = currLevel;
+    bool draw = (level == currLevel)? true : false;
 
-    int num = currLevel->grid[cell.x][cell.y];
+    // cell is out of bounds and doesn't exist
+    if (cell.x<0 || cell.x>=level->gridDimensions.x ||
+        cell.y<0 || cell.y>=level->gridDimensions.y) return -1;
+
+    int num = level->grid[cell.x][cell.y];
     // a rect representing the area of the cell in the map
 
-    int sideLen = currLevel->cell_sideLen;
+    int sideLen = level->cell_sideLen;
     int x = cell.x * sideLen, y = cell.y * sideLen;
     SDL_Rect cellRect = { x, y, sideLen, sideLen };
 
@@ -35,12 +38,14 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
             // cell is occupied, AND the placement was made by player, not loading
             if (num&0x4000 && playerPlacement) return -2;
 
-            // draw the background of the cell first
-            if (num&WATER) DrawWaterToCell(cell, cellRect);
-            else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+            if (draw) {
+                // draw the background of the cell first
+                if (num&WATER) DrawWaterToCell(cell, cellRect);
+                else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
-            // draw a log into the cell
-            tEditor.renderTextureToTexture(BGTexture, logTex, &cellRect);
+                // draw a log into the cell
+                tEditor.renderTextureToTexture(BGTexture, logTex, &cellRect);
+            }
 
             // update the grid value to represent a log
             num |= LOG;
@@ -52,12 +57,14 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
             // cell is occupied, AND the placement was made by player, not loading
             if (num&0x4000 && playerPlacement) return -2;
 
-            // draw the background of the cell first
-            if (num&WATER) DrawWaterToCell(cell, cellRect);
-            else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+            if (draw) {
+                // draw the background of the cell first
+                if (num&WATER) DrawWaterToCell(cell, cellRect);
+                else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
-            // draw a log into the cell
-            tEditor.renderTextureToTexture(BGTexture, bridgeTex, &cellRect);
+                // draw a log into the cell
+                tEditor.renderTextureToTexture(BGTexture, bridgeTex, &cellRect);
+            }
 
             // update the grid value to represent a bridge
             num |= BRIDGE;
@@ -65,23 +72,26 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
             break;
 
         case 3: // tree
-            // empty grass tile where the base is
-            tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
-            // add a tree to the overlay layer
-            AddTreeToOverlay(cell);
+            if (draw) {
+                // empty grass tile where the base is
+                tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                // add a tree to the overlay layer
+                AddTreeToOverlay(cell);
+            }
             
             // set the cell space to be a tree
             // use = (not |=) because previous data SHOULD be overwritten; if the tree grew
             // from a sapling, the cell should no longer contain any data about the sapling
             num = TREE;
             break;
-            break;
 
         
         case 4: // stump
-            tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
-            // draw a stump into the cell
-            tEditor.renderTextureToTexture(BGTexture, stumpTex, &cellRect);
+            if (draw) {
+                tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                // draw a stump into the cell
+                tEditor.renderTextureToTexture(BGTexture, stumpTex, &cellRect);
+            }
             // only occurs when a tree gets removed, thus the cell could only have been TREE prior.
             // so, there is no issue just settig the cell to STUMP, no need for |=
             num = STUMP;
@@ -92,9 +102,11 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
             // cell is occupied or water, AND the placement was made by player, not loading
             if (num&0x5000 && playerPlacement) return -2;
 
-            tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
-            // draw a sapling into the cell
-            tEditor.renderTextureToTexture(BGTexture, saplingTex, &cellRect);
+            if (draw) {
+                tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                // draw a sapling into the cell
+                tEditor.renderTextureToTexture(BGTexture, saplingTex, &cellRect);
+            }
 
             // update the grid to represent a sapling
             num |= SAPLING;
@@ -102,9 +114,11 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
 
 
         case 6: { // world border
-            // make the cell empty (black)
-            std::shared_ptr<LTexture> black = tEditor.createSolidColour(sideLen, sideLen, 0x000000FF, window);
-            tEditor.renderTextureToTexture(BGTexture, black, &cellRect);
+            if (draw) {
+                // make the cell empty (black)
+                std::shared_ptr<LTexture> black = tEditor.createSolidColour(sideLen, sideLen, 0x000000FF, window);
+                tEditor.renderTextureToTexture(BGTexture, black, &cellRect);
+            }
             // update the grid to represent a border
             num = BORDER;
             break;
@@ -117,9 +131,11 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                 else num = CLOSED_DOOR;
             } else num |= CLOSED_DOOR;
 
-            // draw the empty tile first
-            tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
-            tEditor.renderTextureToTexture(BGTexture, closed_doorTex, &cellRect);
+            if (draw) {
+                // draw the empty tile first
+                tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                tEditor.renderTextureToTexture(BGTexture, closed_doorTex, &cellRect);
+            }
             break;
 
         case 8: // open door
@@ -129,16 +145,18 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                 else num = OPEN_DOOR;
             } else num |= OPEN_DOOR;
 
-            // draw the empty tile first
-            tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
-            tEditor.renderTextureToTexture(BGTexture, open_doorTex, &cellRect);
+            if (draw) {
+                // draw the empty tile first
+                tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                tEditor.renderTextureToTexture(BGTexture, open_doorTex, &cellRect);
+            }
             break;
 
 
         case EMPTY:
         {
             // cannot remove cells while holding an object
-            if (currLevel->held != nullptr && playerPlacement) return -4;
+            if (level->held != nullptr && playerPlacement) return -4;
 
             // remove building in the cell
             // if it IS indestructible or NOT occupied, return
@@ -152,8 +170,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Log_Item, pos, 1);
 
-                    if (num&WATER) DrawWaterToCell(cell, cellRect);
-                    else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    if (draw) {
+                        if (num&WATER) DrawWaterToCell(cell, cellRect);
+                        else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    }
 
                     break;
                 }
@@ -163,23 +183,29 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Bridge_Item, pos, 1);
 
-                    if (num&WATER) DrawWaterToCell(cell, cellRect);
-                    else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    if (draw) {
+                        if (num&WATER) DrawWaterToCell(cell, cellRect);
+                        else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    }
 
                     break;
                 }
 
                 case 3: { // tree
-                    // remove tree image from the overlay layer
-                    RemoveTreeFromOverlay(cell);
+                    // remove tree from the grid
+                    level->grid[cell.x][cell.y] &= 0xFF9000;
+                    if (draw) {
+                        // remove tree image from the overlay layer
+                        RemoveTreeFromOverlay(cell);
+                    }
 
                     // spawn a falling tree in its place
                     Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
-                    Instantiate(pos, Falling_Tree, 1);
+                    Instantiate(pos, Falling_Tree, 1, level);
 
                     // place a stump where the tree once stood
                     // everything else handled in the STUMP case. don't break, just return
-                    return PlaceObjectInCell(cell, STUMP, false);
+                    return PlaceObjectInCell(cell, STUMP, false, level);
                 }
 
                 case 4: { // stump
@@ -187,8 +213,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Log_Item, pos, 1);
 
-                    if (num&WATER) DrawWaterToCell(cell, cellRect);
-                    else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    if (draw) {
+                        if (num&WATER) DrawWaterToCell(cell, cellRect);
+                        else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    }
 
                     break;
                 }
@@ -198,8 +226,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Pine_Cone_Item, pos, 1);
 
-                    if (num&WATER) DrawWaterToCell(cell, cellRect);
-                    else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    if (draw) {
+                        if (num&WATER) DrawWaterToCell(cell, cellRect);
+                        else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    }
 
                     break;
                 }
@@ -211,8 +241,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Door_Item, pos, 1);
 
-                    if (num&WATER) DrawWaterToCell(cell, cellRect);
-                    else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    if (draw) {
+                        if (num&WATER) DrawWaterToCell(cell, cellRect);
+                        else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    }
 
                     break;
                 }
@@ -222,15 +254,19 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Door_Item, pos, 1);
 
-                    if (num&WATER) DrawWaterToCell(cell, cellRect);
-                    else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    if (draw) {
+                        if (num&WATER) DrawWaterToCell(cell, cellRect);
+                        else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    }
 
                     break;
                 }
 
                 default:
-                    if (num&WATER) DrawWaterToCell(cell, cellRect);
-                    else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    if (draw) {
+                        if (num&WATER) DrawWaterToCell(cell, cellRect);
+                        else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+                    }
 
                     break;
             }
@@ -243,8 +279,38 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
             break;
         }
     }
-    currLevel->grid[cell.x][cell.y] = num;
+    level->grid[cell.x][cell.y] = num;
     return 0;
+}
+
+void Game::update_cells( Scene *level )
+{
+    Vector2Int dimensions = level->gridDimensions;
+
+    for (int x = 0; x < dimensions.x; x++) {
+        for (int y = 0; y < dimensions.y; y++) {
+            int type = level->grid[x][y] & 255;
+
+            switch (type)
+            {
+                case 5: // sapling
+                    // saplings grow at the beginning of each day
+                    if (g_time == 0.0f && !isNight) {
+                        PlaceObjectInCell(Vector2Int(x,y), TREE, false, level);
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+void Game::update_cells()
+{
+    // update every 2 seconds
+    if (((int(g_time)%2) == 0 && (int(g_time-deltaTime)%2) != 0) || g_time == 0.0f) {
+        update_cells(&testLevel);
+        update_cells(&belowLevel);
+    }
 }
 
 
@@ -257,9 +323,6 @@ void Game::AddTreeToOverlay( Vector2Int cell )
 
 void Game::RemoveTreeFromOverlay( Vector2Int cell )
 {
-    // remove tree from the grid
-    currLevel->grid[cell.x][cell.y] &= 0xFF9000;
-
     // reset the overlay texture
     int sideLen = currLevel->cell_sideLen;
     int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;

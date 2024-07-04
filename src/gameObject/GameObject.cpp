@@ -26,7 +26,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             // other attributes
             moveSpeed = 200.0f;
             max_hp = 5;
-            hp = Clamp(0, max_hp, Health);
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = true;
             break;
         }
@@ -51,8 +51,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             // other attributes
             moveSpeed = 240.0f;
             max_hp = 3;
-            hp = Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
+            hasCollision = false;
             break;
         }
 
@@ -97,7 +97,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
             // other attributes
             max_hp = 5;
-            hp = Clamp(0, max_hp, Health);
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = true;
             moveSpeed = 0.5f;
             break;
@@ -121,7 +121,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
             // other attributes
             max_hp = 6;
-            hp = Clamp(0, max_hp, Health);
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = true;
             moveSpeed = 0.333333333f;
             break;
@@ -145,7 +145,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
             // other attributes
             max_hp = 10;
-            hp = Clamp(0, max_hp, Health);
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = true;
             moveSpeed = 0.5f;
             break;
@@ -169,7 +169,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
             // other attributes
             max_hp = 8;
-            hp = Clamp(0, max_hp, Health);
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = true;
             moveSpeed = 0.5f;
             break;
@@ -194,7 +194,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
             // other attributes
             max_hp = 4;
-            hp = Clamp(0, max_hp, Health);
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = true;
             moveSpeed = 0.5f;
             break;
