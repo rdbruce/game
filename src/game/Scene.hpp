@@ -42,6 +42,7 @@ class Scene
 
         // game objects
         std::shared_ptr<GameObject> player = nullptr; // pointer to the player
+        std::shared_ptr<GameObject> held = nullptr; // pointer to an object held by the player
 
         // vector of all the game objects
         std::vector<std::shared_ptr<GameObject>> gameObjects;

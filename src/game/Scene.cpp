@@ -19,8 +19,8 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
         // convert the string to istringstream
         std::istringstream iss( line );
 
-        int idxPlayer;
-        iss >> std::dec>>idxPlayer >> cell_sideLen;
+        int idxPlayer, idxHeld;
+        iss >> std::dec>>idxPlayer >> idxHeld >> cell_sideLen;
 
 
         // next line
@@ -50,6 +50,9 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
             if (id == idxPlayer) {
                 // assign obj to the player pointer
                 player = obj;
+            } else if (id == idxHeld) {
+                // assign obj to the held object pointer
+                held = obj;
             }
         }
 
@@ -120,9 +123,10 @@ void Scene::Save( std::string directory )
 
     file << name <<'\n';
 
-    int idxPlayer = (player == nullptr)? -1 : player->get_idx();
+    int idxPlayer = (player == nullptr)? -1 : player->get_idx(),
+        idxHeld = (held == nullptr)? -1 : held->get_idx();
 
-    file << std::dec<<idxPlayer <<'\t'<< cell_sideLen <<'\n';
+    file << std::dec<<idxPlayer <<'\t'<< idxHeld <<'\t'<< cell_sideLen <<'\n';
 
 
     int n = gameObjects.size();

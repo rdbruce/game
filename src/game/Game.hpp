@@ -50,6 +50,8 @@ class Game
         void render_background();
         // renders all the game objects
         void render_gameobjects();
+        // renders trees
+        void render_overlay();
 
 
         // finds the time elapsed between frames
@@ -73,6 +75,9 @@ class Game
         // when throwing two different item stacks together, they may combine, and produce
         // a third, different item. returns a pointer to the crafted item
         std::shared_ptr<GameObject> craftTwoItems( std::shared_ptr<GameObject> item1, std::shared_ptr<GameObject> item2 );
+        // when right clicking an item stack, it may be crafted into another type of item
+        std::shared_ptr<GameObject> craftItem( std::shared_ptr<GameObject> item );
+
 
         // moves the player into the specified level, and makes said level the active scene
         void movePlayerToLevel( Scene *level, Vector2 newPlayerPos );
@@ -95,6 +100,8 @@ class Game
         // for tracking player input
         // tracks which keys the player has held down
         Uint8 inputKeys = 0;
+        // determines how far away the player can interact with things
+        float interactRange = 0.0f;
 
 
 
@@ -147,8 +154,34 @@ class Game
         // place an object into a cell in the global grid
         int PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement);
 
+        // renders a tree texture into the overlay texture
+        void AddTreeToOverlay( Vector2Int cell );
+
+        // fills a cell with the water texture, as well as any shoreline
+        void DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect );
+
+
         // renders every cell in the level, to be used when loading levels
         void initialise_BGTexture();
+
+
+        // returns true if the coordinates are within the rect
+        bool isInRegion( Vector2 p, SDL_Rect rect );
+
+        // returns the building corresponding to a given item type
+        int get_building( EntityType type );
+
+        // if the player is holding an object, throw it, otherwise try to pick one up
+        void leftClickFunc();
+        // if the player IS holding an item, attempt to place it, otherwise, do nothing (for now c:)
+        void rightClickFunc();
+
+
+
+        // sets the selected object to be held by the player
+        void setHeldObject( std::shared_ptr<GameObject> obj );
+        // throw the object the player is currently holding
+        void throwHeldObject();
 };
 
 #endif

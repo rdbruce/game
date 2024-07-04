@@ -20,7 +20,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
     if (cell.x<0 || cell.x>=currLevel->gridDimensions.x ||
         cell.y<0 || cell.y>=currLevel->gridDimensions.y) return -1;
 
-    std::vector<std::vector<int>> grid = currLevel->grid;
+    int num = currLevel->grid[cell.x][cell.y];
     // a rect representing the area of the cell in the map
 
     int sideLen = currLevel->cell_sideLen;
@@ -33,39 +33,48 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
         case 1: // log
 
             // cell is occupied, AND the placement was made by player, not loading
-            if (grid[cell.x][cell.y]&0x4000 && playerPlacement) return -2;
+            if (num&0x4000 && playerPlacement) return -2;
 
             // draw the background of the cell first
-            if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+            if (num&WATER) DrawWaterToCell(cell, cellRect);
             else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
             // draw a log into the cell
             tEditor.renderTextureToTexture(BGTexture, logTex, &cellRect);
 
             // update the grid value to represent a log
-            grid[cell.x][cell.y] |= LOG;
+            num |= LOG;
             break;
 
 
         case 2: // bridge
 
             // cell is occupied, AND the placement was made by player, not loading
-            if (grid[cell.x][cell.y]&0x4000 && playerPlacement) return -2;
+            if (num&0x4000 && playerPlacement) return -2;
 
             // draw the background of the cell first
-            if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+            if (num&WATER) DrawWaterToCell(cell, cellRect);
             else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
             // draw a log into the cell
-            tEditor.renderTextureToTexture(BGTexture, logTex, &cellRect);
+            tEditor.renderTextureToTexture(BGTexture, bridgeTex, &cellRect);
 
             // update the grid value to represent a bridge
-            grid[cell.x][cell.y] |= BRIDGE;
-            grid[cell.x][cell.y] &= ~BARRIER; // turn off barrier bit
+            num |= BRIDGE;
+            num &= ~BARRIER; // turn off barrier bit
             break;
 
         case 3: // tree
-            // come back here
+            // empty grass tile where the base is
+            tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
+            // add a tree to the overlay layer
+            AddTreeToOverlay(cell);
+            
+            // set the cell space to be a tree
+            // use = (not |=) because previous data SHOULD be overwritten; if the tree grew
+            // from a sapling, the cell should no longer contain any data about the sapling
+            num = TREE;
+            break;
             break;
 
         
@@ -75,38 +84,38 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
             tEditor.renderTextureToTexture(BGTexture, stumpTex, &cellRect);
             // only occurs when a tree gets removed, thus the cell could only have been TREE prior.
             // so, there is no issue just settig the cell to STUMP, no need for |=
-            grid[cell.x][cell.y] = STUMP;
+            num = STUMP;
             break;
 
 
         case 5: // sapling
             // cell is occupied or water, AND the placement was made by player, not loading
-            if (grid[cell.x][cell.y]&0x5000 && playerPlacement) return -2;
+            if (num&0x5000 && playerPlacement) return -2;
 
             tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
             // draw a sapling into the cell
             tEditor.renderTextureToTexture(BGTexture, saplingTex, &cellRect);
 
             // update the grid to represent a sapling
-            grid[cell.x][cell.y] |= SAPLING;
+            num |= SAPLING;
             break;
 
 
         case 6: { // world border
             // make the cell empty (black)
-            SDL_Texture *borderTex = SDL_CreateTexture(window->gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, sideLen, sideLen);
-            tEditor.renderTextureToTexture(BGTexture, borderTex, &cellRect);
+            std::shared_ptr<LTexture> black = tEditor.createSolidColour(sideLen, sideLen, 0x000000FF, window);
+            tEditor.renderTextureToTexture(BGTexture, black, &cellRect);
             // update the grid to represent a border
-            grid[cell.x][cell.y] = BORDER;
+            num = BORDER;
             break;
         }
 
         case 7: // closed door
             // cell is occupied or water, AND the placement was made by player, not loading
-            if (grid[cell.x][cell.y]&0x5000 && playerPlacement) {
-                if (grid[cell.x][cell.y]&255 != 8) return -2;
-                else grid[cell.x][cell.y] = CLOSED_DOOR;
-            } else grid[cell.x][cell.y] |= CLOSED_DOOR;
+            if (num&0x5000 && playerPlacement) {
+                if (num&255 != 8) return -2;
+                else num = CLOSED_DOOR;
+            } else num |= CLOSED_DOOR;
 
             // draw the empty tile first
             tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
@@ -115,10 +124,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
 
         case 8: // open door
             // cell is occupied or water, AND the placement was made by player, not loading
-            if (grid[cell.x][cell.y]&0x5000 && playerPlacement) {
-                if ((grid[cell.x][cell.y]&255) != 7) return -2;
-                else grid[cell.x][cell.y] = OPEN_DOOR;
-            } else grid[cell.x][cell.y] |= OPEN_DOOR;
+            if (num&0x5000 && playerPlacement) {
+                if ((num&255) != 7) return -2;
+                else num = OPEN_DOOR;
+            } else num |= OPEN_DOOR;
 
             // draw the empty tile first
             tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
@@ -133,17 +142,17 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
 
             // remove building in the cell
             // if it IS indestructible or NOT occupied, return
-            if (grid[cell.x][cell.y]&0x8000) return -3;
+            if (num&0x8000) return -3;
 
             // first byte represents info about the cell, this is the object being removed
-            switch (grid[cell.x][cell.y]&255)
+            switch (num&255)
             {
                 case 1: { // log
                     // spawn a log
                     Vector2 pos(x, y);
                     spawnItemStack(Log_Item, pos, 1);
 
-                    if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+                    if (num&WATER) DrawWaterToCell(cell, cellRect);
                     else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
                     break;
@@ -154,7 +163,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Bridge_Item, pos, 1);
 
-                    if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+                    if (num&WATER) DrawWaterToCell(cell, cellRect);
                     else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
                     break;
@@ -162,7 +171,6 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
 
                 case 3: { // tree
                     // also also come back here :3
-                    break;
                 }
 
                 case 4: { // stump
@@ -170,7 +178,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Log_Item, pos, 1);
 
-                    if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+                    if (num&WATER) DrawWaterToCell(cell, cellRect);
                     else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
                     break;
@@ -181,7 +189,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Pine_Cone_Item, pos, 1);
 
-                    if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+                    if (num&WATER) DrawWaterToCell(cell, cellRect);
                     else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
                     break;
@@ -194,7 +202,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Door_Item, pos, 1);
 
-                    if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+                    if (num&WATER) DrawWaterToCell(cell, cellRect);
                     else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
                     break;
@@ -205,14 +213,14 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                     Vector2 pos(x, y);
                     spawnItemStack(Door_Item, pos, 1);
 
-                    if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+                    if (num&WATER) DrawWaterToCell(cell, cellRect);
                     else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
                     break;
                 }
 
                 default:
-                    if (grid[cell.x][cell.y]&WATER) tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+                    if (num&WATER) DrawWaterToCell(cell, cellRect);
                     else tEditor.renderTextureToTexture(BGTexture, grassTex, &cellRect);
 
                     break;
@@ -220,15 +228,177 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
             // preserve bits 16 (indestructible), and 13, 17-24 (water), 
             // all others to 0
             // bit 14: on if water (bit 13), off otherwise
-            grid[cell.x][cell.y] &= 0xFF9000;
-            if (grid[cell.x][cell.y]&WATER) grid[cell.x][cell.y] |= 0x2000;
-            else grid[cell.x][cell.y] &= ~0x2000;
+            num &= 0xFF9000;
+            if (num&WATER) num |= 0x2000;
+            else num &= ~0x2000;
             break;
         }
-        currLevel->grid = grid;
     }
+    currLevel->grid[cell.x][cell.y] = num;
     return 0;
 }
+
+
+void Game::AddTreeToOverlay( Vector2Int cell )
+{
+    int sideLen = currLevel->cell_sideLen;
+    SDL_Rect rect = {(cell.x-1)*sideLen, (cell.y-9)*sideLen, sideLen*3, sideLen*10};
+    tEditor.renderTextureToTexture(overlayTexture, treeTex, &rect);
+}
+
+
+void Game::DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect )
+{
+    // dimensions of grid -1
+    Vector2Int dimensions = currLevel->gridDimensions - Vector2Int_One;
+    // ensure the cell is in bounds
+    if (cell.x<0 || cell.x>dimensions.x || cell.y<0 || cell.y>dimensions.y) return;
+
+    // get the grid
+    std::vector<std::vector<int>> grid = currLevel->grid;
+    // ensure the cell is actuall water
+    if (!(grid[cell.x][cell.y]&WATER)) return;
+
+    // draw the base water image to the cell
+    tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+
+    // sample the four adjacent cells to see where shoreline should be drawn
+    Uint8 shoreLocations = 0b00000000; // lrLR TBLR
+    /*
+        METHOD:
+        
+        the eight bits of shoreLocations represent the following:
+
+        1: there is a shoreline on the TOP side of the cell
+        2: there is a shoreline on the RIGHT side of the cell
+        3: there is a shoreline on the BOTTOM of the cell
+        4: there is a shoreline on the LEFT of the cell
+
+        5: there is shore in the TOP LEFT corner of the cell
+        6: there is shore in the TOP RIGHT corner of the cell
+        7: there is shore in the BOTTOM RIGHT corner of the cell
+        8: there is shore in the BOTTOM LEFT corner of the cell
+
+        run checks on the surrounding cells to see where there is and isn't land, in order to determine
+        where there should and shouldn't be shore, setting these bits
+    */
+    // check the cell above
+    if (cell.y >= 1) {
+        int num = grid[cell.x][cell.y-1];
+        if (!(num&WATER || num==BORDER)) shoreLocations |= 0x01;
+    }
+    // check the cell to the right
+    if (cell.x < dimensions.x) {
+        int num = grid[cell.x+1][cell.y];
+        if (!(num&WATER || num==BORDER)) shoreLocations |= 0x02;
+    }
+    // check the cell below
+    if (cell.y < dimensions.y) {
+        int num = grid[cell.x][cell.y+1];
+        if (!(num&WATER || num==BORDER)) shoreLocations |= 0x04;
+    }
+    // check the cell to the left
+    if (cell.x >= 1) {
+        int num = grid[cell.x-1][cell.y];
+        if (!(num&WATER || num==BORDER)) shoreLocations |= 0x08;
+    }
+    // check the corners
+    if (!(shoreLocations&0x09)) { // no top or left shoreline
+        // check cell to the top left
+        if (cell.x >= 1 && cell.y >= 1) {
+            int num = grid[cell.x-1][cell.y-1];
+            if (!(num&WATER || num==BORDER)) shoreLocations |= 0x10;
+        }
+    }
+    if (!(shoreLocations&0x03)) { // no top or right shoreline
+        // check the cell to the top right
+        if (cell.x < dimensions.x && cell.y >= 1) {
+            int num = grid[cell.x+1][cell.y-1];
+            if (!(num&WATER || num==BORDER)) shoreLocations |= 0x20;
+        }
+    }
+    if (!(shoreLocations&0x06)) { // no bottom or right shoreline
+        // check the cell to the bottom right
+        if (cell.x < dimensions.x && cell.y < dimensions.y) {
+            int num = grid[cell.x+1][cell.y+1];
+            if (!(num&WATER || num==BORDER)) shoreLocations |= 0x40;
+        }
+    }
+    if (!(shoreLocations&0x0C)) { // no bottom or left shoreline
+        // check the cell to the bottom left
+        if (cell.x >= 1 && cell.y < dimensions.y) {
+            int num = grid[cell.x-1][cell.y+1];
+            if (!(num&WATER || num==BORDER)) shoreLocations |= 0x80;
+        }
+    }
+
+    // now, based off shore locations, draw the shorelines
+    if (shoreLocations & 0xF0) { // there are corner shorelines
+        for (int i = 0; i < 4; i++) {
+            // if theere is a corner for the specified bit, draw the corresponding corner
+            Uint8 bit = shoreLocations & (0x10<<i);
+            // draw the image, rotated 90 degrees per corner
+            if (bit) tEditor.renderTextureToTexture(BGTexture, shoreline4Tex, &cellRect, 90.0*i);
+        }
+    }
+
+    // count the number of surrounding shores by counting the number of the first four bits activated
+    int numShores = numBits(static_cast<int>(shoreLocations&0x0f));
+
+    switch (numShores)
+    {
+        case 1: 
+            // only one shoreline exists, find it, and draw it
+            for (int i = 0; i < 4; i++) {
+                Uint8 bit = shoreLocations & (0x01<<i);
+                if (bit) tEditor.renderTextureToTexture(BGTexture, shoreline0Tex, &cellRect, 90.0*i);
+            }
+            break;
+
+        case 2: {
+            // if the two shores are opposite each other (top/bottom, or left/right), then shoreline0
+            // will be drawn twice. if they are next to each other, shoreline1 will be drawn
+            int val = shoreLocations & 0x0F; // first 4 bits
+
+            if ((shoreLocations&0x05)==val || (shoreLocations&0x0A)==val) { // top/bottom OR left/right
+                // draw shoreline 0 at any place a bit is active
+                for (int i = 0; i < 4; i++) {
+                    // if theere is a corner for the specified bit, draw the corresponding corner
+                    Uint8 bit = shoreLocations & (0x01<<i);
+                    // draw the image, rotated 90 degrees per corner
+                    if (bit) tEditor.renderTextureToTexture(BGTexture, shoreline0Tex, &cellRect, 90.0*i);
+                }
+            } else {
+                // draw shoreline1 in the appropriate location
+                // check if the top AND left corners have a shore
+                if ((shoreLocations&0x09)==val) tEditor.renderTextureToTexture(BGTexture, shoreline1Tex, &cellRect);
+                else {
+                    // check all other side combinations, in order
+                    for (int i = 0; i < 3; i++) {
+                        Uint8 ref = 0x03<<i, bits = shoreLocations&ref;
+                        if (bits == ref) tEditor.renderTextureToTexture(BGTexture, shoreline1Tex, &cellRect, 90.0*(i+1));
+                    }
+                }
+            }
+            break;
+        }
+        case 3:
+            // find the side that DOESN'T have a shore
+            for (int i = 0; i < 4; i++) {
+                Uint8 bit = shoreLocations & (0x01<<i);
+                if (!bit) tEditor.renderTextureToTexture(BGTexture, shoreline2Tex, &cellRect, 90.0*i, SDL_FLIP_VERTICAL);
+            }
+            break;
+
+        case 4:
+            // all four sides occupied, just draw shoreline 3 to the cell
+            tEditor.renderTextureToTexture(BGTexture, shoreline3Tex, &cellRect);
+            break;
+    
+        default: break; // no shores, nothing more needs to be done
+    }
+}
+
 
 
 // deals a specified amount of damage to a cell
@@ -266,6 +436,7 @@ void Game::initialise_BGTexture() {
     int sideLen = currLevel->cell_sideLen;
     map = { 0, 0, currLevel->gridDimensions.x*sideLen, currLevel->gridDimensions.y*sideLen };
     BGTexture = tEditor.createEmptyTexture(map.w, map.h, window);
+    overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);
     for (int x = 0; x < currLevel->gridDimensions.x; x++) {
         for (int y = 0; y < currLevel->gridDimensions.y; y++) {
             PlaceObjectInCell(Vector2Int(x, y), currLevel->grid[x][y], false);

@@ -69,13 +69,17 @@ class GameObject
         bool is_enemy();
 
 
+        // changes to held item position func
+        void make_held();
+        // changes back to thrownItemPositionFunc
+        void make_thrown( Vector2 newVelocity, Vector2 newAcceleration );
 
         // mutators
         void    set_pos( Vector2 newPos );
         void    set_velocity( Vector2 newVelocity );
         void    set_acceleration( Vector2 newAcceleration );
         void    set_HP( int newHP );
-        void    change_behaviour_function( BehaviourFunc func, void (GameObject::*newFunc)(void) );
+        void    set_timer( float t );
         void    decrement_idx();
 
 
@@ -91,6 +95,7 @@ class GameObject
         float       get_moveSpeed();
         float       get_radius();
         bool        has_collision();
+        bool        is_held();
         SDL_Rect    get_hitbox();
         Vector2Int  get_size();
         Vector2Int  get_cell();
@@ -106,8 +111,8 @@ class GameObject
 
         // position of the centre of the object's hitbox
         Vector2 pos;
-        Vector2 velocity;
-        Vector2 acceleration;
+        Vector2 velocity = Vector2_Zero;
+        Vector2 acceleration = Vector2_Zero;
 
         // what kind of entity it is
         EntityType type;
@@ -130,7 +135,7 @@ class GameObject
         // position and size of the hitbox
         SDL_Rect hitbox;
         // circular radius used for detecting game object collisions
-        float radius;
+        float radius = 0.0f;
         // whether or not the object performs collision checks
         bool hasCollision;
 

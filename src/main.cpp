@@ -203,8 +203,10 @@ int main(
 
 
       // Render background
+      game.center_camera_on_player();
       game.render_background();
       game.render_gameobjects();
+      game.render_overlay();
 
 
       gFPSTextTexture->render(0, 0);
