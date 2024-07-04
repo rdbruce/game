@@ -24,7 +24,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             collisionFunc = &GameObject::playerCollisionFunction;
 
             // other attributes
-            moveSpeed = 200.0f;
+            moveSpeed = 2.66666667f * sideLen;
             max_hp = 5;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = true;
@@ -49,7 +49,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             collisionFunc = &GameObject::defaultCollisionFunction;
 
             // other attributes
-            moveSpeed = 240.0f;
+            moveSpeed = 3.2f * sideLen;
             max_hp = 3;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = false;

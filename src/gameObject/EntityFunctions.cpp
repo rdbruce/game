@@ -47,7 +47,7 @@ void GameObject::wolfJumpAttack()
         Vector2 dir = getUnitVector(pos, pPos);
         // give the wolf a bunch of velocity in that direction,
         // with some negative acceleration
-        velocity = dir * 450.0f;
+        velocity = dir * (7.0f * game->currLevel->cell_sideLen);
         acceleration = dir * -300.0f;
 
         // wolf deals increased damage during this attack
