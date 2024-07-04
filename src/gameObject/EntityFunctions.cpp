@@ -167,12 +167,14 @@ void GameObject::fallingTreePositionFunc()
         int seeds = rand()%3, n = seeds+5;
 
         Vector2Int size = get_size();
-        float step = (float)size.x/n, y = pos.y + size.y/2;
+        int sideLen = game->currLevel->cell_sideLen;
+        
+        float step = (sideLen*10)/n, y = hitbox.y + hitbox.h;
 
         // spawn n items
         for (int i = 1; i <= n; i++)
         {
-            Vector2 p(pos.x - step*i, y);
+            Vector2 p(hitbox.x - step*i, y);
             // spawn logs first, seeds last
             EntityType item = (i<6)? Log_Item : Pine_Cone_Item;
             game->spawnItemStack(item, p, 1);
@@ -302,4 +304,22 @@ void GameObject::wolfEnterJumpAttack()
     acceleration = velocity * -2.0f;
     // switch to the attack function
     velocityFunc = &GameObject::wolfJumpAttack;
+}
+
+
+void GameObject::defaultRenderFunc( int camX, int camY )
+{
+    Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    tex->render( p.x, p.y, &hitbox );
+}
+
+void GameObject::fallingTreeRenderFunc( int camX, int camY )
+{
+    // timer is initialised to 1.0f, use it as an interpolator
+    float interp = 1.0f - timer;
+    float theta = -100.0f * interp;
+    Vector2Int p( hitbox.x - camX, hitbox.y-camY );
+    SDL_Point centre = { hitbox.w/2, hitbox.h };
+    tex->render(p.x, p.y, &hitbox, NULL, theta, &centre);
+    timer -= get_deltaTime();
 }

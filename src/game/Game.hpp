@@ -139,7 +139,8 @@ class Game
         std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr;
         std::shared_ptr<LTexture> Bert = nullptr;
         std::shared_ptr<LTexture>   logTex, bridgeTex, waterTex, grassTex, treeTex,
-                                    stumpTex, saplingTex,
+                                    stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
+                                    pine_coneTex, plankTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex, CRT_Tex;
         
@@ -156,6 +157,8 @@ class Game
 
         // renders a tree texture into the overlay texture
         void AddTreeToOverlay( Vector2Int cell );
+        // removes a tree from the overlay texture
+        void RemoveTreeFromOverlay( Vector2Int cell );
 
         // fills a cell with the water texture, as well as any shoreline
         void DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect );

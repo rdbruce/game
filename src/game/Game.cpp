@@ -3,12 +3,13 @@
 // constructor
 Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 {
-    // load the background texture
+    // for testing
     Bert = std::make_shared<LTexture>(window);
     if (!Bert->loadFromFile("../../assets/Bert.png")) {
         printf("Failed to load background texture!\n");
     }
 
+    // do this first!!!
     load_textures();
 
     // camera dimensions should be the same as window size
@@ -163,9 +164,6 @@ void Game::Destroy( std::shared_ptr<GameObject> obj, std::vector<std::shared_ptr
 
     // erase the object from the vector
     vec->erase( vec->begin() + n );
-
-    // delete the object from memory
-    obj->~GameObject();
 }
 void Game::Destroy( std::shared_ptr<GameObject> obj ) {
     Destroy( obj, &currLevel->gameObjects );
@@ -194,7 +192,11 @@ std::shared_ptr<GameObject> Game::spawnItemStack( int type, Vector2 pos, int cou
 
 std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> item1, std::shared_ptr<GameObject> item2 )
 {
-    // come back here !!
+    // validation
+    if (item1 == nullptr || item2 == nullptr) return nullptr;
+    if (item1->is_held() || item2->is_held()) return nullptr;
+    if (item1->get_timer() > 0.0f || item2->get_timer() > 0.0f) return nullptr;
+    
     std::shared_ptr<GameObject> res = nullptr;
     int hp1 = item1->get_hp(), hp2 = item2->get_hp();
 
@@ -515,5 +517,25 @@ void Game::load_textures()
     CRT_Tex = std::make_shared<LTexture>(window);
     if (!CRT_Tex->loadFromFile("../../assets/CRT_Base_Texture.png")) {
         std::cerr << "Failed to load CRT texture!" << std::endl;
+    }
+    playerTex = std::make_shared<LTexture>(window);
+    if (!playerTex->loadFromFile("../../assets/Entities/Player/front/0.png")) {
+        std::cerr << "Failed to load texture for player!\n" << std::endl;
+    }
+    wolfTex = std::make_shared<LTexture>(window);
+    if (!wolfTex->loadFromFile("../../assets/Entities/Wolf.png")) {
+        std::cerr << "Failed to load texture for wolf!\n" << std::endl;
+    }
+    falling_treeTex = std::make_shared<LTexture>(window);
+    if (!falling_treeTex->loadFromFile("../../assets/Tree/Falling_Tree.png")) {
+        std::cerr << "Failed to load texture for falling tree!\n" << std::endl;
+    }
+    pine_coneTex = std::make_shared<LTexture>(window);
+    if (!pine_coneTex->loadFromFile("../../assets/Items/Pine_Cone.png")) {
+        std::cerr << "Failed to load texture for pine cone!\n" << std::endl;
+    }
+    plankTex = std::make_shared<LTexture>(window);
+    if (!plankTex->loadFromFile("../../assets/Items/Plank.png")) {
+        std::cerr << "Failed to load texture for plank!\n" << std::endl;
     }
 }

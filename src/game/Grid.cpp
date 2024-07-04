@@ -137,8 +137,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
 
         case EMPTY:
         {
-            // also come back here :3
-
+            // cannot remove cells while holding an object
+            if (currLevel->held != nullptr && playerPlacement) return -4;
 
             // remove building in the cell
             // if it IS indestructible or NOT occupied, return
@@ -170,7 +170,16 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement)
                 }
 
                 case 3: { // tree
-                    // also also come back here :3
+                    // remove tree image from the overlay layer
+                    RemoveTreeFromOverlay(cell);
+
+                    // spawn a falling tree in its place
+                    Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
+                    Instantiate(pos, Falling_Tree, 1);
+
+                    // place a stump where the tree once stood
+                    // everything else handled in the STUMP case. don't break, just return
+                    return PlaceObjectInCell(cell, STUMP, false);
                 }
 
                 case 4: { // stump
@@ -244,6 +253,24 @@ void Game::AddTreeToOverlay( Vector2Int cell )
     int sideLen = currLevel->cell_sideLen;
     SDL_Rect rect = {(cell.x-1)*sideLen, (cell.y-9)*sideLen, sideLen*3, sideLen*10};
     tEditor.renderTextureToTexture(overlayTexture, treeTex, &rect);
+}
+
+void Game::RemoveTreeFromOverlay( Vector2Int cell )
+{
+    // remove tree from the grid
+    currLevel->grid[cell.x][cell.y] &= 0xFF9000;
+
+    // reset the overlay texture
+    int sideLen = currLevel->cell_sideLen;
+    int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
+    map = { 0, 0, nx*sideLen, ny*sideLen };
+    overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);
+    for (int x = 0; x < nx; x++) {
+        for (int y = 0; y < ny; y++) {
+            int type = currLevel->grid[x][y]&255;
+            if (type == 3) AddTreeToOverlay( Vector2Int(x, y) );
+        }
+    }
 }
 
 
@@ -434,11 +461,12 @@ void Game::damageCell( Vector2Int cell, int damage )
 
 void Game::initialise_BGTexture() {
     int sideLen = currLevel->cell_sideLen;
-    map = { 0, 0, currLevel->gridDimensions.x*sideLen, currLevel->gridDimensions.y*sideLen };
+    int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
+    map = { 0, 0, nx*sideLen, ny*sideLen };
     BGTexture = tEditor.createEmptyTexture(map.w, map.h, window);
     overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);
-    for (int x = 0; x < currLevel->gridDimensions.x; x++) {
-        for (int y = 0; y < currLevel->gridDimensions.y; y++) {
+    for (int x = 0; x < nx; x++) {
+        for (int y = 0; y < ny; y++) {
             PlaceObjectInCell(Vector2Int(x, y), currLevel->grid[x][y], false);
         }
     }

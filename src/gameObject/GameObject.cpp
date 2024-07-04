@@ -9,10 +9,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
     {
         case Player: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Entities/Player/front/0.png")) {
-                std::cerr << "Failed to load texture for player!\n" << std::endl;
-            }
+            tex = game->playerTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-2, sideLen-2);
@@ -36,10 +34,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         
         case Wolf: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Entities/Wolf.png")) {
-                std::cerr << "Failed to load texture for wolf!\n" << std::endl;
-            }
+            tex = game->wolfTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-2, sideLen-2);
@@ -63,13 +59,11 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
         case Falling_Tree: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Tree/Falling_Tree.png")) {
-                std::cerr << "Failed to load texture for falling tree!\n" << std::endl;
-            }
+            tex = game->falling_treeTex;
+            renderingFunc = &GameObject::fallingTreeRenderFunc;
 
             // set up the hitbox
-            Vector2Int size(10*sideLen, 10*sideLen);
+            Vector2Int size(3*sideLen, 10*sideLen);
             Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
             hitbox = { p.x, p.y, size.x, size.y };
 
@@ -79,18 +73,16 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             collisionFunc = &GameObject::defaultCollisionFunction;
 
             // other attributes
-            max_hp = 1;
-            hp = 1;
+            max_hp = hp = 1;
+            timer = 1.0f;
             hasCollision = false;
             break;
         }
 
         case Log_Item: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Buildings/Log.png")) {
-                std::cerr << "Failed to load texture for log!\n" << std::endl;
-            }
+            tex = game->logTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -113,10 +105,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         
         case Pine_Cone_Item: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Items/Pine_Cone.png")) {
-                std::cerr << "Failed to load texture for pine cone!\n" << std::endl;
-            }
+            tex = game->pine_coneTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -139,10 +129,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
         case Plank_Item: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Items/Plank.png")) {
-                std::cerr << "Failed to load texture for plank!\n" << std::endl;
-            }
+            tex = game->plankTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -165,10 +153,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         
         case Bridge_Item: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Buildings/Bridge.png")) {
-                std::cerr << "Failed to load texture for bridge!\n" << std::endl;
-            }
+            tex = game->bridgeTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -192,10 +178,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         
         case Door_Item: {
             // assign the texture
-            tex = LTexture( game->window );
-            if (!tex.loadFromFile("../../assets/Buildings/Door.png")) {
-                std::cerr << "Failed to load texture for door!\n" << std::endl;
-            }
+            tex = game->closed_doorTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -219,19 +203,10 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}
 
-GameObject::~GameObject()
-{
-    // destroy the texture
-    tex.~LTexture();
-}
-
-
 void GameObject::render( int camX, int camY )
 {
-    Vector2Int p( hitbox.x-camX, hitbox.y-camY );
-    tex.render( p.x, p.y, &hitbox );
+    (this->*renderingFunc)( camX, camY );
 }
-
 
 void GameObject::update()
 {
@@ -295,6 +270,7 @@ int GameObject::get_maxHP() {return max_hp; }
 int GameObject::get_damage() { return damage; }
 float GameObject::get_moveSpeed() { return moveSpeed; }
 float GameObject::get_radius() { return radius; }
+float GameObject::get_timer() { return timer; }
 bool GameObject::has_collision() { return hasCollision; }
 bool GameObject::is_held() { return game->currLevel->gameObjects[idx] == game->currLevel->held; }
 Uint8 GameObject::get_inputKeys() { return game->inputKeys; }

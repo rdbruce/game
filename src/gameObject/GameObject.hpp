@@ -53,9 +53,6 @@ class GameObject
         GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game *game, int sideLen );
         GameObject();
 
-        // frees resources
-        ~GameObject();
-
 
         // updates member variables
         void update();
@@ -94,6 +91,7 @@ class GameObject
         int         get_damage();
         float       get_moveSpeed();
         float       get_radius();
+        float       get_timer();
         bool        has_collision();
         bool        is_held();
         SDL_Rect    get_hitbox();
@@ -147,7 +145,7 @@ class GameObject
 
 
         // the image to be drawn
-        LTexture tex;
+        std::shared_ptr<LTexture> tex;
 
 
 
@@ -159,6 +157,7 @@ class GameObject
         void (GameObject::*positionFunc) (void);
         void (GameObject::*velocityFunc) (void);
         void (GameObject::*collisionFunc)(void);
+        void (GameObject::*renderingFunc)( int, int );
 
 
 
@@ -271,6 +270,14 @@ class GameObject
         // checks if the hitbox is within a wall, and pushes it out
         void defaultHandleSideCollisionsWithWalls();
         void defaultHandleCornerCollisionsWithWalls();
+
+        
+
+
+
+        // rendering functions
+        void defaultRenderFunc( int camX, int camY );
+        void fallingTreeRenderFunc( int camX, int camY );
 };
 
 #endif
