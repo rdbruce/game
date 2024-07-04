@@ -16,10 +16,8 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
     camera = { 0, 0, window->getWidth(), window->getHeight() };
 
 
-    // load the test level
-    testLevel = Scene("../../saves/test.txt", this);
-    currLevel = &testLevel;
-    interactRange = 3.0f * currLevel->cell_sideLen;
+    // load levels
+    load_levels();
 
     initialise_BGTexture();
 }
@@ -287,14 +285,19 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     // and added to the new scene, as the held object
     if (currLevel->held != nullptr) {
         // revise using the same position as the player
-        level->held = moveEntityToLevel(currLevel->held, level, newPlayerPos);
-        currLevel->held = nullptr;
+        level->held = Instantiate(newPlayerPos, currLevel->held->get_type(), currLevel->held->get_hp(), level);
+        level->held->make_held();
+        Destroy(currLevel->held);
     }
 
     level->player = Instantiate(newPlayerPos, Player, currLevel->player->get_hp(), level);
     Destroy(currLevel->player);
     currLevel->player = nullptr;
+    
     currLevel = level;
+    interactRange = 3.0f * currLevel->cell_sideLen;
+
+    initialise_BGTexture();
 }
 
 
@@ -303,6 +306,7 @@ std::shared_ptr<GameObject> Game::moveEntityToLevel( std::shared_ptr<GameObject>
     // if the object being moved is the held object, do nothing since it should move
     // with the player, not on its own
     if (obj->is_held()) return nullptr;
+
 
     auto res = Instantiate(newPos, obj->get_type(), obj->get_hp(), level);
     Destroy(obj);
@@ -443,6 +447,22 @@ void Game::throwHeldObject()
     Vector2 accel = vel * -0.7f;
 
     obj->make_thrown( vel, accel );
+}
+
+
+void Game::load_levels()
+{
+    testLevel = Scene("../../saves/test.txt", this);
+    if (testLevel.player != nullptr) currLevel = &testLevel;
+
+    belowLevel = Scene("../../saves/test_below.txt", this);
+    if (belowLevel.player != nullptr) currLevel = &belowLevel;
+
+    // set up pointers to adjacent levels
+    testLevel.assignNeighbours(nullptr, &belowLevel);
+    belowLevel.assignNeighbours(&testLevel);
+
+    interactRange = 3.0f * currLevel->cell_sideLen;
 }
 
 

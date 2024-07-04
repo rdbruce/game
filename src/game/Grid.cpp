@@ -463,8 +463,10 @@ void Game::initialise_BGTexture() {
     int sideLen = currLevel->cell_sideLen;
     int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
     map = { 0, 0, nx*sideLen, ny*sideLen };
+    
     BGTexture = tEditor.createEmptyTexture(map.w, map.h, window);
     overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);
+
     for (int x = 0; x < nx; x++) {
         for (int y = 0; y < ny; y++) {
             PlaceObjectInCell(Vector2Int(x, y), currLevel->grid[x][y], false);

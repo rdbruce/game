@@ -186,18 +186,18 @@ bool GameObject::defaultCollideWithWorldBorders()
             return true; // true for moving to another scene
         } else {
             hitbox.x = 0.0f;
-            pos.x = hitbox.w/2;
+            pos.x = hitbox.x + hitbox.w/2;
         }
     } else if (hitbox.x > map.x-hitbox.w) {
         auto lvl = game->currLevel->right;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
-            Vector2 newPos(2.0f, newMap.y/2);
+            Vector2 newPos(hitbox.w, newMap.y/2);
             game->moveEntityToLevel(game->currLevel->gameObjects[idx], lvl, newPos);
             return true; // true for moving to another scene
         } else {
             hitbox.x = map.x-hitbox.w;
-            pos.x = hitbox.w/2;
+            pos.x = hitbox.x + hitbox.w/2;
         }
     }
     if (hitbox.y < 0.0f) {
@@ -209,18 +209,18 @@ bool GameObject::defaultCollideWithWorldBorders()
             return true; // true for moving to another scene
         } else {
             hitbox.y = 0.0f;
-            pos.y = hitbox.h/2;
+            pos.y = hitbox.y + hitbox.h/2;
         }
-    } else if (hitbox.x > map.x-hitbox.w) {
+    } else if (hitbox.y > map.y-hitbox.h) {
         auto lvl = game->currLevel->below;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
-            Vector2 newPos(newMap.x/2, 2.0f);
+            Vector2 newPos(newMap.x/2, hitbox.h);
             game->moveEntityToLevel(game->currLevel->gameObjects[idx], lvl, newPos);
             return true; // true for moving to another scene
         } else {
             hitbox.y = map.y-hitbox.h;
-            pos.y = hitbox.h/2;
+            pos.y = hitbox.y + hitbox.h/2;
         }
     }
     return false;
@@ -236,7 +236,7 @@ void GameObject::playerCollideWithWorldBorders()
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
             Vector2 newPos(newMap.x-hitbox.w-2, newMap.y/2);
             game->movePlayerToLevel(lvl, newPos);
-            return; // true for moving to another scene
+            return;
         } else {
             hitbox.x = 0.0f;
             pos.x = hitbox.x + hitbox.w/2;
@@ -245,9 +245,9 @@ void GameObject::playerCollideWithWorldBorders()
         Scene *lvl = game->currLevel->right;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
-            Vector2 newPos(2.0f, newMap.y/2);
+            Vector2 newPos(hitbox.w, newMap.y/2);
             game->movePlayerToLevel(lvl, newPos);
-            return; // true for moving to another scene
+            return;
         } else {
             hitbox.x = map.x-hitbox.w;
             pos.x = hitbox.x + hitbox.w/2;
@@ -259,7 +259,7 @@ void GameObject::playerCollideWithWorldBorders()
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
             Vector2 newPos(newMap.x/2, newMap.y-hitbox.h-2);
             game->movePlayerToLevel(lvl, newPos);
-            return; // true for moving to another scene
+            return;
         } else {
             hitbox.y = 0.0f;
             pos.y = hitbox.y + hitbox.h/2;
@@ -268,9 +268,9 @@ void GameObject::playerCollideWithWorldBorders()
         Scene *lvl = game->currLevel->below;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
-            Vector2 newPos(newMap.x/2, 2.0f);
+            Vector2 newPos(newMap.x/2, hitbox.h);
             game->movePlayerToLevel(lvl, newPos);
-            return; // true for moving to another scene
+            return;
         } else {
             hitbox.y = map.y-hitbox.h;
             pos.y = hitbox.y+ hitbox.h/2;

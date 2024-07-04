@@ -124,6 +124,7 @@ class Game
         // all the levels in the game
         Scene *currLevel;
         Scene testLevel;
+        Scene belowLevel;
 
         
 
@@ -134,6 +135,9 @@ class Game
 
         // loads all of the games textures from file
         void load_textures();
+
+        // loads levels from files, chooses one to be the active level
+        void load_levels();
 
         // background texture
         std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr;
