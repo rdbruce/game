@@ -93,6 +93,14 @@ void GameObject::wolfSpawningFunc()
     }
 }
 
+void GameObject::foxVelocityFunc()
+{
+    if (game->isNight) beginRetreat();
+    else {
+        deccelerateVelocityFunc();
+    }
+}
+
 
 void GameObject::defaultVelocityFunc() {
     velocity += acceleration * get_deltaTime();
@@ -114,7 +122,25 @@ void GameObject::moveDirectlyToPlayer()
     velocity = (dir * moveSpeed) + (acceleration * get_deltaTime());
 }
 
+void GameObject::retreatVelocityFunc()
+{
+    // move away from the centre of the map until out of bounds
+    Vector2Int map = get_mapDimensions();
+    Vector2 mCentre(map.x/2, map.y/2);
 
+    Vector2 dir = getUnitVector(mCentre, pos);
+    // in case the entity is on the map's centre
+    if (dir == Vector2_Zero) dir = Vector2_One;
+
+    // accelerate off the map
+    acceleration = dir * 1500.0f;
+    velocity += acceleration * get_deltaTime();
+
+    // destroy itself when it goes out of bounds
+    if (pos.x != clampf(0.0f, map.x, pos.x) || pos.y != clampf(0.0f, map.y, pos.y)) {
+        game->Destroy(game->currLevel->gameObjects[idx]);
+    }
+}
 
 
 
@@ -304,6 +330,18 @@ void GameObject::wolfEnterJumpAttack()
     acceleration = velocity * -2.0f;
     // switch to the attack function
     velocityFunc = &GameObject::wolfJumpAttack;
+}
+
+void GameObject::beginRetreat()
+{
+    // turn off collision and switch to retreat function
+    hasCollision = false;
+    // start with some velocity towards the centre of the map
+    Vector2Int map = get_mapDimensions();
+    Vector2 mCentre(map.x/2, map.y/2);
+    velocity = getUnitVector(pos, mCentre) * 300.0f;
+    // enter the retreat function
+    velocityFunc = &GameObject::retreatVelocityFunc;
 }
 
 

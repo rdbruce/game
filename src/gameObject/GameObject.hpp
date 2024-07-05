@@ -205,6 +205,9 @@ class GameObject
         // moves to the centre of the map without collision until it gets into the map
         void wolfSpawningFunc();
 
+        // tries to return back to a constant point. retreats upon nightfall
+        void foxVelocityFunc();
+
 
         // adds object's acceleration to their velocity
         void defaultVelocityFunc();
@@ -213,6 +216,7 @@ class GameObject
 
         // draws a unit vector to the player and moves towards it
         void moveDirectlyToPlayer();
+        void retreatVelocityFunc();
 
 
 
@@ -247,6 +251,8 @@ class GameObject
         
         // switches a wolf into it's jump attack
         void wolfEnterJumpAttack();
+        // enters into the retreating velocity function
+        void beginRetreat();
 
 
 

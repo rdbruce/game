@@ -215,7 +215,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 
             // assign behaviour functions
             positionFunc = &GameObject::defaultPositionFunc;
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
+            velocityFunc = &GameObject::foxVelocityFunc;
             collisionFunc = &GameObject::defaultCollisionFunction;
 
             // other attributes
