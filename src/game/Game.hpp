@@ -9,6 +9,7 @@
 #include "../gameObject/GameObject.hpp"
 #include "Scene.hpp"
 #include "CellTypes.hpp"
+#include "Dialogue.hpp"
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -99,6 +100,12 @@ class Game
         // attempts to spawn enemies
         void attempt_enemy_spawn();
 
+        // sets the current dialogue to the specified option
+        void enter_dialogue( Dialogue newDialogue );
+
+        // if the player is currently in dialogue, this function will take player input to see which dialogue option they select
+        void handle_dialogue( int e );
+
         // saves all scenes to file
         void save_game();
 
@@ -116,6 +123,9 @@ class Game
         Uint8 inputKeys = 0;
         // determines how far away the player can interact with things
         float interactRange = 0.0f;
+
+        // tracks which dialogue (if any) the player is currently engaged in
+        Dialogue currDialogue = None;
 
 
 

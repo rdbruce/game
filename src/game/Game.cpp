@@ -48,6 +48,8 @@ void Game::handle_events( SDL_Event& e )
                         inputKeys |= 1; break;
                     case SDLK_LSHIFT:
                         inputKeys |= 16; break;
+                    default:
+                        handle_dialogue(e.key.keysym.sym); break;
                 }
             }
             break;
@@ -78,6 +80,7 @@ void Game::handle_events( SDL_Event& e )
             break;
     }
 }
+
 
 
 void Game::render_framerate()
@@ -470,6 +473,8 @@ void Game::update_CRT()
         }
     }
 }
+
+void Game::enter_dialogue( Dialogue newDialogue ) { currDialogue = newDialogue; }
 
 
 void Game::save_game()

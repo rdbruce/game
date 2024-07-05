@@ -155,8 +155,8 @@ class GameObject
         int pathfindingLength = 0;
 
         
-        // text the object will say, in dialogue, for instance
-        std::string txt = "this is a longer test";
+        // i don't know how, I don't know why, but removing this variable may cause the game to crash
+        std::string apparently_very_important_variable = "LEAVE THIS";
 
 
         // the image to be drawn
@@ -189,8 +189,8 @@ class GameObject
         //    function   (positionFunc,   for  instance),  with     //
         //    "positionFunc = &GameObject::playerPositionFunc;"     //
         //                                                          //
-        //    Alternatively, use 'change_behaviour_function' to     //
-        //                 alter entity behaviour.                  //
+        //    Alternatively, some functions, like 'make_held()'     //
+        //         can also update behaviour functions.             //
         //                                                          //
         //////////////////////////////////////////////////////////////
 
@@ -295,6 +295,7 @@ class GameObject
         void fallingTreeRenderFunc( int camX, int camY );
 
         void foxRenderFunc( int camX, int camY );
+        void playerRenderFunc( int camx, int camY);
 };
 
 #endif

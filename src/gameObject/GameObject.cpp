@@ -10,7 +10,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Player: {
             // assign the texture
             tex = game->playerTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            altTex = std::make_shared<LTexture>(game->window);
+            renderingFunc = &GameObject::playerRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-2, sideLen-2);
