@@ -178,8 +178,8 @@ void Game::attempt_enemy_spawn()
 
     if (validAttempt) {
         // choose an enemy type to spawn in
-        int range = Wolf - Wolf + 1;
-        int type = (rand() % range) + Wolf;
+        int range = ENEMY_MAX - ENEMY_MIN - 1;
+        int type = (rand() % range) + (ENEMY_MIN+1);
 
         switch (type)
         {
@@ -494,7 +494,7 @@ void Game::save_game()
 
 
 
-bool Game::is_item( int type ) { return type >= Log_Item; }
+bool Game::is_item( int type ) { return type > ITEM_MIN && type < ITEM_MAX; }
 
 
 bool Game::isInRegion( Vector2 p, SDL_Rect rect )

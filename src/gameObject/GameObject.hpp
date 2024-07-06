@@ -26,23 +26,27 @@ enum EntityType
     Player,             // 0
 
     // enemy types
-    Wolf,               // 1
+    ENEMY_MIN,
+    Wolf,               // 2
+    ENEMY_MAX,          
 
     // end of enemy types
 
-    Falling_Tree,       // 2
+    Falling_Tree,       // 4
 
     // item types
-    Log_Item,           // 3
-    Pine_Cone_Item,     // 4
-    Plank_Item,         // 5
-    Bridge_Item,        // 6
-    Door_Item,          // 7
+    ITEM_MIN,
+    Log_Item,           // 6
+    Pine_Cone_Item,     // 7
+    Plank_Item,         // 8
+    Bridge_Item,        // 9
+    Door_Item,          // 10
+    ITEM_MAX,
 
     // end of item types
 
     // NPC types
-    Fox_NPC,            // 8
+    Fox_NPC,            // 12
 };
 
 

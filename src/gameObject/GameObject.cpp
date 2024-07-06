@@ -266,8 +266,8 @@ void GameObject::make_thrown( Vector2 newVelocity, Vector2 newAcceleration )
 }
 
 
-bool GameObject::is_item() { return type>=Log_Item && type<=Door_Item; }
-bool GameObject::is_enemy() { return type>=Wolf && type<=Wolf; }
+bool GameObject::is_item() { return type>ITEM_MIN && type<ITEM_MAX; }
+bool GameObject::is_enemy() { return type>ENEMY_MIN && type<ENEMY_MAX; }
 
 
 // mutators
