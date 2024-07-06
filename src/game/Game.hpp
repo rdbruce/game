@@ -152,6 +152,8 @@ class Game
         Scene *currLevel;
         Scene testLevel;
         Scene belowLevel;
+        // true when switching between levels
+        bool switching_scenes = false;
 
         
 

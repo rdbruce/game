@@ -225,6 +225,9 @@ class GameObject
 
         void playerPositionFunc();
 
+        // attempt to move back to a specified point
+        void foxPositionFunc();
+
         // adds velocity to current position
         void defaultPositionFunc();
         // trees don't move, snap their position to the position they spawned

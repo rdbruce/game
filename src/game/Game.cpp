@@ -100,6 +100,9 @@ void Game::render_framerate()
 void Game::update_gameobjects()
 {
     for (int i = 0; i < currLevel->gameObjects.size(); i++) {
+        if (switching_scenes) {
+            switching_scenes = false; return;
+        }
         currLevel->gameObjects[i]->update();
     }
 }
@@ -134,8 +137,10 @@ void Game::render_overlay() {
 
 // renders all the game objects
 void Game::render_gameobjects() {
-    int n = currLevel->gameObjects.size();
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < currLevel->gameObjects.size(); i++) {
+        if (switching_scenes) {
+            switching_scenes = false; return;
+        }
         currLevel->gameObjects[i]->render( camera.x, camera.y );
     }
 }
@@ -414,7 +419,11 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     // update pathfinding variables
     AStar::Open(&currLevel->grid, &barrier);
 
+    enter_dialogue(None);
+
     initialise_BGTexture();
+
+    switching_scenes = true;
 }
 
 

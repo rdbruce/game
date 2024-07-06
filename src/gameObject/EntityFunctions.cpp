@@ -174,6 +174,24 @@ void GameObject::playerPositionFunc()
 }
 
 
+void GameObject::foxPositionFunc()
+{
+    // attempt to move back to a point
+    Vector2 target(820.0f, 750.0f);
+    Vector2 dist = target - pos;
+    Vector2 vel = Vector2_Zero;
+
+    if (dist.length() > 1.0f * game->currLevel->cell_sideLen) {
+        dist.normalise();
+        vel = dist * moveSpeed;
+    }
+    float dt = get_deltaTime();
+
+    Vector2 p = pos + (velocity+vel) * dt;
+    set_pos(p);
+}
+
+
 void GameObject::defaultPositionFunc()
 {
     Vector2 newPos = pos + velocity * get_deltaTime();
@@ -342,6 +360,7 @@ void GameObject::beginRetreat()
     velocity = getUnitVector(pos, mCentre) * 300.0f;
     // enter the retreat function
     velocityFunc = &GameObject::retreatVelocityFunc;
+    positionFunc = &GameObject::defaultPositionFunc;
 }
 
 

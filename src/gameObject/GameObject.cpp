@@ -214,11 +214,12 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour functions
-            positionFunc = &GameObject::defaultPositionFunc;
+            positionFunc = &GameObject::foxPositionFunc;
             velocityFunc = &GameObject::foxVelocityFunc;
             collisionFunc = &GameObject::defaultCollisionFunction;
 
             // other attributes
+            moveSpeed = 2.66666667f * sideLen;
             max_hp = 255;
             hp = Health;
             hasCollision = true;
