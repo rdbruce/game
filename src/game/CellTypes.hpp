@@ -16,10 +16,8 @@ byte 2:
     16: indestructible by player? 
 
 byte 3:
-    17-20 = water corner shorelines
-        ....LRlr, 0010 = bottom left, 0100 = top right
-    21-24 = side shorelines
-        lrtb...., 1100 = left&right, 0101 = right&bottom
+    17: is dried?
+    18-24 = ...
 
 byte 4:
     25: can be destroyed by enemies
@@ -33,11 +31,11 @@ byte 4:
 #define INDESTRUBTIBLE  0b00000000000000001000000000000000
 #define CAN_DIE         0b00000001000000000000000000000000
 #define HAS_TIMER       0b00000010000000000000000000000000
+#define IS_DRIED        0b00000000000000010000000000000000
 
 // macros to easily access certain regions of data
 #define TIMER           0b11111100000000000000000000000000
 #define HEALTH          0b00000000000000000000111100000000
-#define SHORELINE       0b00000000111111110000000000000000
 
 #define LOG             0b00000001000000000110100000000001 // 8  health
 #define BRIDGE          0b00000001000000000100001100000010 // 3  health

@@ -151,9 +151,9 @@ std::shared_ptr<LTexture> TextureManipulator::createSolidColour( int width, int 
 
     SDL_SetRenderTarget(renderer, tex);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    Uint8   r = colour&0xFF000000,
-            g = colour&0x00FF0000,
-            b = colour&0x0000FF00,
+    Uint8   r = (colour&0xFF000000)>>24,
+            g = (colour&0x00FF0000)>>16,
+            b = (colour&0x0000FF00)>>8,
             a = colour&0x000000FF;
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
     SDL_RenderClear(renderer);

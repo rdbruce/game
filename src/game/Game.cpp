@@ -751,6 +751,10 @@ void Game::load_textures()
     if (!foxTex->loadFromFile("../../assets/Entities/Fox.png")) {
         std::cerr << "Failed to load texture for fox!" << std::endl;
     }
+    dirtTex = std::make_shared<LTexture>(window);
+    if (!dirtTex->loadFromFile("../../assets/Ground/Dirt.png")) {
+        std::cerr << "Failed to load texture for dirt!" << std::endl;
+    }
 
     CRT_Tex = std::make_shared<LTexture>(window);
     if (!CRT_Tex->loadFromFile("../../assets/CRT_Base_Texture.png")) {

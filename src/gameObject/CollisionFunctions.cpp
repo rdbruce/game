@@ -91,10 +91,10 @@ void GameObject::defaultHandleCollisionsWithGameObjects()
 
                 // knock objects apart
                 float sideLen = game->currLevel->cell_sideLen;
-                velocity += disp * (-0.266667 * sideLen);
+                velocity += disp * (-0.0666667 * sideLen);
                 acceleration = velocity * -1.5f;
 
-                Vector2 newVel = other->get_velocity() + (disp * (0.266667 * sideLen));
+                Vector2 newVel = other->get_velocity() + (disp * (0.0666667 * sideLen));
                 other->set_velocity(newVel);
                 other->set_acceleration(newVel * -1.5f);
 
@@ -171,10 +171,10 @@ void GameObject::itemsHandleCollisionsWithGameObjects()
             }
             // knock objects apart
             float sideLen = game->currLevel->cell_sideLen;
-            velocity += disp * (-0.266667 * sideLen);
+            velocity += disp * (-0.0666667 * sideLen);
             acceleration = velocity * -1.5f;
 
-            Vector2 newVel = other->get_velocity() + (disp * (0.266667 * sideLen));
+            Vector2 newVel = other->get_velocity() + (disp * (0.0666667 * sideLen));
             other->set_velocity(newVel);
             other->set_acceleration(newVel * -1.5f);
         }

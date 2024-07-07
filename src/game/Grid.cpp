@@ -160,7 +160,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
             // remove building in the cell
             // if it IS indestructible or NOT occupied, return
-            if (num&0x8000) return -3;
+            if (num&0x8000 && playerPlacement) return -3;
 
             // first byte represents info about the cell, this is the object being removed
             switch (num&255)
@@ -274,8 +274,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             // all others to 0
             // bit 14: on if water (bit 13), off otherwise
             num &= 0xFF9000;
-            if (num&WATER) num |= 0x2000;
-            else num &= ~0x2000;
+            if (num&WATER && !(num&IS_DRIED)) num |= BARRIER;
+            else num &= ~BARRIER;
             break;
         }
     }
@@ -351,7 +351,8 @@ void Game::DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect )
     if (!(grid[cell.x][cell.y]&WATER)) return;
 
     // draw the base water image to the cell
-    tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
+    if (grid[cell.x][cell.y]&IS_DRIED) tEditor.renderTextureToTexture(BGTexture, dirtTex, &cellRect);
+    else tEditor.renderTextureToTexture(BGTexture, waterTex, &cellRect);
 
     // sample the four adjacent cells to see where shoreline should be drawn
     Uint8 shoreLocations = 0b00000000; // lrLR TBLR

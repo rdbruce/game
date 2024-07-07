@@ -176,7 +176,7 @@ class Game
                                     stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
                                     pine_coneTex, plankTex, foxTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
-                                    shoreline4Tex, closed_doorTex, open_doorTex;
+                                    shoreline4Tex, closed_doorTex, open_doorTex, dirtTex;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;

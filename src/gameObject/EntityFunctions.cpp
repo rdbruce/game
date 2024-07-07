@@ -368,6 +368,20 @@ void GameObject::defaultRenderFunc( int camX, int camY )
 {
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     tex->render( p.x, p.y, &hitbox );
+
+    // show hp
+    if (hp < max_hp && hp > 0) {
+        float t = (float)hp / (float)max_hp;
+        int wWhite = hitbox.w*t, wRed = hitbox.w * (1.0f-t);
+
+        auto white = game->tEditor.createSolidColour(wWhite, 20, 0xFFFFFFFF, game->window);
+        auto red   = game->tEditor.createSolidColour(wRed, 20, 0xFF0000FF, game->window);
+
+        SDL_Rect wRect = {p.x, p.y, wWhite, 20}, rRect = {p.x+wWhite, p.y, wRed, 20};
+
+        white->render(wRect.x, wRect.y, &wRect);
+        red->render(rRect.x, rRect.y, &rRect);
+    }
 }
 
 void GameObject::fallingTreeRenderFunc( int camX, int camY )
