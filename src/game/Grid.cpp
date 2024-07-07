@@ -308,8 +308,9 @@ void Game::update_cells()
 {
     // update every 2 seconds
     if (((int(g_time)%2) == 0 && (int(g_time-deltaTime)%2) != 0) || g_time == 0.0f) {
-        update_cells(&testLevel);
-        update_cells(&belowLevel);
+        update_cells(&Base);
+        update_cells(&Woods);
+        update_cells(&Woods2);
     }
 }
 

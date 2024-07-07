@@ -150,8 +150,9 @@ class Game
 
         // all the levels in the game
         Scene *currLevel;
-        Scene testLevel;
-        Scene belowLevel;
+        Scene Base;
+        Scene Woods;
+        Scene Woods2;
         // true when switching between levels
         bool switching_scenes = false;
 

@@ -446,7 +446,7 @@ void Game::dayNightCycle()
     if (g_time >= 300.0f) {
         // toggle night, and make sure all scene objects get updated
         isNight = !isNight;
-        testLevel.night = belowLevel.night = isNight;
+        Base.night = Woods.night = isNight;
 
         // autosave the game
         save_game();
@@ -488,8 +488,8 @@ void Game::enter_dialogue( Dialogue newDialogue ) { currDialogue = newDialogue; 
 
 void Game::save_game()
 {
-    testLevel.Save("../../saves/");
-    belowLevel.Save("../../saves/");
+    Base.Save("../../saves/");
+    Woods.Save("../../saves/");
 }
 
 
@@ -637,15 +637,19 @@ void Game::throwHeldObject()
 
 void Game::load_levels()
 {
-    testLevel = Scene("../../saves/test.txt", this);
-    if (testLevel.player != nullptr) currLevel = &testLevel;
+    Base = Scene("../../saves/Base.txt", this);
+    if (Base.player != nullptr) currLevel = &Base;
 
-    belowLevel = Scene("../../saves/test_below.txt", this);
-    if (belowLevel.player != nullptr) currLevel = &belowLevel;
+    Woods = Scene("../../saves/Woods.txt", this);
+    if (Woods.player != nullptr) currLevel = &Woods;
+
+    Woods2 = Scene("../../saves/Woods2.txt", this);
+    if (Woods2.player != nullptr) currLevel = &Woods2;
 
     // set up pointers to adjacent levels
-    testLevel.assignNeighbours(nullptr, &belowLevel);
-    belowLevel.assignNeighbours(&testLevel);
+    Base.assignNeighbours(nullptr, &Woods);
+    Woods.assignNeighbours(&Base, nullptr, &Woods2);
+    Woods2.assignNeighbours(nullptr, nullptr, nullptr, &Woods);
 
     isNight = currLevel->night;
 
