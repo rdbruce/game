@@ -75,8 +75,15 @@ void Game::handle_events( SDL_Event& e )
 
         case SDL_MOUSEBUTTONDOWN:
             // left click
-            if (e.button.button == SDL_BUTTON_LEFT) leftClickFunc();
-            else if (e.button.button == SDL_BUTTON_RIGHT) rightClickFunc();
+            switch (e.button.button)
+            {
+                case SDL_BUTTON_LEFT:
+                    leftClickFunc(); break;
+                case SDL_BUTTON_RIGHT:
+                    rightClickFunc(); break;
+                case SDL_BUTTON_MIDDLE:
+                    if (currLevel->held != nullptr) throwHeldObject(); break;
+            }
             break;
     }
 }
@@ -201,48 +208,57 @@ std::shared_ptr<GameObject> Game::spawnWolf()
 
     // set to true when a valid spawning location has been chosen
     bool validLocation = false;
+    int sideLen = currLevel->cell_sideLen;
 
     switch (edge)
     {
         case 0: { // top edge of the map
-            y = 0.0f;
+            y = sideLen/2;
             // make x a random number between 0 and len
             x = rand()%map.w;
 
             // check cell below to make sure it's not water
-            int sideLen = currLevel->cell_sideLen;
             Vector2Int cell(x/sideLen, y/sideLen);
+            std::cout << cell.x <<' '<< cell.y <<'\n';
             if (!(currLevel->grid[cell.x][cell.y+1]&WATER)) validLocation = true;
             break;
         }
         case 1: { // left edge
-            x = 0.0f;
+            x = sideLen/2;
             y = rand() % map.h;
 
             // check the cell to the right to make sure it's not water
-            int sideLen = currLevel->cell_sideLen;
             Vector2Int cell(x/sideLen, y/sideLen);
-            if (!(currLevel->grid[cell.x+1][cell.y]&WATER)) validLocation = true;
+            std::cout << cell.x <<' '<< cell.y <<'\n';
+            int n0 = (cell.y>0)? currLevel->grid[cell.x+1][cell.y-1] : 0,
+                n1 = currLevel->grid[cell.x+1][cell.y],
+                n2 = (cell.y<currLevel->gridDimensions.y-1)? currLevel->grid[cell.x+1][cell.y+1] : 0;
+            int n = n0|n1|n2;
+            if (!(n&WATER)) validLocation = true;
             break;
         }
         case 2: { // bottom edge
-            y = map.h;
+            y = map.h-(sideLen/2);
             x = rand() % map.w;
 
             // check the cell above to make sure it's not water
-            int sideLen = currLevel->cell_sideLen;
             Vector2Int cell(x/sideLen, y/sideLen);
+            std::cout << cell.x <<' '<< cell.y <<'\n';
             if (!(currLevel->grid[cell.x][cell.y-1]&WATER)) validLocation = true;
             break;
         }
         case 3: { // right edge
-            x = map.w;
+            x = map.w-(sideLen/2);
             y = rand() % map.h;
 
             // check the cell to the left to make sure it's not water
-            int sideLen = currLevel->cell_sideLen;
             Vector2Int cell(x/sideLen, y/sideLen);
-            if (!(currLevel->grid[cell.x-1][cell.y]&WATER)) validLocation = true;
+            std::cout << cell.x <<' '<< cell.y <<'\n';
+            int n0 = (cell.y>0)? currLevel->grid[cell.x-1][cell.y-1] : 0,
+                n1 = currLevel->grid[cell.x-1][cell.y],
+                n2 = (cell.y<currLevel->gridDimensions.y-1)? currLevel->grid[cell.x-1][cell.y+1] : 0;
+            int n = n0|n1|n2;
+            if (!(n&WATER)) validLocation = true;
             break;
         }
     }
@@ -559,7 +575,7 @@ void Game::leftClickFunc()
                     }
                 }
             // if an item IS held, throw it :)
-            } else if (currLevel->held != nullptr) throwHeldObject();
+            } else if (currLevel->held != nullptr) throwSingleItem();
             break;
 
     }
@@ -625,13 +641,44 @@ void Game::throwHeldObject()
     // copied from player position func
     float s = currLevel->player->get_moveSpeed();
     if (inputKeys & 16) s *= 2.0f;
-    Math::Vector2 vel((bool(inputKeys&1)-bool(inputKeys&4)), (bool(inputKeys&2)-bool(inputKeys&8)));
+    Vector2 vel((bool(inputKeys&1)-bool(inputKeys&4)), (bool(inputKeys&2)-bool(inputKeys&8)));
     vel.normalise(); vel *= s;
 
-    vel += currLevel->player->get_velocity() + (dir * 260.0f);
+    vel += currLevel->player->get_velocity() + (dir * (5.2f * currLevel->cell_sideLen));
     Vector2 accel = vel * -0.7f;
 
     obj->make_thrown( vel, accel );
+}
+
+void Game::throwSingleItem()
+{
+    int heldHP = currLevel->held->get_hp();
+    // if there is only one item in the stack, just throw the whole thing
+    if (heldHP == 1) throwHeldObject();
+
+    else {
+        // spawn a single item in the direction of the player's mouse, and give it velocity in said direction
+        Vector2 mPos = find_mouse_pos();
+        Vector2 pPos = currLevel->player->get_pos();
+        Vector2 dir = getUnitVector(pPos, mPos);
+
+        // copied from player position func
+        float s = currLevel->player->get_moveSpeed();
+        if (inputKeys&16) s *= 2.0f;
+        Vector2 vel((bool(inputKeys&1)-bool(inputKeys&4)), (bool(inputKeys&2)-bool(inputKeys&8)));
+        vel.normalise(); vel *= s;
+
+        vel += currLevel->player->get_velocity() + (dir * (4.5f * currLevel->cell_sideLen));
+        Vector2 accel  = vel * -0.7f;
+
+        float r = 2.0f * (currLevel->player->get_radius() + currLevel->held->get_radius());
+        Vector2 p = pPos + (dir * r);
+
+        auto obj = Instantiate(p, currLevel->held->get_type(), 1);
+        obj->make_thrown( vel, accel );
+
+        currLevel->held->set_HP( heldHP - 1 );
+    }
 }
 
 

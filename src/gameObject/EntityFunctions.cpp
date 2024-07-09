@@ -7,34 +7,38 @@ void GameObject::wolfVelocityFunc()
 {
     damage = 0;
 
-    // wolves will update their pathfinding every 0.5 seconds
-    if (timer <= 0.0f) {
-        wolfUpdatePathfinding();
-    }
-
-    // if the wolf is close enough to the player, attempt to perform an attack
-    if (pathfindingLength < 5) 
-    {
-        Vector2 distToPlayer = get_player_pos() - pos;
-        int sideLen = game->currLevel->cell_sideLen;
-
-        // set the pathfinding to a nullptr, so it's not stuck in this case forever
-        // if the wolf is super close, just go straight for them
-        if (distToPlayer.length() <= 2.0f * sideLen || pathfindingLength < 2) {
-            path = nullptr;
-            damage = 1;
-            moveDirectlyToPlayer();
-
-        } else if (timer <= 0.5f) {
-            path = nullptr;
-            wolfEnterJumpAttack();
+    // wolves leave the map when it becomes day
+    if (!game->isNight) beginRetreat();
+    else {
+        // wolves will update their pathfinding every 0.5 seconds
+        if (timer <= 0.0f) {
+            wolfUpdatePathfinding();
         }
-    }
-    // decrease the timer
-    timer -= get_deltaTime();
 
-    // walk to the first cell in its pathfinding
-    if (path != nullptr) wolfWalkToNextCell();
+        // if the wolf is close enough to the player, attempt to perform an attack
+        if (pathfindingLength < 5) 
+        {
+            Vector2 distToPlayer = get_player_pos() - pos;
+            int sideLen = game->currLevel->cell_sideLen;
+
+            // set the pathfinding to a nullptr, so it's not stuck in this case forever
+            // if the wolf is super close, just go straight for them
+            if (distToPlayer.length() <= 2.0f * sideLen || pathfindingLength < 2) {
+                path = nullptr;
+                damage = 1;
+                moveDirectlyToPlayer();
+
+            } else if (timer <= 0.5f) {
+                path = nullptr;
+                wolfEnterJumpAttack();
+            }
+        }
+        // decrease the timer
+        timer -= get_deltaTime();
+
+        // walk to the first cell in its pathfinding
+        if (path != nullptr) wolfWalkToNextCell();
+    }
 }
 
 
@@ -80,7 +84,7 @@ void GameObject::wolfSpawningFunc()
 {
     Vector2Int cell = get_cell();
     if (game->is_barrier(cell)) {
-        // still inside the world borderm move towards the centre of the map
+        // still inside the world border, move towards the centre of the map
         Vector2Int dest = get_mapDimensions()/2;
         Vector2 dir = getUnitVector(pos, Vector2(dest.x, dest.y));
         // don't use the entity's speed, just go with a constant speed while spawning
@@ -196,6 +200,7 @@ void GameObject::defaultPositionFunc()
 {
     Vector2 newPos = pos + velocity * get_deltaTime();
     set_pos(newPos);
+    if (pos.x < 0.0f) std::cout << pos.x <<'\n';
 }
 
 void GameObject::fallingTreePositionFunc()
@@ -367,6 +372,10 @@ void GameObject::beginRetreat()
 void GameObject::defaultRenderFunc( int camX, int camY )
 {
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+        return;
+    }
     tex->render( p.x, p.y, &hitbox );
 
     // show hp
@@ -386,10 +395,14 @@ void GameObject::defaultRenderFunc( int camX, int camY )
 
 void GameObject::fallingTreeRenderFunc( int camX, int camY )
 {
+    Vector2Int p( hitbox.x - camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+        return;
+    }
     // timer is initialised to 1.0f, use it as an interpolator
     float interp = 1.0f - timer;
     float theta = -100.0f * interp;
-    Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     SDL_Point centre = { hitbox.w/2, hitbox.h };
     tex->render(p.x, p.y, &hitbox, NULL, theta, &centre);
     timer -= get_deltaTime();

@@ -5,6 +5,10 @@
 void GameObject::foxRenderFunc( int camX, int camY )
 {
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+        return;
+    }
     tex->render( p.x, p.y, &hitbox );
 
     switch (hp)
@@ -89,6 +93,10 @@ void GameObject::foxRenderFunc( int camX, int camY )
 void GameObject::playerRenderFunc( int camX, int camY )
 {
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+        return;
+    }
     tex->render( p.x, p.y, &hitbox );
 
     switch (game->currDialogue)

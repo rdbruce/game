@@ -28,7 +28,6 @@ class Game
 {
     // declare GameObject as a friend of Game, so the private members can be accessed
     friend class GameObject;
-    friend class EntityFunctions;
 
     public:
 
@@ -224,7 +223,8 @@ class Game
         void setHeldObject( std::shared_ptr<GameObject> obj );
         // throw the object the player is currently holding
         void throwHeldObject();
-
+        // throw one of the item the player is currently holding
+        void throwSingleItem();
 
         // spawns a wolf at a random location on the maps edge
         std::shared_ptr<GameObject> spawnWolf();

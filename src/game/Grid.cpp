@@ -17,7 +17,7 @@ bool Game::is_barrier( Vector2Int cell ) {
 int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, Scene *level)
 {
     if (level == NULL) level = currLevel;
-    bool draw = (level == currLevel)? true : false;
+    bool draw = level == currLevel;
 
     // cell is out of bounds and doesn't exist
     if (cell.x<0 || cell.x>=level->gridDimensions.x ||

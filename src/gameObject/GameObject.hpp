@@ -41,12 +41,13 @@ enum EntityType
     Plank_Item,         // 8
     Bridge_Item,        // 9
     Door_Item,          // 10
+    Stone_Item,         // 11
     ITEM_MAX,
 
     // end of item types
 
     // NPC types
-    Fox_NPC,            // 12
+    Fox_NPC,            // 13
 };
 
 
