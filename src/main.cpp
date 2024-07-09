@@ -15,6 +15,8 @@
 
 #include "gameObject/GameObject.hpp"
 
+#include "Menu/Menu.hpp"
+
 #include <chrono>
 #include <condition_variable>
 #include <functional>
@@ -96,6 +98,8 @@ int main(
   // Initialize SDL
   auto gHolder = std::make_shared<LWindow>();
 
+  GameMenu menu(gHolder);
+
   Game game(gHolder);
 
   // Event handler
@@ -103,6 +107,7 @@ int main(
 
   // Main loop flag
   bool quit = false;
+  bool inMenu = true;
 
   // While application is running
   while (!quit)
@@ -118,19 +123,21 @@ int main(
 
       // Handle window events
       gHolder->handleEvent(e);
-      game.handle_events(e);
+      menu.handle_events(e, &inMenu);
+      if (!inMenu) game.handle_events(e);
     }
 
-
     game.update_deltaTime();
+    if (!inMenu) {
 
-    game.update_gameobjects();
+      game.update_gameobjects();
 
-    // call update_cells first
-    game.update_cells();
-    game.dayNightCycle();
+      // call update_cells first
+      game.update_cells();
+      game.dayNightCycle();
 
-    game.attempt_enemy_spawn();
+      game.attempt_enemy_spawn();
+    }
 
     // Only draw when not minimized
     if (!gHolder->isMinimized())
@@ -139,15 +146,19 @@ int main(
       SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
       SDL_RenderClear(gHolder->gRenderer);
 
+      if (!inMenu) {
+        // Render background
+        game.center_camera_on_player();
+        game.render_background();
+        game.render_gameobjects();
+        game.render_overlay();
+        game.render_cell_health();
 
-      // Render background
-      game.center_camera_on_player();
-      game.render_background();
-      game.render_gameobjects();
-      game.render_overlay();
+        game.render_framerate();
 
-
-      game.render_framerate();
+      } else {
+        menu.render_background();
+      }
 
       // Update screen
       SDL_RenderPresent(gHolder->gRenderer);

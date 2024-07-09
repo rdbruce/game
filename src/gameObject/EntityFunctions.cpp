@@ -200,7 +200,6 @@ void GameObject::defaultPositionFunc()
 {
     Vector2 newPos = pos + velocity * get_deltaTime();
     set_pos(newPos);
-    if (pos.x < 0.0f) std::cout << pos.x <<'\n';
 }
 
 void GameObject::fallingTreePositionFunc()

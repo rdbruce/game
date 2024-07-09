@@ -219,7 +219,6 @@ std::shared_ptr<GameObject> Game::spawnWolf()
 
             // check cell below to make sure it's not water
             Vector2Int cell(x/sideLen, y/sideLen);
-            std::cout << cell.x <<' '<< cell.y <<'\n';
             if (!(currLevel->grid[cell.x][cell.y+1]&WATER)) validLocation = true;
             break;
         }
@@ -229,7 +228,6 @@ std::shared_ptr<GameObject> Game::spawnWolf()
 
             // check the cell to the right to make sure it's not water
             Vector2Int cell(x/sideLen, y/sideLen);
-            std::cout << cell.x <<' '<< cell.y <<'\n';
             int n0 = (cell.y>0)? currLevel->grid[cell.x+1][cell.y-1] : 0,
                 n1 = currLevel->grid[cell.x+1][cell.y],
                 n2 = (cell.y<currLevel->gridDimensions.y-1)? currLevel->grid[cell.x+1][cell.y+1] : 0;
@@ -243,7 +241,6 @@ std::shared_ptr<GameObject> Game::spawnWolf()
 
             // check the cell above to make sure it's not water
             Vector2Int cell(x/sideLen, y/sideLen);
-            std::cout << cell.x <<' '<< cell.y <<'\n';
             if (!(currLevel->grid[cell.x][cell.y-1]&WATER)) validLocation = true;
             break;
         }
@@ -253,7 +250,6 @@ std::shared_ptr<GameObject> Game::spawnWolf()
 
             // check the cell to the left to make sure it's not water
             Vector2Int cell(x/sideLen, y/sideLen);
-            std::cout << cell.x <<' '<< cell.y <<'\n';
             int n0 = (cell.y>0)? currLevel->grid[cell.x-1][cell.y-1] : 0,
                 n1 = currLevel->grid[cell.x-1][cell.y],
                 n2 = (cell.y<currLevel->gridDimensions.y-1)? currLevel->grid[cell.x-1][cell.y+1] : 0;

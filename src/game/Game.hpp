@@ -52,6 +52,8 @@ class Game
         void render_gameobjects();
         // renders trees
         void render_overlay();
+        // shows how much health each cell has
+        void render_cell_health();
         // shows the current frame rate
         void render_framerate();
 

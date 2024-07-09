@@ -152,8 +152,8 @@ void LWindow::handleEvent(SDL_Event &e)
       SDL_SetWindowTitle(gWindow, caption.str().c_str());
     }
   }
-  // Enter exit full screen on return key
-  else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)
+  // Enter exit full screen on f11 key
+  else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_F11)
   {
     if (wFullScreen)
     {

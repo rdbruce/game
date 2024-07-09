@@ -337,6 +337,38 @@ void Game::RemoveTreeFromOverlay( Vector2Int cell )
     }
 }
 
+void Game::render_cell_health()
+{
+    int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
+    int sideLen = currLevel->cell_sideLen;
+    for (int x = 0; x < nx; x++) {
+        for (int y = 0; y < ny; y++) {
+            Vector2Int p( x*sideLen - camera.x, y*sideLen - camera.y );
+            // not within the camera's view, don't render
+            if (p.x != Clamp(-sideLen, camera.w, p.x) || p.y != Clamp(-sideLen, camera.h, p.y)) {
+                continue;
+            }
+
+            int num = currLevel->grid[x][y];
+            int max_hp = (num&MAX_HEALTH)>>17,
+                health = (num&HEALTH)>>8;
+
+            if (health < max_hp && health != 0) {
+                float t = (float)health / (float) max_hp;
+                int wWhite = sideLen*t, wRed = sideLen*(1.0f-t);
+
+                auto white = tEditor.createSolidColour(wWhite, 20, 0xFFFFFFFF, window);
+                auto red   = tEditor.createSolidColour(wRed, 20, 0xFF0000FF, window);
+
+                SDL_Rect wRect = {p.x, p.y, wWhite, 20}, rRect = {p.x+wWhite, p.y, wRed, 20};
+
+                white->render(wRect.x, wRect.y, &wRect);
+                red->render(rRect.x, rRect.y, &rRect);
+            }
+        }
+    }
+}
+
 
 void Game::DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect )
 {
