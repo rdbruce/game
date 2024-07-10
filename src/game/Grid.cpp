@@ -192,20 +192,31 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 }
 
                 case 3: { // tree
-                    // remove tree from the grid
-                    level->grid[cell.x][cell.y] &= 0xFF9000;
-                    if (draw) {
-                        // remove tree image from the overlay layer
-                        RemoveTreeFromOverlay(cell);
+                    int hp = num&HEALTH;
+                    if (hp != 0) {
+                        // damage the tree until broken
+                        damageCell(cell, 2);
+                        return 0;
+
+                    } else {
+                        // if the tree is destroyed, remove it and place a stump
+                        // remove tree from the grid
+                        level->grid[cell.x][cell.y] &= 0xFF9000;
+
+                        if (draw) {
+                            // remove tree image from the overlay layer
+                            RemoveTreeFromOverlay(cell);
+                        }
+
+                        // spawn a falling tree in its place
+                        Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
+                        Instantiate(pos, Falling_Tree, 1, level);
+
+                        // place a stump where the tree once stood
+                        // everything else handled in the STUMP case. don't break, just return
+                        return PlaceObjectInCell(cell, STUMP, false, level);
                     }
-
-                    // spawn a falling tree in its place
-                    Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
-                    Instantiate(pos, Falling_Tree, 1, level);
-
-                    // place a stump where the tree once stood
-                    // everything else handled in the STUMP case. don't break, just return
-                    return PlaceObjectInCell(cell, STUMP, false, level);
+                    break;
                 }
 
                 case 4: { // stump
@@ -539,20 +550,18 @@ void Game::damageCell( Vector2Int cell, int damage )
     int health = (num&HEALTH)>>8;
 
     // subtract the amount of damage dealth
-    health -= damage;
+    health = Max(0, health-damage);
+
+    // bit shift health to be in the right position
+    health <<= 8;
+    // reset the health bits of the cell
+    num &= ~HEALTH;
+    // set the health bits to the new value
+    num |= health;
+    currLevel->grid[cell.x][cell.y] = num;
 
     // if the health is now non-positive, destroy the cell
-    if (health <= 0) {
-        PlaceObjectInCell(cell, EMPTY, true);
-    } else {
-        // bit shift health to be in the right position
-        health <<= 8;
-        // reset the health bits of the cell
-        num &= ~HEALTH;
-        // set the health bits to the new value
-        num |= health;
-        currLevel->grid[cell.x][cell.y] = num;
-    }
+    if (health <= 0) PlaceObjectInCell(cell, EMPTY, true);
 }
 
 

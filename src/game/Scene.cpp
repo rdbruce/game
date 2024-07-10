@@ -55,6 +55,7 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
             } else if (id == idxHeld) {
                 // assign obj to the held object pointer
                 held = obj;
+                held->make_held();
             }
         }
 
