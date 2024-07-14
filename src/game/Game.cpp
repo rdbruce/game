@@ -464,6 +464,12 @@ void Game::dayNightCycle()
         save_game();
         // reset g_time to 0
         g_time = 0.0f;
+
+        // spawn mr fox at the beginning of each day
+        if (!isNight) {
+            int sideLen = Base.cell_sideLen;
+        }
+
         return;
     } 
     update_CRT();

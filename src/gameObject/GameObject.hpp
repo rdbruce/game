@@ -27,36 +27,27 @@ enum EntityType
 
     // enemy types
     ENEMY_MIN,
-    Wolf,               // 2
+    Wolf,
     ENEMY_MAX,          
 
     // end of enemy types
 
-    Falling_Tree,       // 4
+    Falling_Tree,
 
     // item types
     ITEM_MIN,
-    Log_Item,           // 6
-    Pine_Cone_Item,     // 7
-    Plank_Item,         // 8
-    Bridge_Item,        // 9
-    Door_Item,          // 10
-    Stone_Item,         // 11
+    Log_Item,       
+    Pine_Cone_Item, 
+    Plank_Item,     
+    Bridge_Item,    
+    Door_Item,      
+    Stone_Item,     
     ITEM_MAX,
 
     // end of item types
 
     // NPC types
-    Fox_NPC,            // 13
-};
-
-
-// for altering game object behaviour
-enum BehaviourFunc
-{
-    Position,
-    Velocity,
-    Collision
+    Fox_NPC,
 };
 
 

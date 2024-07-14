@@ -228,6 +228,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}
 
+
+
 void GameObject::render( int camX, int camY )
 {
     (this->*renderingFunc)( camX, camY );

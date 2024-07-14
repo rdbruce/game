@@ -16,6 +16,7 @@
 #include "gameObject/GameObject.hpp"
 
 #include "Menu/Menu.hpp"
+#include "Menu/Button.hpp"
 
 #include <chrono>
 #include <condition_variable>
@@ -158,6 +159,7 @@ int main(
 
       } else {
         menu.render_background();
+        menu.render_buttons();
       }
 
       // Update screen

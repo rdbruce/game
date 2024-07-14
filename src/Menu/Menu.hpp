@@ -4,9 +4,25 @@
 #include "../engine/LWindow.hpp"
 
 #include <iostream>
+#include <vector>
+#include <memory>
+
+// forwards declaration
+class Button;
+
+
+// different menu states
+enum State
+{
+    main_menu,
+    in_game,
+};
+
 
 class GameMenu
 {
+    friend class Button;
+
     public:
 
         // initialise menu
@@ -15,8 +31,13 @@ class GameMenu
         // renders the background texture
         void render_background();
 
+        // shows all the buttons
+        void render_buttons();
+
         // handle user input
         void handle_events( SDL_Event &e, bool *menuActive );
+
+        bool is_active();
 
     private:
 
@@ -24,5 +45,15 @@ class GameMenu
 
         std::shared_ptr<LTexture> BGTexture = nullptr;
 
+
+        std::vector<std::shared_ptr<Button>> *currButtons = &menuButtons;
+        std::vector<std::shared_ptr<Button>> menuButtons, // buttons in the main menu
+                                             pauseButtons; // pause menu
+
         bool isActive = true;
+        State state = main_menu;
+
+
+        // checks to see if the player clicks any buttons
+        void leftClickFunc();
 };
