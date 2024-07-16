@@ -196,7 +196,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
     if (draw) drawCell(cell);
 
-    damRiver();
+    if (level == &Base) damRiver();
 
     return 0;
 }
@@ -242,18 +242,33 @@ void Game::update_cells( Scene *level )
     Vector2Int dimensions = level->gridDimensions;
 
     for (int x = 0; x < dimensions.x; x++) {
-        for (int y = 0; y < dimensions.y; y++) {
-            int type = level->grid[x][y] & 255;
+        for (int y = 0; y < dimensions.y; y++) 
+        {
+            Vector2Int currCell(x, y);
 
-            switch (type)
-            {
-                case 5: // sapling
-                    // saplings grow at the beginning of each day
-                    if (g_time == 0.0f && !isNight) {
-                        PlaceObjectInCell(Vector2Int(x,y), TREE, false, level);
+            if (is_occupied(currCell)) {
+                int type = level->grid[x][y];
+
+                if (type&WATER && !(type&IS_DRIED)) 
+                {
+                    if ((int)g_time%100 == 0 && int(g_time-deltaTime)%100 != 0) {
+                        damageCell(currCell, 1, level);
                     }
-                    break;
+                } 
+                else 
+                {
+                    switch (type&255)
+                    {
+                        case 5: // sapling
+                            // saplings grow at the beginning of each day
+                            if (g_time == 0.0f && !isNight) {
+                                PlaceObjectInCell(currCell, TREE, false, level);
+                            }
+                            break;
+                    }
+                }
             }
+
         }
     }
 }
@@ -480,8 +495,10 @@ void Game::DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect )
 
 
 // deals a specified amount of damage to a cell
-void Game::damageCell( Vector2Int cell, int damage )
+void Game::damageCell( Vector2Int cell, int damage, Scene *level )
 {
+    if (level == NULL) level = currLevel;
+
     if (damage == 0) return;
     int num = currLevel->grid[cell.x][cell.y];
 

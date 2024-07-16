@@ -90,7 +90,7 @@ class Game
         std::shared_ptr<GameObject> moveEntityToLevel( std::shared_ptr<GameObject> obj, Scene *level, Vector2 newPos );
 
         // deals a specified amount of damage to a cell
-        void damageCell( Vector2Int cell, int damage );
+        void damageCell( Vector2Int cell, int damage, Scene *level = NULL );
 
         // toggles day/night, when the appropriate amount of time has passed
         void dayNightCycle();
