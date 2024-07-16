@@ -252,7 +252,20 @@ void Game::update_cells( Scene *level )
                 if (type&WATER && !(type&IS_DRIED)) 
                 {
                     if ((int)g_time%100 == 0 && int(g_time-deltaTime)%100 != 0) {
-                        damageCell(currCell, 1, level);
+                        // interpolate between river beginning and end
+                        // at the left of the map will damage equal to the cell's max hp,
+                        // at the right of the map will deal one damage
+
+                        float maxDamage = float((type&MAX_HEALTH)>>17);
+                        
+                        // use linear interpolation
+                        float t = (float)x / (float)dimensions.x;
+
+                        // t = 0 when x is zero (the max damage should be dealt), and
+                        // t = 1 when x = dimensions.x (the minimum damage).
+                        int damage = ceilToInt(maxDamage * (1.0f-t));
+
+                        damageCell(currCell, damage, level);
                     }
                 } 
                 else 
