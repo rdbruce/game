@@ -117,6 +117,8 @@ class Game
         bool is_item( int type );
         // returns true if the specified cell is a barrier
         bool is_barrier( Vector2Int cell );
+        // returns true if there is some building in the cell
+        bool is_occupied( Vector2Int cell );
 
 
         // for tracking player input
@@ -194,6 +196,9 @@ class Game
 
         // place an object into a cell in the global grid
         int PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, Scene *level = NULL);
+        // updates the background texture for rendering
+        void drawCell( Vector2Int cell );
+
 
         // renders a tree texture into the overlay texture
         void AddTreeToOverlay( Vector2Int cell );
@@ -230,6 +235,12 @@ class Game
 
         // spawns a wolf at a random location on the maps edge
         std::shared_ptr<GameObject> spawnWolf();
+
+        // checks if the river has been walled off, and removes water from the subsequent tiles
+        void damRiver();
+
+        // removes water from all the cells to the right of the specified one
+        void removeWaterFollowingCell( Vector2Int cell );
 };
 
 #endif
