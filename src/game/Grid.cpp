@@ -528,32 +528,49 @@ void Game::damRiver()
     // check the top row of the river to see if there are any barriers
     // river starts at row 12 (index 11)
 
-    int n = currLevel->gridDimensions.x - 1;
-    // flags
-    bool barrierInRow = true;
+    int n = currLevel->gridDimensions.x - 1, x;
 
-    for (int y = 11; y < 19 && barrierInRow; y++) 
-    {
-        barrierInRow = false;
+    for (x = 1; x < n; x++) {
+        Vector2Int cell(x, 11);
 
-        for (int x = 1; x < n; x++) 
+        // if a valid dam has been found, clear up the river behind it
+        if (blocksRiver(cell)) 
         {
-            Vector2Int cell(x, y);
-            if (is_barrier(cell) && is_occupied(cell)) {
-                barrierInRow = true;
-                removeWaterFollowingCell(cell);
-                break;
+            // river spans from y cell 11 to 18 (inclusive)
+            for (int y = 11; y < 19; y++) {
+                Vector2Int currCell(x, y);
+                removeWaterFollowingCell(currCell);
             }
-            int num = currLevel->grid[x][cell.y];
+            break;
+        }
+    }
+    
+    for (int y = 11; y < 19; y++) {
+        for (int i = 1; i < x; i++) 
+        {
+            int num = currLevel->grid[i][y];
             if (num&IS_DRIED) {
+                Vector2Int curr(i, y);
                 num &= ~IS_DRIED;
-                if (!is_occupied(cell)) num |= BARRIER;
-                currLevel->grid[x][cell.y] = num;
-                drawCell(cell);
+                if (!is_occupied(curr)) num |= BARRIER;
+                currLevel->grid[i][y] = num;
+                drawCell(curr);
             }
         }
     }
 }
+
+bool Game::blocksRiver( Vector2Int cell )
+{
+    // other end of the river reached, return true
+    if (!(currLevel->grid[cell.x][cell.y]&WATER)) return true;
+    // cell is water and unblocked, return false
+    if (!(is_barrier(cell) && is_occupied(cell))) return false;
+
+    Vector2Int currCell(cell.x, cell.y+1);
+    return blocksRiver( currCell );
+}
+
 
 void Game::removeWaterFollowingCell( Vector2Int cell )
 {

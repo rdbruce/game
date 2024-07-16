@@ -239,6 +239,9 @@ class Game
         // checks if the river has been walled off, and removes water from the subsequent tiles
         void damRiver();
 
+        // recursive, returns true if the river is blocked
+        bool blocksRiver( Vector2Int cell );
+
         // removes water from all the cells to the right of the specified one
         void removeWaterFollowingCell( Vector2Int cell );
 };
