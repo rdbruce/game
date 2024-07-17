@@ -156,6 +156,7 @@ class Game
         Scene Base;
         Scene Woods;
         Scene Woods2;
+        Scene Town;
         // true when switching between levels
         bool switching_scenes = false;
 
@@ -177,9 +178,10 @@ class Game
         std::shared_ptr<LTexture> Bert = nullptr;
         std::shared_ptr<LTexture>   logTex, bridgeTex, waterTex, grassTex, treeTex,
                                     stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
-                                    pine_coneTex, plankTex, foxTex,
+                                    pine_coneTex, plankTex, foxTex, berryTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
-                                    shoreline4Tex, closed_doorTex, open_doorTex, dirtTex;
+                                    shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
+                                    berry_bushTex, empty_bushTex;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;

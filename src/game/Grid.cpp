@@ -102,6 +102,14 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             } else num |= OPEN_DOOR;
             break;
 
+        case 10: // berry bush
+            num = BERRY_BUSH;
+            break;
+
+        case 11: // empty berry bush
+            num = EMPTY_BUSH;
+            break;
+
 
         case EMPTY:
         {
@@ -181,6 +189,16 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     break;
                 }
 
+                case 10: { // berry bush
+                    // spawn a berry
+                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
+                    spawnItemStack(Berry_Item, pos, 1);
+                    // place a depleted bush where the berry bush is
+                    return PlaceObjectInCell(cell, EMPTY_BUSH, false, level);
+                }
+
+                case 11: return 0; // berry bush can't be removed
+
                 default: break;
             }
             // preserve bits 16 (indestructible), and 13, 17-24 (water), 
@@ -234,6 +252,10 @@ void Game::drawCell( Vector2Int cell )
         case 7: tEditor.renderTextureToTexture(BGTexture, closed_doorTex, &cellRect); break;
 
         case 8: tEditor.renderTextureToTexture(BGTexture, open_doorTex, &cellRect); break;
+
+        case 10: tEditor.renderTextureToTexture(BGTexture, berry_bushTex, &cellRect); break;
+
+        case 11: tEditor.renderTextureToTexture(BGTexture, empty_bushTex, &cellRect); break;
     }
 }
 
@@ -260,7 +282,6 @@ void Game::update_cells( Scene *level )
                         
                         // use linear interpolation
                         float t = (float)x / (float)dimensions.x;
-
                         // t = 0 when x is zero (the max damage should be dealt), and
                         // t = 1 when x = dimensions.x (the minimum damage).
                         int damage = ceilToInt(maxDamage * (1.0f-t));
@@ -323,9 +344,12 @@ void Game::render_cell_health()
 {
     int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
     int sideLen = currLevel->cell_sideLen;
-    for (int x = 0; x < nx; x++) {
-        for (int y = 0; y < ny; y++) {
-            Vector2Int p( x*sideLen - camera.x, y*sideLen - camera.y );
+    for (int x = 0; x < nx; x++) 
+    {
+        int xPos = x*sideLen - camera.x;
+        for (int y = 0; y < ny; y++) 
+        {
+            Vector2Int p( xPos, y*sideLen - camera.y );
             // not within the camera's view, don't render
             if (p.x != Clamp(-sideLen, camera.w, p.x) || p.y != Clamp(-sideLen, camera.h, p.y)) {
                 continue;
@@ -335,7 +359,9 @@ void Game::render_cell_health()
             int max_hp = (num&MAX_HEALTH)>>17,
                 health = (num&HEALTH)>>8;
 
-            if (health < max_hp && health != 0) {
+            // don't show the health bar for cells at maxHP or 0 hp
+            if (health < max_hp && health != 0) 
+            {
                 float t = (float)health / (float) max_hp;
                 int wWhite = sideLen*t, wRed = sideLen*(1.0f-t);
 

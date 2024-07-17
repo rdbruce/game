@@ -42,6 +42,7 @@ enum EntityType
     Bridge_Item,    
     Door_Item,      
     Stone_Item,     
+    Berry_Item,
     ITEM_MAX,
 
     // end of item types

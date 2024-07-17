@@ -181,7 +181,7 @@ void GameObject::playerPositionFunc()
 void GameObject::foxPositionFunc()
 {
     // attempt to move back to a point
-    Vector2 target(820.0f, 750.0f);
+    Vector2 target(609.0f, 230.0f);
     Vector2 dist = target - pos;
     Vector2 vel = Vector2_Zero;
 

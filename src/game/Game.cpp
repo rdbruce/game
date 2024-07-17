@@ -590,8 +590,9 @@ void Game::rightClickFunc()
     float r = (mPos - currLevel->player->get_pos()).length();
     // clicked too far away, do nothing
     if (r > interactRange) return;
+    auto held = currLevel->held;
 
-    if (currLevel->held == nullptr)
+    if (held == nullptr)
     {
         // check to see if the player clicked on ANY entities
         int n = currLevel->gameObjects.size();
@@ -608,13 +609,21 @@ void Game::rightClickFunc()
                 if (crafted != nullptr) return;
             }
         }
-    }
+    // if the player is holding berries, heal them
+    } else if (held->get_type() == Berry_Item) {
+        auto player = currLevel->player;
+        int pHP = player->get_hp();
+        if (pHP < player->get_maxHP()) {
+            player->set_HP(pHP + 1);
+            held->set_HP(held->get_hp() - 1);
+        }
+        return;
+    } 
+
     // the player didn't craft anything
     // find the cell they selected
     int sideLen = currLevel->cell_sideLen;
     Vector2Int cell(mPos.x/sideLen, mPos.y/sideLen);
-
-    auto held = currLevel->held;
 
     // the type of building to be placed in the cell
     int building = (held == nullptr)? EMPTY : get_building(held->get_type());
@@ -695,10 +704,14 @@ void Game::load_levels()
     Woods2 = Scene("../../saves/Woods2.txt", this);
     if (Woods2.player != nullptr) currLevel = &Woods2;
 
+    Town = Scene("../../saves/Town.txt", this);
+    if (Town.player != nullptr) currLevel = &Town;
+
     // set up pointers to adjacent levels
-    Base.assignNeighbours(nullptr, &Woods);
+    Base.assignNeighbours(&Town, &Woods);
     Woods.assignNeighbours(&Base, nullptr, &Woods2);
     Woods2.assignNeighbours(nullptr, nullptr, nullptr, &Woods);
+    Town.assignNeighbours(nullptr, &Base);
 
     isNight = currLevel->night;
 
@@ -800,9 +813,21 @@ void Game::load_textures()
     if (!foxTex->loadFromFile("../../assets/Entities/Fox.png")) {
         std::cerr << "Failed to load texture for fox!" << std::endl;
     }
+    berryTex = std::make_shared<LTexture>(window);
+    if (!berryTex->loadFromFile("../../assets/Items/Berry.png")) {
+        std::cerr << "Failed to load texture for berry!" << std::endl;
+    }
     dirtTex = std::make_shared<LTexture>(window);
     if (!dirtTex->loadFromFile("../../assets/Ground/Dirt.png")) {
         std::cerr << "Failed to load texture for dirt!" << std::endl;
+    }
+    berry_bushTex = std::make_shared<LTexture>(window);
+    if (!berry_bushTex->loadFromFile("../../assets/Buildings/Berry_Bush.png")) {
+        std::cerr << "Failed to load texture for berry bush!" << std::endl;
+    }
+    empty_bushTex = std::make_shared<LTexture>(window);
+    if (!empty_bushTex->loadFromFile("../../assets/Buildings/EmptyBush.png")) {
+        std::cerr << "Failed to load texture for depleted bush!" << std::endl;
     }
 
     CRT_Tex = std::make_shared<LTexture>(window);
