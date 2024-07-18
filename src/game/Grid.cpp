@@ -5,16 +5,18 @@
 
 
 
-bool Game::is_barrier( Vector2Int cell ) {
+bool Game::is_barrier( Vector2Int cell, Scene *level ) {
+    if (level == NULL) level = currLevel;
     // validate the cell 
-    if (cell.x < 0 || cell.y < 0 || cell.x>=currLevel->gridDimensions.x || cell.y>=currLevel->gridDimensions.y) return false;
-    return currLevel->grid[cell.x][cell.y]&BARRIER; 
+    if (cell.x < 0 || cell.y < 0 || cell.x>=level->gridDimensions.x || cell.y>=level->gridDimensions.y) return false;
+    return level->grid[cell.x][cell.y]&BARRIER; 
 }
 
-bool Game::is_occupied( Vector2Int cell ) {
+bool Game::is_occupied( Vector2Int cell, Scene *level ) {
+    if (level == NULL) level = currLevel;
     // validate the cell
-    if (cell.x < 0 || cell.y < 0 || cell.x>=currLevel->gridDimensions.x || cell.y>=currLevel->gridDimensions.y) return false;
-    return currLevel->grid[cell.x][cell.y]&OCCUPIED;
+    if (cell.x < 0 || cell.y < 0 || cell.x>=level->gridDimensions.x || cell.y>=level->gridDimensions.y) return false;
+    return level->grid[cell.x][cell.y]&OCCUPIED;
 }
 
 
@@ -268,12 +270,13 @@ void Game::update_cells( Scene *level )
         {
             Vector2Int currCell(x, y);
 
-            if (is_occupied(currCell)) {
+            if (is_occupied(currCell, level)) {
                 int type = level->grid[x][y];
 
                 if (type&WATER && !(type&IS_DRIED)) 
                 {
-                    if ((int)g_time%100 == 0 && int(g_time-deltaTime)%100 != 0) {
+                    int val = (int)DAY_LENGTH / 3;
+                    if ((int)g_time%val == 0 && int(g_time-deltaTime)%val != 0) {
                         // interpolate between river beginning and end
                         // at the left of the map will damage equal to the cell's max hp,
                         // at the right of the map will deal one damage
@@ -294,9 +297,18 @@ void Game::update_cells( Scene *level )
                     switch (type&255)
                     {
                         case 5: // sapling
-                            // saplings grow at the beginning of each day
+                            // when planted in the base, saplings will grow every three days.
+                            // otherwise they grow every day
                             if (g_time == 0.0f && !isNight) {
-                                PlaceObjectInCell(currCell, TREE, false, level);
+                                int timer = (level == &Base)? (type&TIMER)>>26 : 2;
+                                if (timer >= 2) {
+                                    PlaceObjectInCell(currCell, TREE, false, level);
+                                } else {
+                                    timer++; timer <<= 26;
+                                    type &= ~TIMER;
+                                    type |= timer;
+                                    level->grid[x][y] = type;
+                                }
                             }
                             break;
                     }
@@ -597,6 +609,7 @@ void Game::damRiver()
                 Vector2Int currCell(x, y);
                 removeWaterFollowingCell(currCell);
             }
+            mayGatherStone = false;
             break;
         }
     }
@@ -643,5 +656,17 @@ void Game::removeWaterFollowingCell( Vector2Int cell )
         currLevel->grid[x][cell.y] = num;
         // render the new cell
         drawCell(currCell);
+
+        // 5% chance to spawn a stone item in each riverbed cell
+        // this may only be done once per day
+        if (mayGatherStone) {
+            float random = (float)rand() / RAND_MAX;
+            if (random <= 0.05f) 
+            {
+                int sideLen = currLevel->cell_sideLen;
+                Vector2 pos(currCell.x*sideLen, currCell.y*sideLen);
+                Instantiate( pos, Stone_Item, 1 );
+            }
+        }
     }
 }

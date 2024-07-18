@@ -102,6 +102,19 @@ void Game::render_framerate()
     fpsTex->render(0, 0);
 }
 
+void Game::render_player_health()
+{
+    SDL_Rect heartRect = {0, 30, 50, 50};
+    int full = currLevel->player->get_hp();
+
+    for (int i = 0; i < 5; i++) 
+    {
+        if (i < full) full_heartTex->render(heartRect.x, heartRect.y, &heartRect);
+        else empty_heartTex->render(heartRect.x, heartRect.y, &heartRect);
+        heartRect.x += heartRect.w;
+    }
+}
+
 
 // updates all the game objects
 void Game::update_gameobjects()
@@ -455,7 +468,7 @@ std::shared_ptr<GameObject> Game::moveEntityToLevel( std::shared_ptr<GameObject>
 void Game::dayNightCycle()
 {
     // after x seconds
-    if (g_time >= 300.0f) {
+    if (g_time >= DAY_LENGTH) {
         // toggle night, and make sure all scene objects get updated
         isNight = !isNight;
         Base.night = Woods.night = isNight;
@@ -465,10 +478,7 @@ void Game::dayNightCycle()
         // reset g_time to 0
         g_time = 0.0f;
 
-        // spawn mr fox at the beginning of each day
-        if (!isNight) {
-            int sideLen = Base.cell_sideLen;
-        }
+        if (!isNight) mayGatherStone = true;
 
         return;
     } 
@@ -828,6 +838,18 @@ void Game::load_textures()
     empty_bushTex = std::make_shared<LTexture>(window);
     if (!empty_bushTex->loadFromFile("../../assets/Buildings/EmptyBush.png")) {
         std::cerr << "Failed to load texture for depleted bush!" << std::endl;
+    }
+    full_heartTex = std::make_shared<LTexture>(window);
+    if (!full_heartTex->loadFromFile("../../assets/Menu/FullHeart.png")) {
+        std::cerr << "Failed to load texture for full heart!" << std::endl;
+    }
+    empty_heartTex = std::make_shared<LTexture>(window);
+    if (!empty_heartTex->loadFromFile("../../assets/Menu/EmptyHeart.png")) {
+        std::cerr << "Failed to load texture for empty heart!" << std::endl;
+    }
+    stoneTex = std::make_shared<LTexture>(window);
+    if (!stoneTex->loadFromFile("../../assets/Items/Stone.png")) {
+        std::cerr << "Failed  to load texture for stone!" << std::endl;
     }
 
     CRT_Tex = std::make_shared<LTexture>(window);

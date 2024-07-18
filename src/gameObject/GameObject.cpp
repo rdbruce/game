@@ -249,6 +249,30 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             moveSpeed = 0.0f;
             break;
         }
+
+        case Stone_Item: {
+            // assign the texture
+            tex = game->stoneTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
+
+            // set up the hitbox
+            Vector2Int size(sideLen-20, sideLen-20);
+            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+            hitbox = { p.x, p.y, size.x, size.y };
+            radius = Max(size.x/2, size.y/2);
+
+            // assign behaviour function
+            velocityFunc = &GameObject::deccelerateVelocityFunc;
+            positionFunc = &GameObject::thrownItemPositionFunc;
+            collisionFunc = &GameObject::stationaryItemCollisionFunction;
+
+            // other attributes
+            max_hp = 4;
+            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
+            hasCollision = true;
+            moveSpeed = 1.5f;
+            break;
+        }
     }
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}

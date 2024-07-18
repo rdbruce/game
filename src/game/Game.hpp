@@ -56,6 +56,8 @@ class Game
         void render_cell_health();
         // shows the current frame rate
         void render_framerate();
+        // display's the player's hp
+        void render_player_health();
 
 
         // finds the time elapsed between frames
@@ -116,9 +118,9 @@ class Game
         // returns true if the type represents an Item
         bool is_item( int type );
         // returns true if the specified cell is a barrier
-        bool is_barrier( Vector2Int cell );
+        bool is_barrier( Vector2Int cell, Scene *level = NULL );
         // returns true if there is some building in the cell
-        bool is_occupied( Vector2Int cell );
+        bool is_occupied( Vector2Int cell, Scene *level = NULL );
 
 
         // for tracking player input
@@ -136,6 +138,8 @@ class Game
         SDL_Rect map;
 
 
+        // the length (in seconds) of one day
+        float DAY_LENGTH = 300.0f;
         // the time elapsed between frames
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
@@ -145,6 +149,9 @@ class Game
         float g_time = 0.0f;
         // whether or not it is currently night time
         bool isNight;
+
+        // whether or not stone may be gathered from the riverbed
+        bool mayGatherStone = true;
 
 
         // position and dimensions of the camera
@@ -181,7 +188,8 @@ class Game
                                     pine_coneTex, plankTex, foxTex, berryTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
-                                    berry_bushTex, empty_bushTex;
+                                    berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
+                                    stoneTex;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;
