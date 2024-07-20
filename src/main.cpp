@@ -99,9 +99,8 @@ int main(
   // Initialize SDL
   auto gHolder = std::make_shared<LWindow>();
 
-  GameMenu menu(gHolder);
-
   Game game(gHolder);
+  GameMenu menu(gHolder, &game);
 
   // Event handler
   SDL_Event e;
@@ -129,8 +128,8 @@ int main(
     }
 
     game.update_deltaTime();
-    if (!inMenu) {
-
+    if (!inMenu) 
+    {
       game.update_gameobjects();
 
       // call update_cells first

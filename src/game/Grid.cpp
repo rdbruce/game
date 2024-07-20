@@ -331,7 +331,7 @@ void Game::update_cells()
     if (((int(g_time)%2) == 0 && (int(g_time-deltaTime)%2) != 0) || g_time == 0.0f) {
         update_cells(&Base);
         update_cells(&Woods);
-        update_cells(&Woods2);
+        update_cells(&Town);
     }
 }
 

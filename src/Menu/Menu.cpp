@@ -1,7 +1,8 @@
 #include "Menu.hpp"
 #include "Button.hpp"
 
-GameMenu::GameMenu( std::shared_ptr<LWindow> Window ) : window(Window)
+GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game ) 
+: window(Window), game(game)
 {
     BGTexture = std::make_shared<LTexture>(window);
     if (!BGTexture->loadFromFile("../../assets/Bert.png")) {
@@ -10,13 +11,22 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window ) : window(Window)
 
     // create buttons
     auto texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/StartButton.png")) {
-        std::cerr << "Failed to load button texture!" << std::endl;
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ContinueButton.png")) {
+        std::cerr << "Failed to load continue button texture!" << std::endl;
     }
     
     int x = window->getWidth() - 275, y = 75;
     SDL_Rect rect = {x, y, 200, 66};
-    auto button = std::make_shared<Button>(this, rect, texture, &Button::enter_game);
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
+    menuButtons.push_back(button);
+    
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
+        std::cerr << "Failed to load new game button texture!" << std::endl;
+    }
+    rect.y += 99;
+    button = std::make_shared<Button>(this, rect, texture, &Button::load_new_game);
     menuButtons.push_back(button);
 }
 
@@ -60,7 +70,7 @@ void GameMenu::leftClickFunc()
 
     // check all the buttons to see if they were clicked
     int n = currButtons->size();
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n && isActive; i++) {
         std::shared_ptr<Button> b = (*currButtons)[i];
         if (b->isPressed( x, y )) {
             // when pressed, execute the button's function

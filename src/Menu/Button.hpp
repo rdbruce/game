@@ -47,4 +47,10 @@ class Button
 
         // enters the game
         void enter_game();
+
+        // loads previous save file
+        void continue_game();
+
+        // loads a new game file
+        void load_new_game();
 };

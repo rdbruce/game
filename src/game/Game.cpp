@@ -18,14 +18,8 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
     // camera dimensions should be the same as window size
     camera = { 0, 0, window->getWidth(), window->getHeight() };
 
-
-    // load levels
-    load_levels();
-
     // set up pathfinding
     AStar::Open(&currLevel->grid, &barrier);
-
-    initialise_BGTexture();
 }
 
 
@@ -452,8 +446,9 @@ void Game::enter_dialogue( Dialogue newDialogue ) { currDialogue = newDialogue; 
 
 void Game::save_game()
 {
-    Base.Save("../../saves/");
-    Woods.Save("../../saves/");
+    Base.Save("../../saves/curr/");
+    Woods.Save("../../saves/curr/");
+    Town.Save("../../saves/curr/");
 }
 
 
@@ -639,24 +634,20 @@ void Game::throwSingleItem()
 }
 
 
-void Game::load_levels()
+void Game::load_levels( std::string dir )
 {
-    Base = Scene("../../saves/Base.txt", this);
+    Base = Scene(dir + "Base.txt", this);
     if (Base.player != nullptr) currLevel = &Base;
 
-    Woods = Scene("../../saves/Woods.txt", this);
+    Woods = Scene(dir + "Woods.txt", this);
     if (Woods.player != nullptr) currLevel = &Woods;
 
-    Woods2 = Scene("../../saves/Woods2.txt", this);
-    if (Woods2.player != nullptr) currLevel = &Woods2;
-
-    Town = Scene("../../saves/Town.txt", this);
+    Town = Scene(dir + "Town.txt", this);
     if (Town.player != nullptr) currLevel = &Town;
 
     // set up pointers to adjacent levels
     Base.assignNeighbours(&Town, &Woods);
-    Woods.assignNeighbours(&Base, nullptr, &Woods2);
-    Woods2.assignNeighbours(nullptr, nullptr, nullptr, &Woods);
+    Woods.assignNeighbours(&Base, nullptr);
     Town.assignNeighbours(nullptr, &Base);
 
     isNight = currLevel->night;

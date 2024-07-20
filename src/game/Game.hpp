@@ -114,6 +114,11 @@ class Game
         // saves all scenes to file
         void save_game();
 
+        // loads levels from files, chooses one to be the active level
+        void load_levels( std::string dir );
+        // renders every cell in the level, to be used when loading levels
+        void initialise_BGTexture();
+
 
     private:
 
@@ -165,10 +170,7 @@ class Game
 
         // all the levels in the game
         Scene *currLevel;
-        Scene Base;
-        Scene Woods;
-        Scene Woods2;
-        Scene Town;
+        Scene Base, Woods, Town;
         // true when switching between levels
         bool switching_scenes = false;
 
@@ -182,8 +184,6 @@ class Game
         // loads all of the games textures from file
         void load_textures();
 
-        // loads levels from files, chooses one to be the active level
-        void load_levels();
 
         // background texture
         std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr, CRT_Tex = nullptr, CRT = nullptr;
@@ -224,8 +224,6 @@ class Game
         void DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect );
 
 
-        // renders every cell in the level, to be used when loading levels
-        void initialise_BGTexture();
 
 
         // returns true if the coordinates are within the rect

@@ -2,6 +2,7 @@
 
 #include "../engine/LTexture.hpp"
 #include "../engine/LWindow.hpp"
+#include "../game/Game.hpp"
 
 #include <iostream>
 #include <vector>
@@ -26,7 +27,7 @@ class GameMenu
     public:
 
         // initialise menu
-        GameMenu( std::shared_ptr<LWindow> Window );
+        GameMenu( std::shared_ptr<LWindow> Window, Game *game );
 
         // renders the background texture
         void render_background();
@@ -52,6 +53,8 @@ class GameMenu
 
         bool isActive = true;
         State state = main_menu;
+
+        Game *game = nullptr;
 
 
         // checks to see if the player clicks any buttons

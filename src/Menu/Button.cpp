@@ -27,3 +27,19 @@ void Button::enter_game()
     menu->isActive = false;
     menu->currButtons = &menu->pauseButtons;
 }
+
+void Button::continue_game()
+{
+    menu->game->load_levels("../../saves/curr/");
+    menu->game->initialise_BGTexture();
+    enter_game();
+}
+
+void Button::load_new_game()
+{
+    menu->game->load_levels("../../saves/NewGame/");
+    menu->game->initialise_BGTexture();
+    // save the game to overwrite any existing save data
+    menu->game->save_game();
+    enter_game();
+}
