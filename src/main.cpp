@@ -155,6 +155,7 @@ int main(
         game.render_overlay();
         game.render_cell_health();
         game.render_player_health();
+        game.render_controls();
 
         game.render_framerate();
 

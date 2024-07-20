@@ -89,33 +89,6 @@ void Game::handle_events( SDL_Event& e )
 }
 
 
-
-void Game::render_framerate()
-{
-    int newFPS = 1.0f / deltaTime;
-    fps = (newFPS == Clamp(0, 5000, newFPS))? newFPS : fps;
-    std::string txt = std::to_string(fps) + "FPS";
-    if (!fpsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-        std::cerr << "couldn't render FPS!" << std::endl;
-        return;
-    }
-    fpsTex->render(0, 0);
-}
-
-void Game::render_player_health()
-{
-    SDL_Rect heartRect = {0, 30, 50, 50};
-    int full = currLevel->player->get_hp();
-
-    for (int i = 0; i < 5; i++) 
-    {
-        if (i < full) full_heartTex->render(heartRect.x, heartRect.y, &heartRect);
-        else empty_heartTex->render(heartRect.x, heartRect.y, &heartRect);
-        heartRect.x += heartRect.w;
-    }
-}
-
-
 // updates all the game objects
 void Game::update_gameobjects()
 {
@@ -127,43 +100,6 @@ void Game::update_gameobjects()
     }
 }
 
-
-
-
-void Game::center_camera_on_player()
-{
-    Vector2 pPos = currLevel->player->get_pos(),
-            cPos = pPos - Vector2(camera.w/2, camera.h/2);
-    
-    // if the camera is on the edge of the map, snap it back in bounds
-    cPos.x = clampf(0.0f, map.w-camera.w, cPos.x);
-    cPos.y = clampf(0.0f, map.h-camera.h, cPos.y);
-
-    camera.x = cPos.x; camera.y = cPos.y;
-}
-
-
-// renders the scene's background
-void Game::render_background() {
-    BGTexture->render(0, 0, &camera, &camera);
-}
-
-void Game::render_overlay() {
-    overlayTexture->render(0, 0, &camera, &camera);
-    CRT->renderAsBackground();
-}
-
-
-
-// renders all the game objects
-void Game::render_gameobjects() {
-    for (int i = 0; i < currLevel->gameObjects.size(); i++) {
-        if (switching_scenes) {
-            switching_scenes = false; return;
-        }
-        currLevel->gameObjects[i]->render( camera.x, camera.y );
-    }
-}
 
 // finds the time elapsed between frames
 void Game::update_deltaTime() {
@@ -733,6 +669,7 @@ void Game::load_levels()
 void Game::load_textures()
 {
     fpsTex = std::make_unique<LTexture>(window);
+    controlsTex = std::make_unique<LTexture>(window);
     // load all the textures from their image files
 
     grassTex = std::make_shared<LTexture>(window);
@@ -850,6 +787,18 @@ void Game::load_textures()
     stoneTex = std::make_shared<LTexture>(window);
     if (!stoneTex->loadFromFile("../../assets/Items/Stone.png")) {
         std::cerr << "Failed  to load texture for stone!" << std::endl;
+    }
+    LMBTex = std::make_shared<LTexture>(window);
+    if (!LMBTex->loadFromFile("../../assets/Menu/Mouse/LeftClick.png")) {
+        std::cerr << "failed to load left mouse texture!" << std::endl;
+    }
+    MMBTex = std::make_shared<LTexture>(window);
+    if (!MMBTex->loadFromFile("../../assets/Menu/Mouse/MiddleClick.png")) {
+        std::cerr << "failed to load middle mouse texture!" << std::endl;
+    }
+    RMBTex = std::make_shared<LTexture>(window);
+    if (!RMBTex->loadFromFile("../../assets/Menu/Mouse/RightClick.png")) {
+        std::cerr << "failed to load right mouse texture!" << std::endl;
     }
 
     CRT_Tex = std::make_shared<LTexture>(window);

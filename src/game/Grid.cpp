@@ -311,10 +311,16 @@ void Game::update_cells( Scene *level )
                                 }
                             }
                             break;
+
+                        case 11: // empty berry bush
+                            // grow new berries every day
+                            if (g_time == 0.0f && !isNight) {
+                                PlaceObjectInCell(currCell, BERRY_BUSH, false, level);
+                            }
+                            break;
                     }
                 }
             }
-
         }
     }
 }

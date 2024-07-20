@@ -58,6 +58,8 @@ class Game
         void render_framerate();
         // display's the player's hp
         void render_player_health();
+        // shows what mouse controls the player can use
+        void render_controls();
 
 
         // finds the time elapsed between frames
@@ -144,7 +146,10 @@ class Game
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
         int fps;
-        std::unique_ptr<LTexture> fpsTex;
+
+        // textures used for rendering text
+        std::unique_ptr<LTexture> fpsTex, controlsTex;
+
         // tracking the time of day/night
         float g_time = 0.0f;
         // whether or not it is currently night time
@@ -189,7 +194,7 @@ class Game
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
                                     berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
-                                    stoneTex;
+                                    stoneTex, LMBTex, MMBTex, RMBTex;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;
