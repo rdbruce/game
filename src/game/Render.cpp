@@ -13,7 +13,8 @@ void Game::render_controls()
     if (currLevel->held != nullptr) 
     {
         int hp = currLevel->held->get_hp();
-        if (hp == 1) {
+        if (hp == 1) 
+        {
             // do LMB / MMB
             LMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
             txt = "/";
@@ -23,32 +24,76 @@ void Game::render_controls()
             }
             controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
             MMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
-            txt = "Throw item";
+            txt = "Throw item (";
             if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
                 std::cerr << "couldn't render controls text!" << std::endl;
                 return;
             }
-            controlsTex->render(mRect.x, mRect.y); mRect.x = 0;
-            mRect.y += 30;
+            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
+
+            txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed()));
+            if (!controlsTex->loadFromRenderedText(txt, {255,0,0,255})) {
+                std::cerr << "couldn't render controls text!" << std::endl;
+                return;
+            }
+            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
+
+            txt = ")";
+            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
+                std::cerr << "couldn't render controls text!" << std::endl;
+                return;
+            }
+            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
         
-        } else {
+        } 
+        else 
+        {
             // left click to throw one item
-            txt = "Throw one item";
+            txt = "Throw one item (";
             if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
                 std::cerr << "couldn't render controls text!" << std::endl;
                 return;
             }
-            LMBTex->render(mRect.x, mRect.y, &mRect);
-            controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+            LMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
+            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
+
+            txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed()));
+            if (!controlsTex->loadFromRenderedText(txt, {255,0,0,255})) {
+                std::cerr << "couldn't render controls text!" << std::endl;
+                return;
+            }
+            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
+
+            txt = ")";
+            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
+                std::cerr << "couldn't render controls text!" << std::endl;
+                return;
+            }
+            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
             
+
             // middle click to throw the stack
-            txt = "Throw all " + std::to_string(hp) + " items";
+            txt = "Throw all " + std::to_string(hp) + " items (";
             if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
                 std::cerr << "couldn't render controls text!" << std::endl;
                 return;
             }
-            MMBTex->render(mRect.x, mRect.y, &mRect);
-            controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+            MMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
+            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
+
+            txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed() * hp));
+            if (!controlsTex->loadFromRenderedText(txt, {255,0,0,255})) {
+                std::cerr << "couldn't render controls text!" << std::endl;
+                return;
+            }
+            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
+
+            txt = ")";
+            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
+                std::cerr << "couldn't render controls text!" << std::endl;
+                return;
+            }
+            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
         }
 
 
