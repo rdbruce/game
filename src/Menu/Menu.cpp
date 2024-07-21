@@ -16,7 +16,13 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
 
 void GameMenu::render_background()
 {
-    if (isActive) BGTexture->renderAsBackground();
+    if (isActive) 
+    {
+        auto tex = (state == in_game)? 
+                   tEditor.createSolidColour(window->getWidth(), window->getHeight(), 180, window) 
+                   : BGTexture;
+        tex->renderAsBackground();
+    }
 }
 
 void GameMenu::render_buttons()
@@ -36,6 +42,7 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
         case SDL_KEYDOWN:
             if (e.key.keysym.sym == SDLK_ESCAPE && state == in_game) {
                 isActive = !isActive;
+                game->clear_input();
             }
             break;
 
@@ -120,9 +127,11 @@ void GameMenu::create_pauseMenu_buttons()
 
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/MainMenuButton.png")) {
-        std::cerr << "failed to load resum button texture!" << std::endl;
+        std::cerr << "failed to load main menu button texture!" << std::endl;
     }
     rect.y += 125;
     button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu);
     pauseButtons.push_back(button);
 }
+
+bool GameMenu::is_inGame() { return state == in_game; }

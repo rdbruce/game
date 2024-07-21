@@ -2,6 +2,7 @@
 
 #include "../engine/LTexture.hpp"
 #include "../engine/LWindow.hpp"
+#include "../engine/TextureManipulator.hpp"
 #include "../game/Game.hpp"
 
 #include <iostream>
@@ -41,6 +42,8 @@ class GameMenu
 
         bool is_active();
 
+        bool is_inGame();
+
         // creates all the button objects for the main menu
         void create_mainMenu_buttons();
 
@@ -62,6 +65,8 @@ class GameMenu
         State state = main_menu;
 
         Game *game = nullptr;
+
+        TextureManipulator tEditor;
 
 
         // checks to see if the player clicks any buttons

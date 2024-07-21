@@ -141,15 +141,10 @@ SDL_Surface* createEmptySurface( int width, int height )
 std::shared_ptr<LTexture> TextureManipulator::createSolidColour( int width, int height, Uint32 colour, std::shared_ptr<LWindow> gHolder)
 {
     SDL_Renderer *renderer = gHolder->gRenderer;
-    SDL_Texture *tex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
-    if (tex == NULL) {
-        std::cerr << "Failed to create solid texture!" << std::endl;
-        return nullptr;
-    }
 
-    auto res = std::make_shared<LTexture>(gHolder);
+    auto res = createEmptyTexture(width, height, gHolder);
 
-    SDL_SetRenderTarget(renderer, tex);
+    SDL_SetRenderTarget(renderer, res->mTexture);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     Uint8   r = (colour&0xFF000000)>>24,
             g = (colour&0x00FF0000)>>16,
@@ -158,8 +153,5 @@ std::shared_ptr<LTexture> TextureManipulator::createSolidColour( int width, int 
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
     SDL_RenderClear(renderer);
     SDL_SetRenderTarget(renderer, NULL);
-
-    res->mTexture = tex;
-    res->mWidth = width; res->mHeight = height;
     return res;
 }

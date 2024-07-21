@@ -22,6 +22,7 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
     AStar::Open(&currLevel->grid, &barrier);
 }
 
+void Game::clear_input() { inputKeys = 0; }
 
 // handle events like player input
 void Game::handle_events( SDL_Event& e )

@@ -38,6 +38,8 @@ class Game
         // handle events like player input
         void handle_events( SDL_Event& e );
 
+        void clear_input();
+
         // updates all the game objects
         void update_gameobjects();
 

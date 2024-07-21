@@ -146,19 +146,21 @@ int main(
       SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
       SDL_RenderClear(gHolder->gRenderer);
 
-      if (!inMenu) {
-        // Render background
+      // Render background
+      if (menu.is_inGame()) 
+      {
         game.center_camera_on_player();
         game.render_background();
         game.render_gameobjects();
         game.render_overlay();
         game.render_cell_health();
         game.render_player_health();
-        game.render_controls();
+        if (!inMenu) game.render_controls();
 
         game.render_framerate();
+      }
 
-      } else {
+      if (inMenu) {
         menu.render_background();
         menu.render_buttons();
       }

@@ -52,6 +52,7 @@ void Button::exit_to_desktop()
 void Button::close_pause_menu()
 {
     menu->isActive = false;
+    menu->game->clear_input();
 }
 
 void Button::go_to_mainMenu()
