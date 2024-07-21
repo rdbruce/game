@@ -17,6 +17,7 @@ enum State
 {
     main_menu,
     in_game,
+    Quit,
 };
 
 
@@ -35,10 +36,16 @@ class GameMenu
         // shows all the buttons
         void render_buttons();
 
-        // handle user input
-        void handle_events( SDL_Event &e, bool *menuActive );
+        // handle user input, returns true when quit is requested
+        bool handle_events( SDL_Event &e, bool *menuActive );
 
         bool is_active();
+
+        // creates all the button objects for the main menu
+        void create_mainMenu_buttons();
+
+        // creates all the button objects for the in-game pause menu
+        void create_pauseMenu_buttons();
 
     private:
 

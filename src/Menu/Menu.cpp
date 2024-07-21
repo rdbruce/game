@@ -5,29 +5,13 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
 : window(Window), game(game)
 {
     BGTexture = std::make_shared<LTexture>(window);
-    if (!BGTexture->loadFromFile("../../assets/Bert.png")) {
+    if (!BGTexture->loadFromFile("../../assets/Menu/MainMenuBG.png")) {
         std::cerr << "Failed to load menu background!" << std::endl;
     }
 
     // create buttons
-    auto texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ContinueButton.png")) {
-        std::cerr << "Failed to load continue button texture!" << std::endl;
-    }
-    
-    int x = window->getWidth() - 275, y = 75;
-    SDL_Rect rect = {x, y, 200, 66};
-    auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
-    menuButtons.push_back(button);
-    
-
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
-        std::cerr << "Failed to load new game button texture!" << std::endl;
-    }
-    rect.y += 99;
-    button = std::make_shared<Button>(this, rect, texture, &Button::load_new_game);
-    menuButtons.push_back(button);
+    create_mainMenu_buttons();
+    create_pauseMenu_buttons();
 }
 
 void GameMenu::render_background()
@@ -45,7 +29,7 @@ void GameMenu::render_buttons()
     }
 }
 
-void GameMenu::handle_events( SDL_Event &e, bool *menuActive )
+bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
 {
     switch (e.type)
     {
@@ -60,6 +44,8 @@ void GameMenu::handle_events( SDL_Event &e, bool *menuActive )
             break;
     }
     *menuActive = isActive;
+
+    return state == Quit;
 }
 
 void GameMenu::leftClickFunc()
@@ -80,3 +66,63 @@ void GameMenu::leftClickFunc()
 }
 
 bool GameMenu::is_active() { return isActive; }
+
+void GameMenu::create_mainMenu_buttons()
+{
+    auto texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ContinueButton.png")) {
+        std::cerr << "Failed to load continue button texture!" << std::endl;
+    }
+    
+    int x = window->getWidth() - 325, y = 75;
+    SDL_Rect rect = {x, y, 250, 83};
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
+    menuButtons.push_back(button);
+    
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
+        std::cerr << "Failed to load new game button texture!" << std::endl;
+    }
+    rect.y += 125;
+    button = std::make_shared<Button>(this, rect, texture, &Button::load_new_game);
+    menuButtons.push_back(button);
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/SettingsButton.png")) {
+        std::cerr << "Failed to load settings button texture!" << std::endl;
+    }
+    rect.y += 125;
+    button = std::make_shared<Button>(this, rect, texture);
+    menuButtons.push_back(button);
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ExitButton.png")) {
+        std::cerr << "Failed to load texture for exit button" << std::endl;
+    }
+    rect.y += 125;
+    button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop);
+    menuButtons.push_back(button);
+}
+
+void GameMenu::create_pauseMenu_buttons()
+{
+    int x = (window->getWidth()/2) - 125, y = 125;
+    SDL_Rect rect = {x, y, 250, 83};
+
+    auto texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ResumeButton.png")) {
+        std::cerr << "Failed to load resume button texture!" << std::endl;
+    }
+
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu);
+    pauseButtons.push_back(button);
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/MainMenuButton.png")) {
+        std::cerr << "failed to load resum button texture!" << std::endl;
+    }
+    rect.y += 125;
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu);
+    pauseButtons.push_back(button);
+}

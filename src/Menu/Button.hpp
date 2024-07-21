@@ -24,7 +24,6 @@ class Button
         // what happens when the button is pressed
         void (Button::*func)();
 
-
         
     public:
 
@@ -53,4 +52,13 @@ class Button
 
         // loads a new game file
         void load_new_game();
+
+        // closes the game
+        void exit_to_desktop();
+
+        // closes the pause menu
+        void close_pause_menu();
+
+        // exits the game, and goes to the main menu
+        void go_to_mainMenu();
 };

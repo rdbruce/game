@@ -43,3 +43,20 @@ void Button::load_new_game()
     menu->game->save_game();
     enter_game();
 }
+
+void Button::exit_to_desktop()
+{
+    menu->state = Quit;
+}
+
+void Button::close_pause_menu()
+{
+    menu->isActive = false;
+}
+
+void Button::go_to_mainMenu()
+{
+    menu->state = main_menu;
+    menu->isActive = true;
+    menu->currButtons = &menu->menuButtons;
+}

@@ -123,7 +123,7 @@ int main(
 
       // Handle window events
       gHolder->handleEvent(e);
-      menu.handle_events(e, &inMenu);
+      quit = menu.handle_events(e, &inMenu);
       if (!inMenu) game.handle_events(e);
     }
 
