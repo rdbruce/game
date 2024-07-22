@@ -63,7 +63,9 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
     {
         case SDL_KEYDOWN:
             if (e.key.keysym.sym == SDLK_ESCAPE && state == in_game) {
-                isActive = !isActive;
+                if (currButtons == &pauseButtons) isActive = !isActive;
+                confirmationText = "";
+                currButtons = &pauseButtons;
                 game->clear_input();
             }
             break;
