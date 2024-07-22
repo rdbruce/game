@@ -37,6 +37,8 @@ class GameMenu
         // shows all the buttons
         void render_buttons();
 
+        void render_confirmation();
+
         // handle user input, returns true when quit is requested
         bool handle_events( SDL_Event &e, bool *menuActive );
 
@@ -56,10 +58,13 @@ class GameMenu
 
         std::shared_ptr<LTexture> BGTexture = nullptr;
 
+        std::string confirmationText = "";
+
 
         std::vector<std::shared_ptr<Button>> *currButtons = &menuButtons;
         std::vector<std::shared_ptr<Button>> menuButtons, // buttons in the main menu
-                                             pauseButtons; // pause menu
+                                             pauseButtons, // pause menu
+                                             confirmationButtons; // yes/no
 
         bool isActive = true;
         State state = main_menu;
@@ -67,7 +72,6 @@ class GameMenu
         Game *game = nullptr;
 
         TextureManipulator tEditor;
-
 
         // checks to see if the player clicks any buttons
         void leftClickFunc();

@@ -121,6 +121,9 @@ class Game
         // renders every cell in the level, to be used when loading levels
         void initialise_BGTexture();
 
+        // returns g_time
+        float get_time();
+
 
     private:
 

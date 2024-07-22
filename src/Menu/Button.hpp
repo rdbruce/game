@@ -29,6 +29,12 @@ class Button
 
         Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)() = &Button::doNothing );
 
+        // updates execute func
+        void set_func( void (Button::*newFunc)() );
+
+        // changes position
+        void set_pos( int x, int y );
+
         // returns true if the button is pressed
         bool isPressed( int x, int y );
 
@@ -50,6 +56,7 @@ class Button
         // loads previous save file
         void continue_game();
 
+        void new_game_confirmation();
         // loads a new game file
         void load_new_game();
 
@@ -59,6 +66,8 @@ class Button
         // closes the pause menu
         void close_pause_menu();
 
+        void exit_to_menu_confirmation();
+        void exit_decline();
         // exits the game, and goes to the main menu
         void go_to_mainMenu();
 };

@@ -25,6 +25,28 @@ void GameMenu::render_background()
     }
 }
 
+void GameMenu::render_confirmation() {
+    if (confirmationText != "") 
+    {
+        auto rend = std::make_unique<LTexture>(window);
+        if (!rend->loadFromRenderedText("Are you sure?", {255,255,255,255})) {
+            std::cerr << "failed to load confirmation text!" << std::endl;
+        }
+
+        int x = (window->getWidth() - rend->getWidth())/2, 
+            y = 125 - rend->getHeight() * 2;
+
+        rend->render(x, y); 
+        y += rend->getHeight(); x += rend->getWidth()/2;
+
+        if (!rend->loadFromRenderedText(confirmationText, {255,255,255,255})) {
+            std::cerr << "failed to load confirmation text!" << std::endl;
+        }
+        x -= rend->getWidth()/2;
+        rend->render(x, y);
+    }
+}
+
 void GameMenu::render_buttons()
 {
     if (isActive) {
@@ -62,8 +84,7 @@ void GameMenu::leftClickFunc()
     SDL_GetMouseState(&x, &y);
 
     // check all the buttons to see if they were clicked
-    int n = currButtons->size();
-    for (int i = 0; i < n && isActive; i++) {
+    for (int i = 0; i < currButtons->size(); i++) {
         std::shared_ptr<Button> b = (*currButtons)[i];
         if (b->isPressed( x, y )) {
             // when pressed, execute the button's function
@@ -81,7 +102,7 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load continue button texture!" << std::endl;
     }
     
-    int x = window->getWidth() - 325, y = 75;
+    int x = window->getWidth() - 325, y = 175;
     SDL_Rect rect = {x, y, 250, 83};
     auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
     menuButtons.push_back(button);
@@ -92,7 +113,7 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load new game button texture!" << std::endl;
     }
     rect.y += 125;
-    button = std::make_shared<Button>(this, rect, texture, &Button::load_new_game);
+    button = std::make_shared<Button>(this, rect, texture, &Button::new_game_confirmation);
     menuButtons.push_back(button);
 
     texture = std::make_shared<LTexture>(window);
@@ -130,8 +151,25 @@ void GameMenu::create_pauseMenu_buttons()
         std::cerr << "failed to load main menu button texture!" << std::endl;
     }
     rect.y += 125;
-    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu);
+    button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_menu_confirmation);
     pauseButtons.push_back(button);
+
+
+    rect.y = 175;
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/YesButton.png")) {
+        std::cerr << "Failed to load texture for yes button!" << std::endl;
+    }
+    button = std::make_shared<Button>(this, rect, texture);
+    confirmationButtons.push_back(button);
+
+    rect.y += 125;
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/NoButton.png")) {
+        std::cerr << "Failed to load texture for no button!" << std::endl;
+    }
+    button = std::make_shared<Button>(this, rect, texture);
+    confirmationButtons.push_back(button);
 }
 
 bool GameMenu::is_inGame() { return state == in_game; }
