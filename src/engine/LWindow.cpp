@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include <sstream>
 #include <stdio.h>
 #include <string>
@@ -19,9 +20,16 @@ LWindow::LWindow()
   wHeight = 720;
 
   // Initialize SDL
-  if (SDL_Init(SDL_INIT_VIDEO) < 0)
+  if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0)
   {
     printf("SDL could not initialize! %s\n", SDL_GetError());
+    exit(0);
+  }
+  // audio setup
+  int result = 0, flags = MIX_INIT_MP3;
+  if (flags != (result = Mix_Init(flags))) {
+    printf("could not initialise mixer (result: %d)\n", result);
+    printf("Mix_Init: %s\n", Mix_GetError());
     exit(0);
   }
 

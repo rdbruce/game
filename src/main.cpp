@@ -5,11 +5,13 @@
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#include <SDL_mixer.h>
 
 #include "engine/LTexture.hpp"
 #include "engine/LTimer.hpp"
 #include "engine/LWindow.hpp"
 #include "engine/GameMath.hpp"
+#include "engine/LAudio.hpp"
 
 #include "game/Game.hpp"
 
@@ -27,70 +29,6 @@
 #include <thread>
 #include <vector>
 
-// Generic thread wrapper
-class Simulator
-{
-public:
-  using Callback = std::function<void()>;
-
-private:
-  Callback callback;
-  bool die;
-  std::thread tid;
-  std::string name;
-
-public:
-  // Construct std function from provided callable
-  Simulator(Callback _callback) : callback(_callback), die(false)
-  {
-    // Create thread
-    tid = std::thread([this]()
-                      { this->worker(); });
-  }
-
-  ~Simulator()
-  {
-    {
-      die = true;
-    }
-    tid.join();
-  }
-
-  // Generic run loop that pMath exists in
-  void worker()
-  {
-    using namespace std;
-    for (;;)
-    {
-      callback();
-      if (die)
-        return;
-    }
-  }
-};
-
-// Generic SafeSharedPtr
-template <typename T>
-class SafeSharedPtr
-{
-  std::mutex mtx;
-  std::shared_ptr<T> ptr;
-
-public:
-  SafeSharedPtr() : ptr(nullptr) {}
-
-  void store(std::shared_ptr<T> arg)
-  {
-    std::unique_lock<std::mutex> lock(mtx);
-    ptr = arg;
-  }
-
-  std::shared_ptr<T> load()
-  {
-    std::unique_lock<std::mutex> lock(mtx);
-    return ptr;
-  }
-};
 
 int main(
     // int argc, char* args[]
@@ -98,6 +36,11 @@ int main(
 {
   // Initialize SDL
   auto gHolder = std::make_shared<LWindow>();
+
+  auto audio = std::make_shared<LAudio>();
+  if (!audio->loadFromFile("../../assets/Audio/ThinkFastChucklenuts.mp3")) {
+    std::cerr << "failed to load audio" << std::endl;
+  }
 
   Game game(gHolder);
   GameMenu menu(gHolder, &game);
@@ -126,6 +69,8 @@ int main(
       quit = menu.handle_events(e, &inMenu);
       if (!inMenu) game.handle_events(e);
     }
+
+    audio->play();
 
     game.update_deltaTime();
     if (!inMenu) 
