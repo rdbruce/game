@@ -174,3 +174,34 @@ void LTexture::render(int x, int y, SDL_Rect *dest, SDL_Rect *clip, double angle
 int LTexture::getWidth() { return mWidth; }
 
 int LTexture::getHeight() { return mHeight; }
+
+
+void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window )
+{
+  // vector of strings to be rendered
+  std::vector<std::string> strings;
+
+  int n = txt.size(), last = 0, i;
+
+  for (i = 0; i < n; i++) 
+  {
+    if (txt[i] == '\n') {
+      strings.push_back(txt.substr(last, i-last));
+      last = i+1;
+    }
+  }
+  strings.push_back(txt.substr(last, i-last));
+
+  n = strings.size();
+  for (i = 0; i < n; i++) 
+  {
+    if (strings[i].size() == 0) continue;
+    auto rend = std::make_unique<LTexture>(window);
+    if (!rend->loadFromRenderedText(strings[i], {255, 255, 255, 255})) {
+      std::cerr << "failed to load rendered text!";
+    }
+    int X = x - (rend->getWidth()/2);
+    rend->render(X, y);
+    y += rend->getHeight();
+  }
+}

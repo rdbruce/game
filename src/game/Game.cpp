@@ -389,7 +389,7 @@ std::shared_ptr<GameObject> Game::moveEntityToLevel( std::shared_ptr<GameObject>
 {
     // if the object being moved is the held object, do nothing since it should move
     // with the player, not on its own
-    if (obj->is_held()) return nullptr;
+    if (obj->is_held() || obj->is_NPC()) return nullptr;
 
 
     auto res = Instantiate(newPos, obj->get_type(), obj->get_hp(), level);
@@ -402,19 +402,25 @@ void Game::dayNightCycle()
 {
     // after x seconds
     if (g_time >= DAY_LENGTH) {
+        std::cout << "here\n";
         // toggle night, and make sure all scene objects get updated
         isNight = !isNight;
-        Base.night = Woods.night = isNight;
+        Base.night = Woods.night = Town.night = isNight;
 
         // autosave the game
         save_game();
         // reset g_time to 0
         g_time = 0.0f;
-
-        if (!isNight) mayGatherStone = true;
-
         return;
-    } 
+
+    } else if (g_time == 0.0f && !isNight) {
+        if (!isNight) {
+            // reset daily booleans
+            mayGatherStone = true;
+            // spawn npcs
+            spawnNPCs();
+        }
+    }
     update_CRT();
 
     // update time
@@ -636,6 +642,17 @@ void Game::throwSingleItem()
     }
 }
 
+void Game::spawnNPCs() 
+{
+    // spawn NPCs in the town level
+    Vector2 pos(609.0f, -50.0f);
+    Instantiate(pos, Fox_NPC, 1, &Town);
+
+    // spawn NPCS in the base level
+    pos = Vector2(1500.0f, 2300.0f);
+    Instantiate(pos, Fox_NPC, 1, &Base);
+}
+
 
 void Game::load_levels( std::string dir )
 {
@@ -654,6 +671,7 @@ void Game::load_levels( std::string dir )
     Town.assignNeighbours(nullptr, &Base);
 
     isNight = currLevel->night;
+    g_time = 0.0f;
 
     interactRange = 3.0f * currLevel->cell_sideLen;
 }

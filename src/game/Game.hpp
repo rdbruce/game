@@ -262,6 +262,9 @@ class Game
 
         // removes water from all the cells to the right of the specified one
         void removeWaterFollowingCell( Vector2Int cell );
+
+        // spawns in NPCs at the beginning of each day
+        void spawnNPCs();
 };
 
 #endif

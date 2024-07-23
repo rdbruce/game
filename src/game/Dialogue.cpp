@@ -11,81 +11,382 @@ void GameObject::foxRenderFunc( int camX, int camY )
     }
     tex->render( p.x, p.y, &hitbox );
 
-    switch (hp)
+    // exit dialogue if the player walks too far away
+    Vector2 pPos = get_player_pos();
+    float dist = (pPos - pos).length();
+    if (dist > 1.5f*game->interactRange) {
+        game->enter_dialogue(None);
+        hp = 1; return;
+    }
+
+
+    if (game->currLevel == &game->Base) 
     {
-        case 2: { // first dialogue option
-            // if the next dialogue stage has been reached
-            if (game->currDialogue == test_dialogue_2 || 
-                game->currDialogue == test_dialogue_3) 
+        switch (hp)
+        {
+            case 2: 
             {
-                hp = 4; timer = 0.25f; break;
+                if (game->currDialogue == fox_base_dialogue_1_1) {
+                    hp = 4; timer = 0.25f; break;
+                } else if (game->currDialogue == fox_base_dialogue_1_2) {
+                    hp = 6; timer = 0.25f; break;
+                }
+
+                std::string rend, txt = "Hey, what are you doing here?";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                    game->enter_dialogue(fox_base_dialogue_1);
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
             }
 
-            std::string rend;
-            std::string txt = "Hey! I'm talking to you!";
-            if (timer >= 0.0f) {
-                float t = 1.0f - (timer/0.25f);
-                int n = Max(1, t * txt.size());
-                rend = txt.substr(0, n);
-                timer -= get_deltaTime();
-            } else {
-                rend = txt;
-                game->enter_dialogue(test_dialogue);
+            case 3: hp = 2; timer = 0.25f; break; // go back
+
+            case 4:
+            {
+                if (game->currDialogue == fox_base_dialogue_2_1) {
+                    hp = 8; timer = 0.25f; break;
+                }
+
+                std::string rend, txt = "Good question. Nowhere,\nreally. You ought to go\nnorth of here";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                    game->enter_dialogue(fox_base_dialogue_2);
+                }
+
+                renderText(rend, pos.x - camX, p.y - 90, game->window);
+                break;
             }
 
-            // exit dialogue if the player walks too far away
-            Vector2 pPos = get_player_pos();
-            float dist = (pPos - pos).length();
-            if (dist > 1.5f*game->interactRange) {
+            case 5: hp = 4; timer = 0.25f; break; // go back
+
+            case 6:
+            {
+                std::string rend, txt = "What's it to you?";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 7:
                 game->enter_dialogue(None);
-                hp = 1; break;
+                hp = 2; timer = 0.25f;
+                break;
+
+            case 8:
+            {
+                if (game->currDialogue == fox_base_dialogue_3_1) {
+                    hp = 10; timer = 0.25f; break;
+                } else if (game->currDialogue == fox_base_dialogue_3_2) {
+                    hp = 13; timer = 0.25f; break;
+                }
+
+                std::string rend, txt = "How am I supposed to know?\nDo whatever beavers do,\nbuild a dam or something";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                    game->enter_dialogue(fox_base_dialogue_3);
+                }
+
+                renderText(rend, pos.x - camX, p.y - 90, game->window);
+                break;
             }
 
-            // load text to be rendered
-            if (!altTex->loadFromRenderedText(rend, {255,255,255,255})) {
-                std::cerr << "Unable to render text!" << std::endl;
-            }
-            int w = altTex->getWidth(), h = altTex->getHeight(), dx = (hitbox.w-w)/2;
-            altTex->render( p.x + dx, p.y-h );
-            break;
-        }
+            case 9: hp = 8; timer = 0.25f; break; // go back
 
-        case 3: // go back
-            hp = 2; break;
+            case 10:
+            {
+                std::string rend, txt = "Some beaver you are...";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
 
-        case 4: {
-            std::string rend;
-            std::string txt = (game->currDialogue==test_dialogue_2)? 
-                "great to hear!" : "aw man what the heck dude :(";
-            if (timer >= 0.0f) {
-                float t = 1.0f - (timer/0.25f);
-                int n = Max(1, t * txt.size());
-                rend = txt.substr(0, n);
-                timer -= get_deltaTime();
-            } else {
-                rend = txt;
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
             }
 
-            // exit dialogue if the player walks too far away
-            Vector2 pPos = get_player_pos();
-            float dist = (pPos - pos).length();
-            if (dist > 1.5f*game->interactRange) {
+            case 11:
+            {
+                std::string rend, txt = "Look just put [recipe] together\nand figure it out";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 60, game->window);
+                break;
+            }
+
+            case 12:
                 game->enter_dialogue(None);
-                hp = 1; break;
+                hp = 1;
+                break;
+
+            case 13:
+            {
+                std::string rend, txt = "Don't worry about that";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
             }
 
-            // load text to be rendered
-            if (!altTex->loadFromRenderedText(rend, {255,255,255,255})) {
-                std::cerr << "Unable to render text!" << std::endl;
-            }
-            int w = altTex->getWidth(), h = altTex->getHeight(), dx = (hitbox.w-w)/2;
-            altTex->render( p.x + dx, p.y-h );
-            break;
+            case 14:
+                hp = 11; timer = 0.25f;
+                game->enter_dialogue(fox_base_dialogue_3_1);
+                break;
         }
+    }
+    else
+    {
+        switch (hp)
+        {
+            case 2:
+            {
+                if (game->currDialogue == fox_town_1_1) {
+                    hp = 4; timer = 0.25f; break;
+                } else if (game->currDialogue == fox_town_1_2) {
+                    hp = 7; timer = 0.25f; break;
+                } else if (game->currDialogue == fox_town_1_3) {
+                    hp = 9; timer = 0.25f; break;
+                }
 
-        case 5:
-            game->enter_dialogue(None);
-            hp = 1; break;
+                std::string rend, txt = "Heyy you made it up here";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                    game->enter_dialogue(fox_town_1);
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 3: hp = 2; timer = 0.25f; break; // go back
+
+            case 4:
+            {
+                std::string rend, txt = "You ask too many questions";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 5:
+            {
+                std::string rend, txt = "Look just ask around, you\ncan buy stuff, nothing\n too crazy";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 90, game->window);
+                break;
+            }
+
+            case 6:
+                hp = 1;
+                game->enter_dialogue(None);
+                break;
+
+            case 7:
+            {
+                std::string rend, txt = "Don't. Worry about that.";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 8:
+                hp = 5; timer = 0.25f;
+                break;
+
+            case 9:
+            {
+                std::string rend, txt = "Oh those pricks...";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 10:
+            {
+                if (game->currDialogue == fox_town_2_1) {
+                    hp = 12; timer = 0.25f; break;
+                } else if (game->currDialogue == fox_town_2_2) {
+                    hp = 14; timer = 0.25f; break;
+                } else if (game->currDialogue == fox_town_2_3) {
+                    hp = 17; timer = 0.25f; break;
+                }
+
+                std::string rend, txt = "Yeah sorry about them, just do\nyour best to survive, I guess";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                    game->enter_dialogue(fox_town_2);
+                }
+
+                renderText(rend, pos.x - camX, p.y - 60, game->window);
+                break;
+            }
+
+            case 11: hp = 10; timer = 0.25f; break; // go back
+
+            case 12:
+            {
+                std::string rend, txt = "Oops...";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 13: 
+                game->enter_dialogue(fox_town_2);
+                hp = 10; timer = 0.25f; 
+                break;
+
+            case 14:
+            {
+                std::string rend, txt = "I mean you've made it so far...";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 15:
+            {
+                std::string rend, txt = "Just build walls, throw rocks, etc.";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 30, game->window);
+                break;
+            }
+
+            case 16: 
+                game->enter_dialogue(fox_town_2);
+                hp = 10; timer = 0.25f; 
+                break;
+
+            case 17:
+            {
+                std::string rend, txt = "Yeahh... this is a..\n\"no soliciting\" sorta thing...";
+                if (timer >= 0.0f) {
+                    float t = 1.0f - (timer/0.25f);
+                    int n = Max(1, t * txt.size());
+                    rend = txt.substr(0, n);
+                    timer -= get_deltaTime();
+                } else {
+                    rend = txt;
+                }
+
+                renderText(rend, pos.x - camX, p.y - 60, game->window);
+                break;
+            }
+
+            case 18:
+                hp = 1;
+                game->enter_dialogue(None);
+                break;
+        }
     }
 }
 
@@ -101,12 +402,12 @@ void GameObject::playerRenderFunc( int camX, int camY )
 
     switch (game->currDialogue)
     {
-        case test_dialogue: {
-            float t = 1.0f - (timer/0.25f);
+        case fox_base_dialogue_1: 
+        {
+            std::string rend, txt = "1. Where is here?\n2. What are YOU doing here?";
 
-            std::string rend;
-            std::string txt = "1. I'm responding to you!";
             if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
                 int n = Max(1, t * txt.size());
                 rend = txt.substr(0, n);
                 timer -= get_deltaTime();
@@ -114,55 +415,216 @@ void GameObject::playerRenderFunc( int camX, int camY )
                 rend = txt;
             }
 
-
-            if (!altTex->loadFromRenderedText(rend, {255,255,255,255})) {
-                std::cerr << "Unable to render text!" << std::endl;
-            }
-            int w = altTex->getWidth(), h = altTex->getHeight(), dx = (hitbox.w-w)/2;
-            altTex->render( p.x + dx, p.y-2*h );
-
-            txt = "2. I'm responding to you! (rudely)";
-            if (timer >= 0.0f) {
-                int n = Max(1, t * txt.size());
-                rend = txt.substr(0, n);
-                timer -= get_deltaTime();
-            } else {
-                rend = txt;
-            }
-
-            if (!altTex->loadFromRenderedText(rend, {255,255,255,255})) {
-                std::cerr << "Unable to render text!" << std::endl;
-            }
-            w = altTex->getWidth(); h = altTex->getHeight(); dx = (hitbox.w-w)/2;
-            altTex->render( p.x + dx, p.y-h );
+            renderText(txt, pos.x-camX, p.y-60, game->window);
             break;
         }
 
-        case test_dialogue_2: {
-            if (timer >= 0.0f) { 
+        case fox_base_dialogue_1_1: 
+        {
+            if (timer >= 0.0f) {
                 timer -= get_deltaTime();
-                if (timer < 1.0f) {
-                    std::string txt = "1. I'm responding to you!";
-                    if (!altTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                        std::cerr << "Unable to render text!" << std::endl;
-                    }
-                    int w = altTex->getWidth(), h = altTex->getHeight(), dx = (hitbox.w-w)/2;
-                    altTex->render( p.x + dx, p.y-h );
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. Where is here?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
                 }
             }
             break;
         }
 
-        case test_dialogue_3: {
+        case fox_base_dialogue_1_2:
+        {
             if (timer >= 0.0f) {
                 timer -= get_deltaTime();
-                if (timer < 1.0f) {
-                    std::string txt = "2. I'm responding to you! (rudely)";
-                    if (!altTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                        std::cerr << "Unable to render text!" << std::endl;
-                    }
-                    int w = altTex->getWidth(), h = altTex->getHeight(), dx = (hitbox.w-w)/2;
-                    altTex->render( p.x + dx, p.y-h );
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "2. What are YOU doing here?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case fox_base_dialogue_2:
+        {
+            std::string rend, txt = "1. But how do I\nget past that river?";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-60, game->window);
+            break;
+        }
+
+        case fox_base_dialogue_2_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. But how do I\nget past that river?";
+                    renderText(txt, pos.x-camX, p.y-60, game->window);
+                }
+            }
+            break;
+        }
+
+        case fox_base_dialogue_3:
+        {
+            std::string rend, txt = "1. How do I do THAT?\n2. How are YOU getting there?";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-60, game->window);
+            break;
+        }
+
+        case fox_base_dialogue_3_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. How do I do THAT?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case fox_base_dialogue_3_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "2. How are YOU getting there?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case fox_town_1:
+        {
+            std::string rend, txt = "1. What is this place?\n2. How did YOU make it up here?\n3. Who were all those wolves?";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-90, game->window);
+            break;
+        }
+
+        case fox_town_1_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. What is this place?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case fox_town_1_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "2. How did YOU make it up here?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+        
+        case fox_town_1_3:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "3. Who were all those wolves?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case fox_town_2:
+        {
+            std::string rend, txt = "1. You could've told me that before!\n2. Do you have any advice?\n3. Can I just stay here?";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-90, game->window);
+            break;
+        }
+
+        case fox_town_2_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. You could've told me that before!";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+        
+        case fox_town_2_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "2. Do you have any advice?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case fox_town_2_3:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "3. Can I just stay here?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
                 }
             }
             break;
@@ -178,20 +640,94 @@ void Game::handle_dialogue( int e )
         case test_dialogue:
             switch (e)
             {
-                case SDLK_1:    
-                    enter_dialogue(test_dialogue_2); 
-                    currLevel->player->set_timer( 1.1f );
-                    break;
+                case SDLK_1:
                 case SDLK_KP_1: 
                     enter_dialogue(test_dialogue_2); 
                     currLevel->player->set_timer( 1.1f );
                     break;
-                case SDLK_2:    
+                case SDLK_2:
+                case SDLK_KP_2: 
                     enter_dialogue(test_dialogue_3); 
                     currLevel->player->set_timer( 1.1f );
                     break;
+            } break;
+
+        case fox_base_dialogue_1:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(fox_base_dialogue_1_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
                 case SDLK_KP_2: 
-                    enter_dialogue(test_dialogue_3); 
+                    enter_dialogue(fox_base_dialogue_1_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+
+        case fox_base_dialogue_2:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(fox_base_dialogue_2_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+
+        case fox_base_dialogue_3:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(fox_base_dialogue_3_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(fox_base_dialogue_3_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+    
+        case fox_town_1:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(fox_town_1_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(fox_town_1_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_3:
+                case SDLK_KP_3:
+                    enter_dialogue(fox_town_1_3);
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+
+        case fox_town_2:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(fox_town_2_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(fox_town_2_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_3:
+                case SDLK_KP_3:
+                    enter_dialogue(fox_town_2_3);
                     currLevel->player->set_timer( 1.1f );
                     break;
             } break;

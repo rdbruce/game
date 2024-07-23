@@ -101,6 +101,12 @@ void GameObject::foxVelocityFunc()
 {
     if (game->isNight) beginRetreat();
     else {
+        if (!hasCollision) {
+            Vector2Int cell = get_cell();
+            if (!game->is_barrier(cell)) {
+                hasCollision = true;
+            }
+        }
         deccelerateVelocityFunc();
     }
 }
@@ -181,7 +187,7 @@ void GameObject::playerPositionFunc()
 void GameObject::foxPositionFunc()
 {
     // attempt to move back to a point
-    Vector2 target(609.0f, 230.0f);
+    Vector2 target = (game->currLevel == &game->Base)? Vector2(1500.0f, 1950.0f) : Vector2(609.0f, 230.0f);
     Vector2 dist = target - pos;
     Vector2 vel = Vector2_Zero;
 

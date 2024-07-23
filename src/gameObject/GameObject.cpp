@@ -222,7 +222,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             moveSpeed = 2.66666667f * sideLen;
             max_hp = 255;
             hp = Health;
-            hasCollision = true;
+            hasCollision = false;
             break;
         }
 
@@ -349,6 +349,7 @@ float GameObject::get_radius() { return radius; }
 float GameObject::get_timer() { return timer; }
 bool GameObject::has_collision() { return hasCollision; }
 bool GameObject::is_held() { return game->currLevel->gameObjects[idx] == game->currLevel->held; }
+bool GameObject::is_NPC() { return type>NPC_MIN && type<NPC_MAX; }
 Uint8 GameObject::get_inputKeys() { return game->inputKeys; }
 float GameObject::get_deltaTime() { return game->deltaTime; }
 SDL_Rect GameObject::get_hitbox() { return hitbox; }

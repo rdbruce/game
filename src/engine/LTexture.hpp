@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <string>
 #include <memory>
+#include <vector>
+#include <iostream>
 
 // forward declare texture manipulator class
 class TextureManipulator;
@@ -33,6 +35,7 @@ public:
   // Creates image from font string
   bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
 #endif
+
 
   // Deallocates texture
   void free();
@@ -68,3 +71,7 @@ private:
   int mWidth;
   int mHeight;
 };
+
+
+// renders a desired string centred on x
+void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window );

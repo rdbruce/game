@@ -28,22 +28,10 @@ void GameMenu::render_background()
 void GameMenu::render_confirmation() {
     if (confirmationText != "") 
     {
-        auto rend = std::make_unique<LTexture>(window);
-        if (!rend->loadFromRenderedText("Are you sure?", {255,255,255,255})) {
-            std::cerr << "failed to load confirmation text!" << std::endl;
-        }
-
-        int x = (window->getWidth() - rend->getWidth())/2, 
-            y = 125 - rend->getHeight() * 2;
-
-        rend->render(x, y); 
-        y += rend->getHeight(); x += rend->getWidth()/2;
-
-        if (!rend->loadFromRenderedText(confirmationText, {255,255,255,255})) {
-            std::cerr << "failed to load confirmation text!" << std::endl;
-        }
-        x -= rend->getWidth()/2;
-        rend->render(x, y);
+        std::string txt = "Are you sure?\n" + confirmationText;
+        int x = window->getWidth()/2, y = 65;
+        
+        renderText(txt, x, y, window);
     }
 }
 

@@ -48,7 +48,9 @@ enum EntityType
     // end of item types
 
     // NPC types
+    NPC_MIN,
     Fox_NPC,
+    NPC_MAX
 };
 
 
@@ -102,6 +104,7 @@ class GameObject
         float       get_timer();
         bool        has_collision();
         bool        is_held();
+        bool        is_NPC();
         SDL_Rect    get_hitbox();
         Vector2Int  get_size();
         Vector2Int  get_cell();
