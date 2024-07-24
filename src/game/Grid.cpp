@@ -92,7 +92,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             // cell is occupied or water, AND the placement was made by player, not loading
             if (num&0x5000 && playerPlacement) {
                 if (num&255 != 8) return -2;
-                else num = CLOSED_DOOR;
+                num = CLOSED_DOOR;
+                doorToggle->play();
             } else num |= CLOSED_DOOR;
             break;
 
@@ -100,7 +101,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             // cell is occupied or water, AND the placement was made by player, not loading
             if (num&0x5000 && playerPlacement) {
                 if ((num&255) != 7) return -2;
-                else num = OPEN_DOOR;
+                num = OPEN_DOOR;
+                doorToggle->play();
             } else num |= OPEN_DOOR;
             break;
 
@@ -129,6 +131,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a log
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Log_Item, pos, 1);
+                    logDestruction->play();
                     break;
                 }
 
@@ -144,6 +147,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     if (hp != 0) {
                         // damage the tree until broken
                         damageCell(cell, 2);
+
+                        logDestruction->play();
                         return 0;
 
                     } else {
@@ -153,6 +158,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                         // spawn a falling tree in its place
                         Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
                         Instantiate(pos, Falling_Tree, 1, level);
+
+                        treeFalling->play();
 
                         // place a stump where the tree once stood
                         // everything else handled in the STUMP case. don't break, just return

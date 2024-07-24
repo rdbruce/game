@@ -37,11 +37,6 @@ int main(
   // Initialize SDL
   auto gHolder = std::make_shared<LWindow>();
 
-  auto audio = std::make_shared<LAudio>();
-  if (!audio->loadFromFile("../../assets/Audio/ThinkFastChucklenuts.mp3")) {
-    std::cerr << "failed to load audio" << std::endl;
-  }
-
   Game game(gHolder);
   GameMenu menu(gHolder, &game);
 
@@ -69,8 +64,6 @@ int main(
       quit = menu.handle_events(e, &inMenu);
       if (!inMenu) game.handle_events(e);
     }
-
-    audio->play();
 
     game.update_deltaTime();
     if (!inMenu) 

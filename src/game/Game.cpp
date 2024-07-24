@@ -14,6 +14,7 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 
     // do this first!!!
     load_textures();
+    load_audio();
 
     // camera dimensions should be the same as window size
     camera = { 0, 0, window->getWidth(), window->getHeight() };
@@ -818,4 +819,22 @@ void Game::load_textures()
         std::cerr << "Failed to load texture for CRT effect!" <<std::endl;
     }
     CRT_Tex->setAlpha(50);
+}
+
+void Game::load_audio()
+{
+    logDestruction = std::make_shared<LAudio>();
+    if (!logDestruction->loadFromFile("../../assets/Audio/Destruction/LogBreaking.wav")) {
+        std::cerr << "Failed to load audio for log breaking!" << std::endl;
+    }
+
+    treeFalling = std::make_shared<LAudio>();
+    if (!treeFalling->loadFromFile("../../assets/Audio/Destruction/TreeFalling.wav")) {
+        std::cerr << "Failed to load audio for tree falling!" << std::endl;
+    }
+
+    doorToggle = std::make_shared<LAudio>();
+    if (!doorToggle->loadFromFile("../../assets/Audio/DoorToggle.wav")) {
+        std::cerr << "Failed to load audio for door opening!" << std::endl;
+    }
 }

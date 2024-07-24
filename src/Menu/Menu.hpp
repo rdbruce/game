@@ -3,6 +3,7 @@
 #include "../engine/LTexture.hpp"
 #include "../engine/LWindow.hpp"
 #include "../engine/TextureManipulator.hpp"
+#include "../engine/LAudio.hpp"
 #include "../game/Game.hpp"
 
 #include <iostream>
@@ -58,8 +59,10 @@ class GameMenu
 
         std::shared_ptr<LTexture> BGTexture = nullptr;
 
-        std::string confirmationText = "";
+        // the sound made when you click a button
+        std::shared_ptr<LAudio> buttonSound = nullptr;
 
+        std::string confirmationText = "";
 
         std::vector<std::shared_ptr<Button>> *currButtons = &menuButtons;
         std::vector<std::shared_ptr<Button>> menuButtons, // buttons in the main menu

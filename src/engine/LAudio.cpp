@@ -14,11 +14,9 @@ LAudio::~LAudio()
 
 void LAudio::free()
 {
-    if (music != NULL) {
-        Mix_FreeMusic(music);
-        isPlaying = false;
-        music = NULL;
-        position = duration = 0.0;
+    if (chunk != NULL) {
+        Mix_FreeChunk(chunk);
+        chunk = NULL;
     }
 }
 
@@ -28,31 +26,19 @@ bool LAudio::loadFromFile(std::string path)
     free();
 
     // load the audio from file
-    Mix_Music *newMusic = Mix_LoadMUS(path.c_str());
+    Mix_Chunk *newChunk = Mix_LoadWAV(path.c_str());
 
-    if (newMusic == NULL) 
+    if (newChunk == NULL) 
     {
-        printf("Unable to create audio from %s! SDL Error: \n", path.c_str(), Mix_GetError());
-    }
-    else 
-    {
-        duration = Mix_MusicDuration(newMusic);
+        printf("Unable to create audio from %s! SDL Error: %s\n", path.c_str(), Mix_GetError());
     }
 
     // return success
-    music = newMusic;
-    return music != NULL;
+    chunk = newChunk;
+    return chunk != NULL;
 }
 
 void LAudio::play()
 {
-    if (!isPlaying) {
-        isPlaying = true;
-        Mix_PlayMusic(music, 1);
-    }
-    if (position == duration) isPlaying = false;
-    position = Mix_GetMusicPosition(music);
+    Mix_PlayChannel(-1, chunk, 0);
 }
-
-double LAudio::get_duration() { return duration; }
-double LAudio::get_position() { return position; }

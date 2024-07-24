@@ -6,6 +6,8 @@
 #include "../engine/LWindow.hpp"
 #include "../engine/GameMath.hpp"
 #include "../engine/TextureManipulator.hpp"
+#include "../engine/LAudio.hpp"
+
 #include "../gameObject/GameObject.hpp"
 #include "Scene.hpp"
 #include "CellTypes.hpp"
@@ -188,6 +190,8 @@ class Game
 
         // loads all of the games textures from file
         void load_textures();
+        // loads all of the audio mp3s from file
+        void load_audio();
 
 
         // background texture
@@ -200,6 +204,9 @@ class Game
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
                                     berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
                                     stoneTex, LMBTex, MMBTex, RMBTex;
+
+        // all of the audio used by the game
+        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;

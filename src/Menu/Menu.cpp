@@ -9,6 +9,11 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
         std::cerr << "Failed to load menu background!" << std::endl;
     }
 
+    buttonSound = std::make_shared<LAudio>();
+    if (!buttonSound->loadFromFile("../../assets/Audio/ThinkFastChucklenuts.wav")) {
+        std::cerr << "Failed to load button sound" << std::endl;
+    }
+
     // create buttons
     create_mainMenu_buttons();
     create_pauseMenu_buttons();
@@ -69,16 +74,19 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
 
 void GameMenu::leftClickFunc()
 {
-    // find the coordinates of the mouse click
-    int x, y;
-    SDL_GetMouseState(&x, &y);
+    if (isActive) {
+        // find the coordinates of the mouse click
+        int x, y;
+        SDL_GetMouseState(&x, &y);
 
-    // check all the buttons to see if they were clicked
-    for (int i = 0; i < currButtons->size(); i++) {
-        std::shared_ptr<Button> b = (*currButtons)[i];
-        if (b->isPressed( x, y )) {
-            // when pressed, execute the button's function
-            b->execute_function();
+        // check all the buttons to see if they were clicked
+        for (int i = 0; i < currButtons->size(); i++) {
+            std::shared_ptr<Button> b = (*currButtons)[i];
+            if (b->isPressed( x, y )) {
+                // when pressed, execute the button's function
+                b->execute_function();
+                buttonSound->play();
+            }
         }
     }
 }
