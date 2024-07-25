@@ -51,6 +51,7 @@ enum EntityType
     // NPC types
     NPC_MIN,
     Fox_NPC,
+    Bear_NPC,
     NPC_MAX
 };
 
@@ -232,6 +233,8 @@ class GameObject
 
         // adds velocity to current position
         void defaultPositionFunc();
+        // snaps the bear in place
+        void bearPositionFunc();
         // trees don't move, snap their position to the position they spawned
         void fallingTreePositionFunc();
 
@@ -307,6 +310,7 @@ class GameObject
         void itemRenderFunc( int camX, int camY );
 
         void foxRenderFunc( int camX, int camY );
+        void bearRenderFunc( int camX, int camY );
         void playerRenderFunc( int camx, int camY);
 };
 

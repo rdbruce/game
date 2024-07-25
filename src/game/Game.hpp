@@ -215,7 +215,7 @@ class Game
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
                                     berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
-                                    stoneTex, LMBTex, MMBTex, RMBTex;
+                                    stoneTex, LMBTex, MMBTex, RMBTex, BearTex;
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop;

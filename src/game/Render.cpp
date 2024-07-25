@@ -430,6 +430,7 @@ void Game::render_gameobjects() {
         if (switching_scenes) {
             switching_scenes = false; return;
         }
+        // if (currLevel->gameObjects[i]->get_type() == Bear_NPC) continue;
         currLevel->gameObjects[i]->render( camera.x, camera.y );
     }
 }

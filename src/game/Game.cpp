@@ -293,13 +293,18 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             break;
 
         case Plank_Item:
-            // 2 logs and 4 planks craft one bridge
-            // make sure there are adequate resources
-            if (hp1 >= 4 && hp2 >= 2) {
-                // spawn one bridge item
-                res = spawnItemStack(Bridge_Item, item1->get_pos(), 1);
-                // reduce the hp of the other item stacks
-                item1->set_HP(hp1-4); item2->set_HP(hp2-2);
+            switch (item2->get_type())
+            {
+                case Log_Item:
+                    // 2 logs and 4 planks craft one bridge
+                    // make sure there are adequate resources
+                    if (hp1 >= 4 && hp2 >= 2) {
+                        // spawn one bridge item
+                        res = spawnItemStack(Bridge_Item, item1->get_pos(), 1);
+                        // reduce the hp of the other item stacks
+                        item1->set_HP(hp1-4); item2->set_HP(hp2-2);
+                    }
+                    break;
             }
             break;
     }
@@ -512,7 +517,7 @@ void Game::leftClickFunc()
             {
                 // check all the game objects, and see if any of them ARE items AND were clicked
                 int n = currLevel->gameObjects.size();
-                for (int i =0; i < n; i++) {
+                for (int i = 0; i < n; i++) {
                     auto obj = currLevel->gameObjects[i];
 
                     if (isInRegion(mPos, obj->get_hitbox())) {
@@ -521,14 +526,31 @@ void Game::leftClickFunc()
                             // make the player pick up the object and exit the function
                             setHeldObject(obj);
                             return;
-                        } else if (obj->get_type() == Fox_NPC) {
+                        } else if (obj->is_NPC()) {
                             obj->set_HP( obj->get_hp()+1 );
                             obj->set_timer( 0.25f );
                         }
                     }
                 }
             // if an item IS held, throw it :)
-            } else if (currLevel->held != nullptr) throwSingleItem();
+            } else if (currLevel->held != nullptr) {
+                if (currLevel->held->get_type() == Stone_Item && currLevel->held->get_hp() >= 2) 
+                {
+                    int n = currLevel->gameObjects.size();
+                    for (int i = 0; i < n; i++) {
+                        auto obj = currLevel->gameObjects[i];
+
+                        if (obj->get_type() == Bear_NPC) {
+                            if (isInRegion(mPos, obj->get_hitbox())) {
+                                currLevel->held->set_HP(currLevel->held->get_hp()-2);
+                                spawnItemStack(Berry_Item, obj->get_pos(), 1);
+                                return;
+                            }
+                        }
+                    }
+                }
+                throwSingleItem();
+            }
             break;
 
     }
@@ -646,12 +668,25 @@ void Game::throwSingleItem()
 void Game::spawnNPCs() 
 {
     // spawn NPCs in the town level
-    Vector2 pos(609.0f, -50.0f);
-    Instantiate(pos, Fox_NPC, 1, &Town);
+    int n = Town.gameObjects.size(), i;
+    for (i = 0; i < n; i++) {
+        if (Town.gameObjects[i]->get_type() == Fox_NPC) break;
+    }
+    if (i == n) {
+        Vector2 pos(609.0f, -50.0f);
+        Instantiate(pos, Fox_NPC, 1, &Town);
+    }
 
     // spawn NPCS in the base level
-    pos = Vector2(1500.0f, 2300.0f);
-    Instantiate(pos, Fox_NPC, 1, &Base);
+    // spawn NPCs in the town level
+    n = Base.gameObjects.size();
+    for (i = 0; i < n; i++) {
+        if (Base.gameObjects[i]->get_type() == Fox_NPC) break;
+    }
+    if (i == n) {
+        Vector2 pos(1500.0f, 2300.0f);
+        Instantiate(pos, Fox_NPC, 1, &Base);
+    }
 }
 
 
@@ -812,6 +847,10 @@ void Game::load_textures()
     RMBTex = std::make_shared<LTexture>(window);
     if (!RMBTex->loadFromFile("../../assets/Menu/Mouse/RightClick.png")) {
         std::cerr << "failed to load right mouse texture!" << std::endl;
+    }
+    BearTex = std::make_shared<LTexture>(window);
+    if (!BearTex->loadFromFile("../../assets/Entities/Bear.png")) {
+        std::cerr << "Failed to load bear texture!" << std::endl;
     }
 
     CRT_Tex = std::make_shared<LTexture>(window);

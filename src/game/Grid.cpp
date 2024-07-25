@@ -231,7 +231,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
     if (draw) drawCell(cell);
 
-    if (level == &Base) damRiver();
+    if (level == &Base && playerPlacement) damRiver();
 
     return 0;
 }

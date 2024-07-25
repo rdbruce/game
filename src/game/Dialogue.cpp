@@ -15,7 +15,9 @@ void GameObject::foxRenderFunc( int camX, int camY )
     Vector2 pPos = get_player_pos();
     float dist = (pPos - pos).length();
     if (dist > 1.5f*game->interactRange) {
-        game->enter_dialogue(None);
+        if (game->currDialogue > FOX_DIAG_MIN && game->currDialogue < FOX_DIAG_MAX) {
+            game->enter_dialogue(None);
+        }
         hp = 1; return;
     }
 
@@ -390,6 +392,235 @@ void GameObject::foxRenderFunc( int camX, int camY )
     }
 }
 
+void GameObject::bearRenderFunc( int camX, int camY )
+{
+    Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+        return;
+    }
+    tex->render( p.x, p.y, &hitbox );
+
+    // exit dialogue if the player walks too far away
+    Vector2 pPos = get_player_pos();
+    float dist = (pPos - pos).length();
+    if (dist > 1.5f*game->interactRange) {
+        if (game->currDialogue > BEAR_DIAG_MIN && game->currDialogue < BEAR_DIAG_MAX) {
+            game->enter_dialogue(None);
+        }
+        hp = 1; return;
+    }
+
+    switch(hp)
+    {
+        case 2:
+        {
+            if (game->currDialogue == bear_town_1_1) {
+                hp = 4; timer = 0.25f; break;
+            } else if (game->currDialogue == bear_town_1_2) {
+                hp = 6; timer = 0.25f; break;
+            }
+
+            std::string rend, txt = "Hello :)";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+                game->enter_dialogue(bear_town_1);
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 3: hp = 2; timer = 0.25f; break;
+
+        case 4:
+        {
+            if (game->currDialogue == bear_town_2_1) {
+                hp = 8; timer = 0.25f; break;
+            } else if (game->currDialogue == bear_town_2_2) {
+                hp = 10; timer = 0.25f; break;
+            }
+
+            std::string rend, txt = "Do you like berries?";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+                game->enter_dialogue(bear_town_2);
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 5: hp = 4; timer = 0.25f; break;
+
+        case 6:
+        {
+            if (game->currDialogue == bear_town_3_1) {
+                hp = 8; timer = 0.25f; break;
+            } else if (game->currDialogue == bear_town_3_2) {
+                hp = 12; timer = 0.25f; break;
+            }
+
+            std::string rend, txt = "Your mom ;)";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = "Eat berries :)";
+                game->enter_dialogue(bear_town_3);
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 7: hp = 6; timer = 0.25f; break;
+
+        case 8:
+        {
+            if (game->currDialogue == bear_town_4_1) {
+                hp = 14; timer = 0.25f; break;
+            } else if (game->currDialogue == bear_town_4_2) {
+                hp = 16; timer = 0.25f; break;
+            }
+
+            std::string rend, txt = "You want some? :D";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+                game->enter_dialogue(bear_town_4);
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 9: hp = 8; timer = 0.25f; break;
+
+        case 10:
+        {
+            std::string rend, txt = "... >:(";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 11:
+            hp = 1;
+            game->enter_dialogue(None);
+            break;
+        
+        case 12:
+        {
+            std::string rend, txt = "Eat berries :)";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 13: hp = 8; timer = 0.25f; break;
+
+        case 14:
+        {
+            if (game->currDialogue == bear_town_5_1) {
+                hp = 1; game->enter_dialogue(None); break;
+            } else if (game->currDialogue == bear_town_5_2) {
+                hp = 19; timer = 0.25f; break;
+            }
+
+            std::string rend, txt = "Give me [2 stone] for [berry]";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+                game->enter_dialogue(bear_town_5);
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 15: hp = 14; timer = 0.25f; break;
+
+        case 16:
+        {
+            std::string rend, txt = ":P";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 17:
+            hp = 1;
+            game->enter_dialogue(None);
+            break;
+
+        case 18:
+        {
+            std::string rend, txt = "Mash berry into jam :)";
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(rend, pos.x - camX, p.y, game->window);
+            break;
+        }
+
+        case 19:
+            hp = 1;
+            game->enter_dialogue(None);
+            break;
+    }
+}
+
 
 void GameObject::playerRenderFunc( int camX, int camY )
 {
@@ -398,7 +629,7 @@ void GameObject::playerRenderFunc( int camX, int camY )
     if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
         return;
     }
-    tex->render( p.x, p.y, &hitbox );
+    tex->render( p.x, p.y, &hitbox );   
 
     switch (game->currDialogue)
     {
@@ -629,6 +860,221 @@ void GameObject::playerRenderFunc( int camX, int camY )
             }
             break;
         }
+    
+        case bear_town_1:
+        {
+            std::string rend, txt = "1. Hello\n2. What are you doing?";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-60, game->window);
+            break; 
+        }
+
+        case bear_town_1_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. Hello";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case bear_town_1_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "2. What are you doing?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case bear_town_2:
+        {
+            std::string rend, txt = "1. Yes\n2. No";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-60, game->window);
+            break; 
+        }
+
+        case bear_town_2_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. Yes";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+        
+        case bear_town_2_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. No";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+
+        case bear_town_3:
+        {
+            std::string rend, txt = "1. Where do you get\nall these berries?\n2. How do you survive\nwith all these wolves?";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-120, game->window);
+            break; 
+        }
+
+        case bear_town_3_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. Where do you get\nall these berries?";
+                    renderText(txt, pos.x-camX, p.y-60, game->window);
+                }
+            }
+            break;
+        }
+
+        case bear_town_3_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "2. How do you survive\nwith all these wolves?";
+                    renderText(txt, pos.x-camX, p.y-60, game->window);
+                }
+            }
+            break;
+        }
+
+        case bear_town_4:
+        {
+            std::string rend, txt = "1. Yeah!\n2. No thanks";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-60, game->window);
+            break; 
+        }
+
+        case bear_town_4_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. Yeah!";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+        
+        case bear_town_4_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. No Thanks";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+        
+        case bear_town_5:
+        {
+            std::string rend, txt = "1. Sure thing!\n2. What do you need [stone] for?";
+
+            if (timer >= 0.0f) {
+                float t = 1.0f - (timer/0.25f);
+                int n = Max(1, t * txt.size());
+                rend = txt.substr(0, n);
+                timer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            renderText(txt, pos.x-camX, p.y-60, game->window);
+            break; 
+        }
+
+        case bear_town_5_1:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. Sure thing!";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
+        
+        case bear_town_5_2:
+        {
+            if (timer >= 0.0f) {
+                timer -= get_deltaTime();
+                if (timer < 1.0f) 
+                {
+                    std::string txt = "1. What do you need berries for?";
+                    renderText(txt, pos.x-camX, p.y-30, game->window);
+                }
+            }
+            break;
+        }
     }
 }
 
@@ -728,6 +1174,81 @@ void Game::handle_dialogue( int e )
                 case SDLK_3:
                 case SDLK_KP_3:
                     enter_dialogue(fox_town_2_3);
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+
+        case bear_town_1:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(bear_town_1_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(bear_town_1_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+        
+        case bear_town_2:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(bear_town_2_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(bear_town_2_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+        
+        case bear_town_3:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(bear_town_3_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(bear_town_3_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+        
+        case bear_town_4:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(bear_town_4_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(bear_town_4_2); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+            } break;
+        
+        case bear_town_5:
+            switch (e)
+            {
+                case SDLK_1:
+                case SDLK_KP_1: 
+                    enter_dialogue(bear_town_5_1); 
+                    currLevel->player->set_timer( 1.1f );
+                    break;
+                case SDLK_2:
+                case SDLK_KP_2: 
+                    enter_dialogue(bear_town_5_2); 
                     currLevel->player->set_timer( 1.1f );
                     break;
             } break;

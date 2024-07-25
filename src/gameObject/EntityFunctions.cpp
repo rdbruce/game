@@ -208,6 +208,12 @@ void GameObject::defaultPositionFunc()
     set_pos(newPos);
 }
 
+void GameObject::bearPositionFunc()
+{
+    Vector2 newPos(1240.0f, 200.0f);
+    set_pos(newPos);
+}
+
 void GameObject::fallingTreePositionFunc()
 {
     // when the timer reaches 0, destroy the object

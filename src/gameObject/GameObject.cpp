@@ -273,6 +273,30 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             moveSpeed = 1.5f;
             break;
         }
+
+        case Bear_NPC: {
+            // assign the texture
+            tex = game->BearTex;
+            renderingFunc = &GameObject::bearRenderFunc;
+
+            // set up the hitbox
+            Vector2Int size((3*sideLen)-2, (3*sideLen)-2);
+            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+            hitbox = { p.x, p.y, size.x, size.y };
+            radius = Max(size.x/2, size.y/2);
+
+            // assign behaviour functions
+            velocityFunc = &GameObject::defaultVelocityFunc;
+            positionFunc = &GameObject::bearPositionFunc;
+            collisionFunc = &GameObject::defaultCollisionFunction;
+
+            // other attributes
+            max_hp = 255;
+            hp = Health;
+            hasCollision = true;
+            moveSpeed = 0.0f;
+            break;
+        }
     }
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}
