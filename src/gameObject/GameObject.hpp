@@ -4,6 +4,7 @@
 #include "../engine/GameMath.hpp"
 #include "../engine/LTexture.hpp"
 #include "../engine/LWindow.hpp"
+#include "../engine/LAudio.hpp"
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -162,7 +163,8 @@ class GameObject
         // the image to be drawn
         std::shared_ptr<LTexture> tex, altTex;
 
-
+        // sounds 
+        std::shared_ptr<LAudio> deathSound = nullptr;
 
         // a reference to the game itself
         Game *game = nullptr;
@@ -302,6 +304,7 @@ class GameObject
         // rendering functions
         void defaultRenderFunc( int camX, int camY );
         void fallingTreeRenderFunc( int camX, int camY );
+        void itemRenderFunc( int camX, int camY );
 
         void foxRenderFunc( int camX, int camY );
         void playerRenderFunc( int camx, int camY);

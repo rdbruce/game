@@ -83,7 +83,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Log_Item: {
             // assign the texture
             tex = game->logTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -107,7 +107,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Pine_Cone_Item: {
             // assign the texture
             tex = game->pine_coneTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -131,7 +131,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Plank_Item: {
             // assign the texture
             tex = game->plankTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -155,7 +155,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Bridge_Item: {
             // assign the texture
             tex = game->bridgeTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -180,7 +180,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Door_Item: {
             // assign the texture
             tex = game->closed_doorTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -229,7 +229,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Berry_Item: {
             // assign the texture
             tex = game->berryTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -253,7 +253,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         case Stone_Item: {
             // assign the texture
             tex = game->stoneTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-20, sideLen-20);
@@ -292,9 +292,13 @@ void GameObject::update()
 
     // destroy itself if hp reaches 0
     if (hp <= 0) {
-        // destroying the player causes issues, determine something else to do when they die
-        if (type != Player)
-        game->Destroy(game->currLevel->gameObjects[idx]);
+        // game over when the player dies, otherwise remove the entity
+        if (type == Player) {
+            game->gameOver = true;
+        } else {
+            if (deathSound != nullptr) deathSound->play();
+            game->Destroy(game->currLevel->gameObjects[idx]);
+        } 
     
     } else {
         hp = Clamp(0, max_hp, hp);

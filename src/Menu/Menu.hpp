@@ -20,6 +20,7 @@ enum State
     main_menu,
     in_game,
     Quit,
+    game_over
 };
 
 
@@ -57,7 +58,7 @@ class GameMenu
 
         std::shared_ptr<LWindow> window;
 
-        std::shared_ptr<LTexture> BGTexture = nullptr;
+        std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex;
 
         // the sound made when you click a button
         std::shared_ptr<LAudio> buttonSound = nullptr;
@@ -67,7 +68,8 @@ class GameMenu
         std::vector<std::shared_ptr<Button>> *currButtons = &menuButtons;
         std::vector<std::shared_ptr<Button>> menuButtons, // buttons in the main menu
                                              pauseButtons, // pause menu
-                                             confirmationButtons; // yes/no
+                                             confirmationButtons, // yes/no
+                                             gameOverButtons; // play again/main menu
 
         bool isActive = true;
         State state = main_menu;
@@ -78,4 +80,6 @@ class GameMenu
 
         // checks to see if the player clicks any buttons
         void leftClickFunc();
+
+        void enter_game_over();
 };

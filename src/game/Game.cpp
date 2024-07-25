@@ -20,6 +20,8 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 }
 
 float Game::get_time() { return g_time; }
+bool Game::game_over() { return gameOver; }
+void Game::new_game() { gameOver = false; }
 
 void Game::clear_input() { inputKeys = 0; }
 

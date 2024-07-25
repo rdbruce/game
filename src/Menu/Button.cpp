@@ -31,6 +31,7 @@ void Button::doNothing() {}
 
 void Button::enter_game()
 {
+    menu->game->new_game();
     menu->state = in_game;
     menu->isActive = false;
     menu->currButtons = &menu->pauseButtons;

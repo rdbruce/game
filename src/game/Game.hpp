@@ -127,6 +127,10 @@ class Game
 
         // returns g_time
         float get_time();
+        // returns gameOver
+        bool game_over();
+        // makes game_over false
+        void new_game();
 
 
     private:
@@ -171,6 +175,9 @@ class Game
 
         // whether or not stone may be gathered from the riverbed
         bool mayGatherStone = true;
+
+        // true when the player dies
+        bool gameOver = false;
 
 
         // position and dimensions of the camera

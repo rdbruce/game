@@ -9,6 +9,11 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
         std::cerr << "Failed to load menu background!" << std::endl;
     }
 
+    gameOverTex = std::make_shared<LTexture>(window);
+    if (!gameOverTex->loadFromFile("../../assets/Menu/GameOver.png")) {
+        std::cerr << "Failed to load game over texture!" << std::endl;
+    }
+
     buttonSound = std::make_shared<LAudio>();
     if (!buttonSound->loadFromFile("../../assets/Audio/ThinkFastChucklenuts.wav")) {
         std::cerr << "Failed to load button sound" << std::endl;
@@ -23,10 +28,15 @@ void GameMenu::render_background()
 {
     if (isActive) 
     {
-        auto tex = (state == in_game)? 
-                   tEditor.createSolidColour(window->getWidth(), window->getHeight(), 180, window) 
-                   : BGTexture;
+        auto tex = (state == main_menu)? BGTexture :
+                   tEditor.createSolidColour(window->getWidth(), window->getHeight(), 180, window);
         tex->renderAsBackground();
+
+        if (state == game_over) {
+            int x = window->getWidth()/2;
+            SDL_Rect rect = {x-150, 75, 300, 166};
+            gameOverTex->render(rect.x, rect.y, &rect);
+        }
     }
 }
 
@@ -50,8 +60,17 @@ void GameMenu::render_buttons()
     }
 }
 
+void GameMenu::enter_game_over()
+{
+    isActive = true;
+    currButtons = &gameOverButtons;
+    state = game_over;
+}
+
 bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
 {
+    if (game->game_over() && state == in_game) enter_game_over();
+
     switch (e.type)
     {
         case SDL_KEYDOWN:
@@ -106,12 +125,12 @@ void GameMenu::create_mainMenu_buttons()
     menuButtons.push_back(button);
     
 
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
+    auto newGameTexture = std::make_shared<LTexture>(window);
+    if (!newGameTexture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
         std::cerr << "Failed to load new game button texture!" << std::endl;
     }
     rect.y += 125;
-    button = std::make_shared<Button>(this, rect, texture, &Button::new_game_confirmation);
+    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation);
     menuButtons.push_back(button);
 
     texture = std::make_shared<LTexture>(window);
@@ -129,6 +148,11 @@ void GameMenu::create_mainMenu_buttons()
     rect.y += 125;
     button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop);
     menuButtons.push_back(button);
+
+
+    rect.x = (window->getWidth()/2) - 125; rect.y = 250;
+    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game);
+    gameOverButtons.push_back(button);
 }
 
 void GameMenu::create_pauseMenu_buttons()
@@ -144,12 +168,12 @@ void GameMenu::create_pauseMenu_buttons()
     auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu);
     pauseButtons.push_back(button);
 
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/MainMenuButton.png")) {
+    auto MenuTexture = std::make_shared<LTexture>(window);
+    if (!MenuTexture->loadFromFile("../../assets/Menu/Buttons/MainMenuButton.png")) {
         std::cerr << "failed to load main menu button texture!" << std::endl;
     }
     rect.y += 125;
-    button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_menu_confirmation);
+    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation);
     pauseButtons.push_back(button);
 
 
@@ -168,6 +192,11 @@ void GameMenu::create_pauseMenu_buttons()
     }
     button = std::make_shared<Button>(this, rect, texture);
     confirmationButtons.push_back(button);
+
+
+    rect.y = 375;
+    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_mainMenu);
+    gameOverButtons.push_back(button);
 }
 
-bool GameMenu::is_inGame() { return state == in_game; }
+bool GameMenu::is_inGame() { return state == in_game || state == game_over; }

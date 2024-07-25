@@ -414,3 +414,20 @@ void GameObject::fallingTreeRenderFunc( int camX, int camY )
     tex->render(p.x, p.y, &hitbox, NULL, theta, &centre);
     timer -= get_deltaTime();
 }
+
+void GameObject::itemRenderFunc( int camX, int camY )
+{
+    Vector2Int p( hitbox.x - camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+        return;
+    }
+    tex->render(p.x, p.y, &hitbox);
+
+    std::string txt = std::to_string(hp);
+    auto itemCountTex = std::make_unique<LTexture>(game->window);
+    if (!itemCountTex->loadFromRenderedText(txt, {255,255,255,255})) {
+        std::cerr << "failed to load health display!" << std::endl;
+    }
+    itemCountTex->render(p.x+hitbox.w-(itemCountTex->getWidth()/2), p.y+hitbox.h-(itemCountTex->getHeight()/2));
+}
