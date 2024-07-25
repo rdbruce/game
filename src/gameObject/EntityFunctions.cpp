@@ -11,7 +11,7 @@ void GameObject::wolfVelocityFunc()
     if (!game->isNight) beginRetreat();
     else {
         // wolves will update their pathfinding every 0.5 seconds
-        if (timer <= 0.0f) {
+        if (timer <= 0.0f || path == nullptr) {
             wolfUpdatePathfinding();
         }
 
@@ -327,6 +327,8 @@ void GameObject::wolfWalkToNextCell()
 
 void GameObject::pathfindToPlayer( int searchDepth )
 {
+    AStar::Open(&game->currLevel->grid, &game->barrier);
+
     // create a new pathfinding object
     Vector2Int  start = get_cell(), 
                 end = game->currLevel->player->get_cell(),

@@ -94,15 +94,15 @@ void TextureManipulator::renderTextureToTexture( std::shared_ptr<LTexture> targe
 
 
 // creates an empty LTexture of the specified dimensions with the desired LWindow
-std::shared_ptr<LTexture> TextureManipulator::createEmptyTexture( int width, int height, std::shared_ptr<LWindow> gHolder )
+std::shared_ptr<LTexture> TextureManipulator::createEmptyTexture( int width, int height, std::shared_ptr<LWindow> gHolder, SDL_TextureAccess access )
 {
     // create an LTexture pointer
     auto res = std::make_shared<LTexture>(gHolder);
 
     SDL_Texture *newTexture = NULL;
-    newTexture = SDL_CreateTexture(gHolder->gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    newTexture = SDL_CreateTexture(gHolder->gRenderer, SDL_PIXELFORMAT_RGBA8888, access, width, height);
 
-    // set the blend mode to blen so that the texture can have transparency
+    // set the blend mode to blend so that the texture can have transparency
     SDL_SetTextureBlendMode(newTexture, SDL_BLENDMODE_BLEND);
 
     // initialise the texture with transparent pixels

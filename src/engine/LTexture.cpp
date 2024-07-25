@@ -29,14 +29,16 @@ LTexture::~LTexture()
 
 #if defined(SDL_TTF_MAJOR_VERSION)
 bool LTexture::loadFromRenderedText(std::string textureText,
-                                    SDL_Color textColor)
+                                    SDL_Color textColor, TTF_Font *font)
 {
   // Get rid of preexisting texture
   free();
 
+  if (font == NULL) font = gHolder->gFont;
+
   // Render text surface
   SDL_Surface *textSurface =
-      TTF_RenderText_Solid(gHolder->gFont, textureText.c_str(), textColor);
+      TTF_RenderText_Solid(font, textureText.c_str(), textColor);
   if (textSurface != NULL)
   {
     // Create texture from surface pixels
@@ -169,6 +171,11 @@ void LTexture::render(int x, int y, SDL_Rect *dest, SDL_Rect *clip, double angle
   // Render to screen
   SDL_RenderCopyEx(gHolder->gRenderer, mTexture, clip, &renderQuad, angle,
                    center, flip);
+}
+
+void LTexture::renderGeometry(SDL_Vertex *vertices, int n)
+{
+  SDL_RenderGeometry(gHolder->gRenderer, mTexture, vertices, n, NULL, -1);
 }
 
 int LTexture::getWidth() { return mWidth; }

@@ -433,3 +433,40 @@ void Game::render_gameobjects() {
         currLevel->gameObjects[i]->render( camera.x, camera.y );
     }
 }
+
+void Game::render_clock()
+{
+    float t = g_time / DAY_LENGTH;
+
+    int minutes = (int)g_time / 60, seconds = (int)g_time % 60;
+    std::string txt = (seconds < 10)?
+        std::to_string(minutes) + ":0" + std::to_string(seconds) :
+        std::to_string(minutes) + ':' + std::to_string(seconds);
+
+    auto clockTex = std::make_unique<LTexture>(window);
+    if (!clockTex->loadFromRenderedText(txt, {255,0,0,255}, sevenSegment)) {
+        std::cerr << "Failed to create clock" << std::endl;
+    }
+    int w = clockTex->getWidth(), x = window->getWidth()-106;
+    clockTex->render(x, 25);
+
+    auto bar = tEditor.createSolidColour(75, 5, 0x000000D0, window);
+    bar->render(x+3, 10);
+
+    if (isNight) 
+    {
+        int wRed = 81.0f * (1.0f-t);
+        if (wRed > 0) {
+            bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
+            bar->render(x+(81-wRed), 7);
+        }
+    }
+    else
+    {
+        int wRed = t * 81.0f;
+        if (wRed > 0) {
+            bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
+            bar->render(x, 7);
+        }
+    }
+}

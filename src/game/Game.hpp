@@ -64,6 +64,8 @@ class Game
         void render_player_health();
         // shows what mouse controls the player can use
         void render_controls();
+        // renders the clock that tells how far into the day you are
+        void render_clock();
 
 
         // finds the time elapsed between frames
@@ -180,6 +182,7 @@ class Game
         Scene Base, Woods, Town;
         // true when switching between levels
         bool switching_scenes = false;
+        int barrier = BARRIER;
 
         
 
@@ -192,6 +195,8 @@ class Game
         void load_textures();
         // loads all of the audio mp3s from file
         void load_audio();
+        // loads all the fonts from file
+        void load_fonts();
 
 
         // background texture
@@ -206,7 +211,10 @@ class Game
                                     stoneTex, LMBTex, MMBTex, RMBTex;
 
         // all of the audio used by the game
-        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle;
+        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop;
+
+        // fonts
+        TTF_Font *sevenSegment;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;

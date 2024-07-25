@@ -21,7 +21,7 @@ class TextureManipulator
         void renderTextureToTexture( std::shared_ptr<LTexture> target, SDL_Texture *source, SDL_Rect *targetRect );
 
         // creates an empty LTexture of the specified dimensions with the desired LWindow
-        std::shared_ptr<LTexture> createEmptyTexture( int width, int height, std::shared_ptr<LWindow> gHolder );
+        std::shared_ptr<LTexture> createEmptyTexture( int width, int height, std::shared_ptr<LWindow> gHolder, SDL_TextureAccess access = SDL_TEXTUREACCESS_TARGET );
         
         std::shared_ptr<LTexture> createSolidColour( int width, int height, Uint32 colour, std::shared_ptr<LWindow> gHolder );
 };

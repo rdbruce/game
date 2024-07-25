@@ -1,8 +1,6 @@
 #include "Game.hpp"
 #include "../gameObject/AStarPathfinding.hpp"
 
-int barrier = BARRIER;
-
 // constructor
 Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 {
@@ -15,12 +13,10 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
     // do this first!!!
     load_textures();
     load_audio();
+    load_fonts();
 
     // camera dimensions should be the same as window size
     camera = { 0, 0, window->getWidth(), window->getHeight() };
-
-    // set up pathfinding
-    AStar::Open(&currLevel->grid, &barrier);
 }
 
 float Game::get_time() { return g_time; }
@@ -305,6 +301,7 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             }
             break;
     }
+    if (res != nullptr) pop->play();
     return res;
 }
 
@@ -353,6 +350,8 @@ std::shared_ptr<GameObject> Game::craftItem( std::shared_ptr<GameObject> item )
             item->set_HP( item->get_hp()-1 );
             break;
     }
+
+    if (res != nullptr) pop->play();
     return res;
 }
 
@@ -403,7 +402,6 @@ void Game::dayNightCycle()
 {
     // after x seconds
     if (g_time >= DAY_LENGTH) {
-        std::cout << "here\n";
         // toggle night, and make sure all scene objects get updated
         isNight = !isNight;
         Base.night = Woods.night = Town.night = isNight;
@@ -836,5 +834,23 @@ void Game::load_audio()
     doorToggle = std::make_shared<LAudio>();
     if (!doorToggle->loadFromFile("../../assets/Audio/DoorToggle.wav")) {
         std::cerr << "Failed to load audio for door opening!" << std::endl;
+    }
+    
+    leaves = std::make_shared<LAudio>();
+    if (!leaves->loadFromFile("../../assets/Audio/Destruction/Leaves.wav")) {
+        std::cerr << "Failed to load audio for leaves!" << std::endl;
+    }
+
+    pop = std::make_shared<LAudio>();
+    if (!pop->loadFromFile("../../assets/Audio/Pop.wav")) {
+        std::cerr << "Failed to load item pop sound!" << std::endl;
+    }
+}
+
+void Game::load_fonts()
+{
+    sevenSegment = TTF_OpenFont("C:../../assets/Fonts/Seven_Segment.ttf", 48);
+    if (sevenSegment == NULL) {
+        std::cout << "Failed to load seven segment font!" << std::endl;
     }
 }

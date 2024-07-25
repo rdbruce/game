@@ -47,6 +47,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             if (num&0x4000 && playerPlacement) return -2;
             // update the grid value to represent a log
             num |= LOG;
+            if (playerPlacement) logDestruction->play();
             break;
 
 
@@ -57,6 +58,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             // update the grid value to represent a bridge
             num |= BRIDGE;
             num &= ~BARRIER; // turn off barrier bit
+            if (playerPlacement) logDestruction->play();
             break;
 
         case 3: // tree
@@ -79,6 +81,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             if (num&0x5000 && playerPlacement) return -2;
             // update the grid to represent a sapling
             num |= SAPLING;
+            if (playerPlacement) leaves->play();
             break;
 
 
@@ -94,7 +97,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 if (num&255 != 8) return -2;
                 num = CLOSED_DOOR;
                 doorToggle->play();
-            } else num |= CLOSED_DOOR;
+            } else {
+                num |= CLOSED_DOOR;
+                if (playerPlacement) logDestruction->play();
+            }
             break;
 
         case 8: // open door
@@ -103,7 +109,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 if ((num&255) != 7) return -2;
                 num = OPEN_DOOR;
                 doorToggle->play();
-            } else num |= OPEN_DOOR;
+            } else {
+                num |= OPEN_DOOR;
+                if (playerPlacement) logDestruction->play();
+            }
             break;
 
         case 10: // berry bush
@@ -139,6 +148,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a bridge
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Bridge_Item, pos, 1);
+                    logDestruction->play();
                     break;
                 }
 
@@ -172,6 +182,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a log
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Log_Item, pos, 1);
+                    logDestruction->play();
                     break;
                 }
 
@@ -179,22 +190,18 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a pine cone
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Pine_Cone_Item, pos, 1);
+                    leaves->play();
                     break;
                 }
 
                 case 6: return 0; // world border cannot be modified, exit the function
 
-                case 7: { // closed door
-                    // spawn a door
-                    Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Door_Item, pos, 1);
-                    break;
-                }
-
+                case 7: // closed door
                 case 8: { // open door
                     // spawn a door
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Door_Item, pos, 1);
+                    logDestruction->play();
                     break;
                 }
 
@@ -203,6 +210,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(Berry_Item, pos, 1);
                     // place a depleted bush where the berry bush is
+                    leaves->play();
                     return PlaceObjectInCell(cell, EMPTY_BUSH, false, level);
                 }
 

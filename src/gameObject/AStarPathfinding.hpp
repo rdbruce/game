@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include "../engine/GameMath.hpp"
 
@@ -98,7 +99,6 @@ namespace AStar
 
         // beginning and end of the path
         Vector2Int start, end;
-        Node *finish = nullptr; // the end of the node chain
 
 
         // finds the best node in open to evaluate (lowest fCost, if equal then lowest hCost)

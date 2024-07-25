@@ -33,7 +33,7 @@ public:
 
 #if defined(SDL_TTF_MAJOR_VERSION)
   // Creates image from font string
-  bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
+  bool loadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font *font = NULL);
 #endif
 
 
@@ -56,6 +56,9 @@ public:
   // Renders texture at given point
   void render(int x, int y, SDL_Rect *dest = NULL, SDL_Rect *clip = NULL, double angle = 0.0,
               SDL_Point *center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+  // renders texture on provided vertices
+  void renderGeometry(SDL_Vertex *vertices, int n);
 
   // Gets image dimensions
   int getWidth();

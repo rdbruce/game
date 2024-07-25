@@ -120,7 +120,8 @@ namespace AStar
         for (int x = 0; x < MapDimensions.x; x++) {
             for (int y = 0; y < MapDimensions.y; y++) {
                 Vector2Int p(x, y);
-                nodes.push_back(new Node(p, end));
+                auto node = new Node(p, end);
+                nodes.push_back(node);
             }
         }
     }
