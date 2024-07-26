@@ -22,6 +22,9 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
     // create buttons
     create_mainMenu_buttons();
     create_pauseMenu_buttons();
+
+    // load player highscores
+    highscores.loadFromFile("../../saves/data/HighScores.txt");
 }
 
 void GameMenu::render_background()
@@ -37,6 +40,21 @@ void GameMenu::render_background()
             SDL_Rect rect = {x-150, 75, 300, 166};
             gameOverTex->render(rect.x, rect.y, &rect);
         }
+    }
+}
+
+void GameMenu::render_highscores()
+{
+    if (state == main_menu && confirmationText == "") {
+        std::string txt = "HIGHSCORE:\nMOST NIGHTS SURVIVED:\nMOST ENEMIES KILLED:";
+
+        renderText(txt, 25, 25, window, {255,255,255,255}, Left_aligned);
+
+        txt =   std::to_string(highscores.highscore) + '\n' +
+                std::to_string(highscores.mostNightsSurvived) + '\n' +
+                std::to_string(highscores.mostEnemiesKilled);
+
+        renderText(txt, 500, 25, window, {255,255,255,255}, Left_aligned);
     }
 }
 
@@ -88,6 +106,8 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
     }
     *menuActive = isActive;
 
+    update();
+
     return state == Quit;
 }
 
@@ -111,6 +131,17 @@ void GameMenu::leftClickFunc()
 }
 
 bool GameMenu::is_active() { return isActive; }
+
+void GameMenu::update()
+{
+    if (state == Quit) {
+        highscores.Save("../../saves/data/HighScores.txt");
+        game->scores.Save("../../saves/data/CurrScores.txt");
+    } 
+    else if (state == game_over) {
+        highscores.set_newHighscores(game->scores);
+    }
+}
 
 void GameMenu::create_mainMenu_buttons()
 {

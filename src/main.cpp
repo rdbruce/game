@@ -101,6 +101,7 @@ int main(
 
       if (inMenu) {
         menu.render_background();
+        menu.render_highscores();
         menu.render_buttons();
         menu.render_confirmation();
       }

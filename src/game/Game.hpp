@@ -9,9 +9,12 @@
 #include "../engine/LAudio.hpp"
 
 #include "../gameObject/GameObject.hpp"
+
 #include "Scene.hpp"
 #include "CellTypes.hpp"
 #include "Dialogue.hpp"
+
+#include "../Menu/PlayerData.hpp"
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -131,6 +134,8 @@ class Game
         bool game_over();
         // makes game_over false
         void new_game();
+        // tracks the player's score
+        PlayerData scores;
 
 
     private:
@@ -159,7 +164,7 @@ class Game
 
 
         // the length (in seconds) of one day
-        float DAY_LENGTH = 300.0f;
+        float DAY_LENGTH = 5.0f;
         // the time elapsed between frames
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
@@ -178,6 +183,8 @@ class Game
 
         // true when the player dies
         bool gameOver = false;
+        // if this is the first day in the session
+        bool firstDay = true;
 
 
         // position and dimensions of the camera
@@ -190,6 +197,7 @@ class Game
         // true when switching between levels
         bool switching_scenes = false;
         int barrier = BARRIER;
+
 
         
 
@@ -218,7 +226,7 @@ class Game
                                     stoneTex, LMBTex, MMBTex, RMBTex, BearTex;
 
         // all of the audio used by the game
-        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop;
+        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk;
 
         // fonts
         TTF_Font *sevenSegment;

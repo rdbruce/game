@@ -11,6 +11,12 @@
 #include <vector>
 #include <iostream>
 
+enum TextOrientation
+{
+  Centred,
+  Left_aligned,
+};
+
 // forward declare texture manipulator class
 class TextureManipulator;
 
@@ -77,4 +83,4 @@ private:
 
 
 // renders a desired string centred on x
-void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window );
+void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred );

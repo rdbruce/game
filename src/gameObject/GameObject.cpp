@@ -320,6 +320,10 @@ void GameObject::update()
         if (type == Player) {
             game->gameOver = true;
         } else {
+            if (is_enemy()) {
+                game->scores.mostEnemiesKilled++;
+                game->scores.calculate_score();
+            }
             if (deathSound != nullptr) deathSound->play();
             game->Destroy(game->currLevel->gameObjects[idx]);
         } 

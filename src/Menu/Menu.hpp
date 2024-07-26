@@ -41,6 +41,9 @@ class GameMenu
 
         void render_confirmation();
 
+        // shows the highscores on the main menu
+        void render_highscores();
+
         // handle user input, returns true when quit is requested
         bool handle_events( SDL_Event &e, bool *menuActive );
 
@@ -53,6 +56,9 @@ class GameMenu
 
         // creates all the button objects for the in-game pause menu
         void create_pauseMenu_buttons();
+
+        // updates some of the internal variables
+        void update();
 
     private:
 
@@ -77,6 +83,8 @@ class GameMenu
         Game *game = nullptr;
 
         TextureManipulator tEditor;
+
+        PlayerData highscores;
 
         // checks to see if the player clicks any buttons
         void leftClickFunc();

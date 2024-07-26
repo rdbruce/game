@@ -41,13 +41,14 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
     switch (objType & CELL_ID) // just the first byte, containing cell ID
     {
         case 1: // log
-
+        {
             // cell is occupied, AND the placement was made by player, not loading
-            if (num&0x4000 && playerPlacement) return -2;
+            if (((num&OCCUPIED) || (num&WATER && !(num&IS_DRIED))) && playerPlacement) return -2;
             // update the grid value to represent a log
             num |= LOG;
             if (playerPlacement) logDestruction->play();
             break;
+        }
 
 
         case 2: // DAM
@@ -77,7 +78,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
         case 5: // sapling
             // cell is occupied or water, AND the placement was made by player, not loading
-            if (num&0x5000 && playerPlacement) return -2;
+            if (((num&OCCUPIED) || (num&WATER && !(num&IS_DRIED))) && playerPlacement) return -2;
             // update the grid to represent a sapling
             num |= SAPLING;
             if (playerPlacement) leaves->play();
@@ -92,7 +93,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
         case 7: // closed door
             // cell is occupied or water, AND the placement was made by player, not loading
-            if (num&0x5000 && playerPlacement) {
+            if (((num&OCCUPIED) || (num&WATER && !(num&IS_DRIED))) && playerPlacement) {
                 if (num&255 != 8) return -2;
                 num &= ~(CELL_ID|BARRIER);
                 num |= CLOSED_DOOR;
@@ -105,7 +106,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
         case 8: // open door
             // cell is occupied or water, AND the placement was made by player, not loading
-            if (num&0x5000 && playerPlacement) {
+            if (((num&OCCUPIED) || (num&WATER && !(num&IS_DRIED))) && playerPlacement) {
                 if ((num&255) != 7) return -2;
                 num &= ~(CELL_ID|BARRIER);
                 num |= OPEN_DOOR;

@@ -153,6 +153,7 @@ void GameObject::foxRenderFunc( int camX, int camY )
             }
 
             case 12:
+                beginRetreat();
                 game->enter_dialogue(None);
                 hp = 1;
                 break;

@@ -21,7 +21,12 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 
 float Game::get_time() { return g_time; }
 bool Game::game_over() { return gameOver; }
-void Game::new_game() { gameOver = false; }
+
+void Game::new_game() { 
+    mayGatherStone = true;
+    gameOver = false;
+    firstDay = true;
+}
 
 void Game::clear_input() { inputKeys = 0; }
 
@@ -420,12 +425,15 @@ void Game::dayNightCycle()
         return;
 
     } else if (g_time == 0.0f && !isNight) {
-        if (!isNight) {
-            // reset daily booleans
-            mayGatherStone = true;
-            // spawn npcs
-            spawnNPCs();
+        if (!firstDay) {
+            scores.mostNightsSurvived++;
+            scores.calculate_score();
         }
+        else firstDay = false;
+        // reset daily booleans
+        mayGatherStone = true;
+        // spawn npcs
+        spawnNPCs();
     }
     update_CRT();
 
@@ -883,8 +891,13 @@ void Game::load_audio()
     }
 
     pop = std::make_shared<LAudio>();
-    if (!pop->loadFromFile("../../assets/Audio/Pop.wav")) {
+    if (!pop->loadFromFile("../../assets/Audio/EntitySounds/Pop.wav")) {
         std::cerr << "Failed to load item pop sound!" << std::endl;
+    }
+
+    bonk = std::make_shared<LAudio>();
+    if (!bonk->loadFromFile("../../assets/Audio/EntitySounds/Bonk.wav")) {
+        std::cerr << "Failed to load bonk sound!" << std::endl;
     }
 }
 
@@ -892,6 +905,6 @@ void Game::load_fonts()
 {
     sevenSegment = TTF_OpenFont("C:../../assets/Fonts/Seven_Segment.ttf", 48);
     if (sevenSegment == NULL) {
-        std::cout << "Failed to load seven segment font!" << std::endl;
+        std::cerr << "Failed to load seven segment font!" << std::endl;
     }
 }

@@ -43,6 +43,7 @@ void Button::continue_game()
 {
     menu->game->load_levels("../../saves/curr/");
     menu->game->initialise_BGTexture();
+    menu->game->scores.loadFromFile("../../saves/data/CurrScores.txt");
     enter_game();
 }
 
@@ -63,6 +64,8 @@ void Button::load_new_game()
     menu->game->initialise_BGTexture();
     // save the game to overwrite any existing save data
     menu->game->save_game();
+    menu->game->scores.reset();
+    menu->game->scores.Save("../../saves/data/CurrScores.txt");
     enter_game();
 }
 
@@ -103,4 +106,5 @@ void Button::go_to_mainMenu()
     menu->isActive = true;
     menu->currButtons = &menu->menuButtons;
     menu->confirmationText = "";
+    menu->highscores.set_newHighscores(menu->game->scores);
 }
