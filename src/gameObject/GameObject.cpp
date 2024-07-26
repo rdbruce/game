@@ -152,9 +152,9 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             break;
         }
         
-        case Bridge_Item: {
+        case Dam_Item: {
             // assign the texture
-            tex = game->bridgeTex;
+            tex = game->damTex;
             renderingFunc = &GameObject::itemRenderFunc;
 
             // set up the hitbox

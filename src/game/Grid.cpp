@@ -38,9 +38,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
     int x = cell.x * sideLen, y = cell.y * sideLen;
     SDL_Rect cellRect = { x, y, sideLen, sideLen };
 
-    switch (objType & 255) // just the first byte, containing cell ID
+    switch (objType & CELL_ID) // just the first byte, containing cell ID
     {
-
         case 1: // log
 
             // cell is occupied, AND the placement was made by player, not loading
@@ -51,12 +50,12 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             break;
 
 
-        case 2: // bridge
+        case 2: // DAM
 
             // cell is occupied, AND the placement was made by player, not loading
             if (num&0x4000 && playerPlacement) return -2;
-            // update the grid value to represent a bridge
-            num |= BRIDGE;
+            // update the grid value to represent a DAM
+            num |= DAM;
             num &= ~BARRIER; // turn off barrier bit
             if (playerPlacement) logDestruction->play();
             break;
@@ -95,7 +94,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             // cell is occupied or water, AND the placement was made by player, not loading
             if (num&0x5000 && playerPlacement) {
                 if (num&255 != 8) return -2;
-                num = CLOSED_DOOR;
+                num &= ~(CELL_ID|BARRIER);
+                num |= CLOSED_DOOR;
                 doorToggle->play();
             } else {
                 num |= CLOSED_DOOR;
@@ -107,7 +107,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             // cell is occupied or water, AND the placement was made by player, not loading
             if (num&0x5000 && playerPlacement) {
                 if ((num&255) != 7) return -2;
-                num = OPEN_DOOR;
+                num &= ~(CELL_ID|BARRIER);
+                num |= OPEN_DOOR;
                 doorToggle->play();
             } else {
                 num |= OPEN_DOOR;
@@ -134,7 +135,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
             if (num&0x8000 && playerPlacement) return -3;
 
             // first byte represents info about the cell, this is the object being removed
-            switch (num&255)
+            switch (num&CELL_ID)
             {
                 case 1: { // log
                     // spawn a log
@@ -144,10 +145,10 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     break;
                 }
 
-                case 2: { // bridge
-                    // spawn a bridge
+                case 2: { // DAM
+                    // spawn a DAM
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Bridge_Item, pos, 1);
+                    spawnItemStack(Dam_Item, pos, 1);
                     logDestruction->play();
                     break;
                 }
@@ -249,7 +250,7 @@ void Game::drawCell( Vector2Int cell )
     {
         case 1: tEditor.renderTextureToTexture(BGTexture, logTex, &cellRect); break;
 
-        case 2: tEditor.renderTextureToTexture(BGTexture, bridgeTex, &cellRect); break;
+        case 2: tEditor.renderTextureToTexture(BGTexture, damTex, &cellRect); break;
 
         case 3: AddTreeToOverlay(cell); break;
 
@@ -655,7 +656,7 @@ bool Game::blocksRiver( Vector2Int cell )
     // other end of the river reached, return true
     if (!(currLevel->grid[cell.x][cell.y]&WATER)) return true;
     // cell is water and unblocked, return false
-    if (!(is_barrier(cell) && is_occupied(cell))) return false;
+    if (!is_occupied(cell)) return false;
 
     Vector2Int currCell(cell.x, cell.y+1);
     return blocksRiver( currCell );

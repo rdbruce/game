@@ -113,9 +113,9 @@ void Game::render_controls()
                 render_flag = true;
                 break;
 
-            case Bridge_Item: 
-                // right click to build bridge
-                txt = "Build bridge";
+            case Dam_Item: 
+                // right click to build dam
+                txt = "Build dam";
                 render_flag = true;
                 break;
 
@@ -269,7 +269,7 @@ void Game::render_controls()
                             break;
                         }
 
-                        case Bridge_Item: {
+                        case Dam_Item: {
                             LMBTex->render(mRect.x, mRect.y, &mRect);
                             txt = "Pick up item";
                             if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
@@ -305,7 +305,7 @@ void Game::render_controls()
                             }
                             controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
 
-                            bridgeTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
+                            damTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
                             txt = ")";
                             if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
                                 std::cerr << "couldn't render controls text!" << std::endl;

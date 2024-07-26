@@ -209,7 +209,7 @@ class Game
         // background texture
         std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr, CRT_Tex = nullptr, CRT = nullptr;
         std::shared_ptr<LTexture> Bert = nullptr;
-        std::shared_ptr<LTexture>   logTex, bridgeTex, waterTex, grassTex, treeTex,
+        std::shared_ptr<LTexture>   logTex, damTex, waterTex, grassTex, treeTex,
                                     stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
                                     pine_coneTex, plankTex, foxTex, berryTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,

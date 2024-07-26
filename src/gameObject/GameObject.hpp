@@ -40,7 +40,7 @@ enum EntityType
     Log_Item,       
     Pine_Cone_Item, 
     Plank_Item,     
-    Bridge_Item,    
+    Dam_Item,    
     Door_Item,      
     Stone_Item,     
     Berry_Item,

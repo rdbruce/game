@@ -280,11 +280,11 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             switch (item2->get_type())
             {
                 case Plank_Item:
-                    // 2 logs and 4 planks craft one bridge
+                    // 2 logs and 4 planks craft one DAM
                     // make sure there are adequate resources
                     if (hp1 >= 2 && hp2 >= 4) {
-                        // spawn one bridge item
-                        res = spawnItemStack(Bridge_Item, item1->get_pos(), 1);
+                        // spawn one DAM item
+                        res = spawnItemStack(Dam_Item, item1->get_pos(), 1);
                         // reduce the hp of the other item stacks
                         item1->set_HP(hp1-2); item2->set_HP(hp2-4);
                     }
@@ -296,11 +296,11 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             switch (item2->get_type())
             {
                 case Log_Item:
-                    // 2 logs and 4 planks craft one bridge
+                    // 2 logs and 4 planks craft one DAM
                     // make sure there are adequate resources
                     if (hp1 >= 4 && hp2 >= 2) {
-                        // spawn one bridge item
-                        res = spawnItemStack(Bridge_Item, item1->get_pos(), 1);
+                        // spawn one DAM item
+                        res = spawnItemStack(Dam_Item, item1->get_pos(), 1);
                         // reduce the hp of the other item stacks
                         item1->set_HP(hp1-4); item2->set_HP(hp2-2);
                     }
@@ -329,8 +329,8 @@ std::shared_ptr<GameObject> Game::craftItem( std::shared_ptr<GameObject> item )
             item->set_HP( item->get_hp()-1 ); // lose one log in crafting
             break;
 
-        case Bridge_Item: {
-            // bridges may be deconstructed back into 4 planks and 2 logs
+        case Dam_Item: {
+            // DAMs may be deconstructed back into 4 planks and 2 logs
             Vector2 p = item->get_pos();
             res = spawnItemStack(Log_Item, p, 2);
             res->set_timer( 0.75f );
@@ -483,7 +483,7 @@ int Game::get_building( EntityType type )
     {
         case Log_Item: return LOG;
         case Pine_Cone_Item: return SAPLING;
-        case Bridge_Item: return BRIDGE;
+        case Dam_Item: return DAM;
         case Door_Item: return CLOSED_DOOR;
         default: return EMPTY;
     }
@@ -730,9 +730,9 @@ void Game::load_textures()
         std::cerr << "Failed to load log texture!" << std::endl;
     }
 
-    bridgeTex = std::make_shared<LTexture>(window);
-    if (!bridgeTex->loadFromFile("../../assets/Buildings/Bridge.png")) {
-        std::cerr << "Failed to load bridge texture!" <<std::endl; 
+    damTex = std::make_shared<LTexture>(window);
+    if (!damTex->loadFromFile("../../assets/Buildings/Dam.png")) {
+        std::cerr << "Failed to load DAM texture!" <<std::endl; 
     }
 
     waterTex = std::make_shared<LTexture>(window);
