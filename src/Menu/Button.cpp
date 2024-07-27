@@ -107,4 +107,5 @@ void Button::go_to_mainMenu()
     menu->currButtons = &menu->menuButtons;
     menu->confirmationText = "";
     menu->highscores.set_newHighscores(menu->game->scores);
+    menu->game->scores.Save("../../saves/data/CurrScores.txt");
 }

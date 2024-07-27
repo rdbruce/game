@@ -662,14 +662,16 @@ void Game::spawnNPCs()
     }
 
     // spawn NPCS in the base level
-    // spawn NPCs in the town level
-    n = Base.gameObjects.size();
-    for (i = 0; i < n; i++) {
-        if (Base.gameObjects[i]->get_type() == Fox_NPC) break;
-    }
-    if (i == n) {
-        Vector2 pos(1500.0f, 2300.0f);
-        Instantiate(pos, Fox_NPC, 1, &Base);
+    if (scores.mostNightsSurvived == 0) 
+    {
+        n = Base.gameObjects.size();
+        for (i = 0; i < n; i++) {
+            if (Base.gameObjects[i]->get_type() == Fox_NPC) break;
+        }
+        if (i == n) {
+            Vector2 pos(1500.0f, 2300.0f);
+            Instantiate(pos, Fox_NPC, 1, &Base);
+        }
     }
 }
 
