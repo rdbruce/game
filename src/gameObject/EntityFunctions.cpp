@@ -382,17 +382,24 @@ void GameObject::beginRetreat()
 }
 
 
-void GameObject::defaultRenderFunc( int camX, int camY )
+void GameObject::defaultRenderFunc( int camX, int camY, Uint8 alpha )
 {
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
     if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
         return;
     }
-    tex->render( p.x, p.y, &hitbox );
+    tex->setAlpha(alpha);
+    tex->render(p.x, p.y, &hitbox);
+    tex->setAlpha(255);
 
+
+    Vector2Int cell = get_cell();
+    if (game->is_under_tree(cell) && alpha == 255 && alpha == 255) {
+        game->secondRenders.push(this);
+    }
     // show hp
-    if (hp < max_hp && hp > 0) {
+    else if (hp < max_hp && hp > 0) {
         float t = (float)hp / (float)max_hp;
         int wWhite = hitbox.w*t, wRed = hitbox.w * (1.0f-t);
 
@@ -406,7 +413,7 @@ void GameObject::defaultRenderFunc( int camX, int camY )
     }
 }
 
-void GameObject::fallingTreeRenderFunc( int camX, int camY )
+void GameObject::fallingTreeRenderFunc( int camX, int camY, Uint8 alpha )
 {
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
@@ -421,19 +428,28 @@ void GameObject::fallingTreeRenderFunc( int camX, int camY )
     timer -= get_deltaTime();
 }
 
-void GameObject::itemRenderFunc( int camX, int camY )
+void GameObject::itemRenderFunc( int camX, int camY, Uint8 alpha )
 {
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
     if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
         return;
     }
+    tex->setAlpha(alpha);
     tex->render(p.x, p.y, &hitbox);
+    tex->setAlpha(255);
 
-    std::string txt = std::to_string(hp);
-    auto itemCountTex = std::make_unique<LTexture>(game->window);
-    if (!itemCountTex->loadFromRenderedText(txt, {255,255,255,255})) {
-        std::cerr << "failed to load health display!" << std::endl;
+
+    Vector2Int cell = get_cell();
+    if (game->is_under_tree(cell) && alpha == 255) {
+        game->secondRenders.push(this);
+    
+    } else {
+        std::string txt = std::to_string(hp);
+        auto itemCountTex = std::make_unique<LTexture>(game->window);
+        if (!itemCountTex->loadFromRenderedText(txt, {255,255,255,255})) {
+            std::cerr << "failed to load health display!" << std::endl;
+        }
+        itemCountTex->render(p.x+hitbox.w-(itemCountTex->getWidth()/2), p.y+hitbox.h-(itemCountTex->getHeight()/2));
     }
-    itemCountTex->render(p.x+hitbox.w-(itemCountTex->getWidth()/2), p.y+hitbox.h-(itemCountTex->getHeight()/2));
 }

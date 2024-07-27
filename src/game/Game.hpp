@@ -24,6 +24,7 @@
 #include <ctime>
 #include <vector>
 #include <random>
+#include <stack>
 
 using namespace Math;
 
@@ -71,6 +72,8 @@ class Game
         void render_clock();
         // renders the brightness levels
         void render_darkness();
+        // reders certain game objects a second time, when they are under a tree
+        void render_gameobjects_under_trees();
 
 
         // finds the time elapsed between frames
@@ -200,6 +203,9 @@ class Game
         bool switching_scenes = false;
         int barrier = BARRIER;
 
+        // game objects that will be rendered a second time
+        std::stack<GameObject*> secondRenders;
+
 
         
 
@@ -214,6 +220,8 @@ class Game
         void load_audio();
         // loads all the fonts from file
         void load_fonts();
+
+        
 
 
         // background texture
@@ -292,6 +300,8 @@ class Game
 
         // spawns in NPCs at the beginning of each day
         void spawnNPCs();
+
+        bool is_under_tree( Vector2Int cell );
 };
 
 #endif

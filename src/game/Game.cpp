@@ -696,6 +696,21 @@ void Game::load_levels( std::string dir )
     interactRange = 3.0f * currLevel->cell_sideLen;
 }
 
+bool Game::is_under_tree( Vector2Int cell )
+{
+    int minY = Max(cell.y, 0), maxY = Min(currLevel->gridDimensions.y-1, cell.y+9),
+        minX = Max(cell.x-1, 0), maxX = Min(cell.x+1, currLevel->gridDimensions.x-1);
+
+
+    for (int x = minX; x <= maxX; x++) 
+    {
+        for (int y = minY; y <= maxY; y++) 
+        {
+            if ((currLevel->grid[x][y]&CELL_ID) == 3) return true;
+        }
+    }
+    return false;
+}
 
 
 void Game::load_textures()

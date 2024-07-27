@@ -303,9 +303,9 @@ GameObject::GameObject() : type(Log_Item), idx(-1) {}
 
 
 
-void GameObject::render( int camX, int camY )
+void GameObject::render( int camX, int camY, Uint8 alpha )
 {
-    (this->*renderingFunc)( camX, camY );
+    (this->*renderingFunc)( camX, camY, alpha );
 }
 
 void GameObject::update()

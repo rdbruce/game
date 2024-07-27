@@ -71,7 +71,7 @@ class GameObject
 
 
         // renders the object onto the window, relative to a camera
-        void render( int camX, int camY );
+        void render( int camX, int camY, Uint8 alpha = 255 );
 
 
         bool is_item();
@@ -175,7 +175,7 @@ class GameObject
         void (GameObject::*positionFunc) (void);
         void (GameObject::*velocityFunc) (void);
         void (GameObject::*collisionFunc)(void);
-        void (GameObject::*renderingFunc)( int, int );
+        void (GameObject::*renderingFunc)( int, int, Uint8 );
 
 
 
@@ -305,13 +305,13 @@ class GameObject
 
 
         // rendering functions
-        void defaultRenderFunc( int camX, int camY );
-        void fallingTreeRenderFunc( int camX, int camY );
-        void itemRenderFunc( int camX, int camY );
+        void defaultRenderFunc( int camX, int camY, Uint8 alpha = 255 );
+        void fallingTreeRenderFunc( int camX, int camY, Uint8 alpha = 255 );
+        void itemRenderFunc( int camX, int camY, Uint8 alpha = 255 );
 
-        void foxRenderFunc( int camX, int camY );
-        void bearRenderFunc( int camX, int camY );
-        void playerRenderFunc( int camx, int camY);
+        void foxRenderFunc( int camX, int camY, Uint8 alpha = 255 );
+        void bearRenderFunc( int camX, int camY, Uint8 alpha = 255 );
+        void playerRenderFunc( int camx, int camY, Uint8 alpha = 255);
 };
 
 #endif

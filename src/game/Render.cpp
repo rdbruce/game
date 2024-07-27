@@ -482,3 +482,13 @@ void Game::render_clock()
         }
     }
 }
+
+void Game::render_gameobjects_under_trees()
+{
+    while (secondRenders.size())
+    {
+        auto obj = secondRenders.top();
+        obj->render( camera.x, camera.y, 100);
+        secondRenders.pop();
+    }
+}

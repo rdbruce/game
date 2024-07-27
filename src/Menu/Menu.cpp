@@ -261,7 +261,7 @@ void GameMenu::load_assets()
             tEditor.renderTextureToTexture(CRT_Tex, CRT_Base, &rect);
         }
     }
-    CRT_Tex->setAlpha(50);
+    CRT_Tex->setAlpha(20);
 }
 
 bool GameMenu::is_inGame() { return state == in_game || state == game_over; }

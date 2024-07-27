@@ -367,8 +367,9 @@ void Game::RemoveTreeFromOverlay( Vector2Int cell )
     int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
     map = { 0, 0, nx*sideLen, ny*sideLen };
     overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);
-    for (int x = 0; x < nx; x++) {
-        for (int y = 0; y < ny; y++) {
+
+    for (int y = 0; y < ny; y++) {
+        for (int x = 0; x < nx; x++) {
             int type = currLevel->grid[x][y]&255;
             if (type == 3) AddTreeToOverlay( Vector2Int(x, y) );
         }
@@ -607,8 +608,8 @@ void Game::initialise_BGTexture() {
     BGTexture = tEditor.createEmptyTexture(map.w, map.h, window);
     overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);
 
-    for (int x = 0; x < nx; x++) {
-        for (int y = 0; y < ny; y++) {
+    for (int y = 0; y < ny; y++) {
+        for (int x = 0; x < nx; x++) {
             PlaceObjectInCell(Vector2Int(x, y), currLevel->grid[x][y], false);
         }
     }

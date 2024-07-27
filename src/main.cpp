@@ -91,6 +91,7 @@ int main(
         game.render_background();
         game.render_gameobjects();
         game.render_overlay();
+        game.render_gameobjects_under_trees();
         game.render_darkness();
 
         // UI rendering
