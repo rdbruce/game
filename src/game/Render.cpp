@@ -419,9 +419,20 @@ void Game::render_background() {
 
 void Game::render_overlay() {
     overlayTexture->render(0, 0, &camera, &camera);
-    CRT->renderAsBackground();
 }
 
+void Game::render_darkness() 
+{
+    if (g_time < 10.0f) 
+    {
+        float t = g_time / 10.0f;
+        if (!isNight) t = 1.0f - t;
+
+        int alpha = 100.0f * t;
+        darknessTex = tEditor.createSolidColour(camera.w, camera.h, alpha, window);
+    }
+    darknessTex->renderAsBackground();
+}
 
 
 // renders all the game objects

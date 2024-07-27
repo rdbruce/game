@@ -69,6 +69,8 @@ class Game
         void render_controls();
         // renders the clock that tells how far into the day you are
         void render_clock();
+        // renders the brightness levels
+        void render_darkness();
 
 
         // finds the time elapsed between frames
@@ -164,7 +166,7 @@ class Game
 
 
         // the length (in seconds) of one day
-        float DAY_LENGTH = 5.0f;
+        float DAY_LENGTH = 300.0f;
         // the time elapsed between frames
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
@@ -215,7 +217,7 @@ class Game
 
 
         // background texture
-        std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr, CRT_Tex = nullptr, CRT = nullptr;
+        std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr, darknessTex = nullptr;
         std::shared_ptr<LTexture> Bert = nullptr;
         std::shared_ptr<LTexture>   logTex, damTex, waterTex, grassTex, treeTex,
                                     stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
@@ -233,11 +235,6 @@ class Game
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;
-
-
-        // updates the CRT_texture, making it brighter/darker depending on time
-        void update_CRT();
-
 
         // functions for editing the grid (defined in Grid.cpp NOT Game.cpp!!!!)
 

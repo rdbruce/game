@@ -183,7 +183,7 @@ int LTexture::getWidth() { return mWidth; }
 int LTexture::getHeight() { return mHeight; }
 
 
-void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window, SDL_Color colour, TextOrientation orientation )
+void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window, SDL_Color colour, TTF_Font *font, TextOrientation orientation )
 {
   // vector of strings to be rendered
   std::vector<std::string> strings;
@@ -204,7 +204,7 @@ void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window,
   {
     if (strings[i].size() == 0) continue;
     auto rend = std::make_unique<LTexture>(window);
-    if (!rend->loadFromRenderedText(strings[i], colour)) {
+    if (!rend->loadFromRenderedText(strings[i], colour, font)) {
       std::cerr << "failed to load rendered text!";
     }
     int X = (orientation == Centred)? x - (rend->getWidth()/2) : x;

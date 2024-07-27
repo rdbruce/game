@@ -435,33 +435,9 @@ void Game::dayNightCycle()
         // spawn npcs
         spawnNPCs();
     }
-    update_CRT();
 
     // update time
     g_time += deltaTime;
-}
-
-void Game::update_CRT()
-{
-    if (g_time < 10.0f || CRT == nullptr) {
-        CRT = tEditor.createEmptyTexture(camera.w, camera.h, window);
-
-        float t = g_time / 10.0f;
-        Uint8 alpha = (isNight)? 100.0f * t : 100.0f * (1.0f-t);
-        std::shared_ptr<LTexture> dark = tEditor.createSolidColour(camera.w, camera.h, alpha, window);
-        tEditor.renderTextureToTexture(CRT, dark, NULL);
-
-        SDL_Rect rect = {0, 0, CRT_Tex->getWidth(), CRT_Tex->getHeight()};
-        int nx = camera.w/rect.w + 1, ny = camera.h/rect.h + 1;
-
-        for (int i = 0; i < nx; i++) {
-            rect.x = rect.w*i;
-            for (int j = 0; j < ny; j++) {
-                rect.y = rect.h*j;
-                tEditor.renderTextureToTexture(CRT, CRT_Tex, &rect);
-            }
-        }
-    }
 }
 
 void Game::enter_dialogue( Dialogue newDialogue ) { currDialogue = newDialogue; }
@@ -860,12 +836,6 @@ void Game::load_textures()
     if (!BearTex->loadFromFile("../../assets/Entities/Bear.png")) {
         std::cerr << "Failed to load bear texture!" << std::endl;
     }
-
-    CRT_Tex = std::make_shared<LTexture>(window);
-    if (!CRT_Tex->loadFromFile("../../assets/CRT_Base_Texture.png")) {
-        std::cerr << "Failed to load texture for CRT effect!" <<std::endl;
-    }
-    CRT_Tex->setAlpha(50);
 }
 
 void Game::load_audio()
@@ -903,7 +873,7 @@ void Game::load_audio()
 
 void Game::load_fonts()
 {
-    sevenSegment = TTF_OpenFont("C:../../assets/Fonts/Seven_Segment.ttf", 48);
+    sevenSegment = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 48);
     if (sevenSegment == NULL) {
         std::cerr << "Failed to load seven segment font!" << std::endl;
     }

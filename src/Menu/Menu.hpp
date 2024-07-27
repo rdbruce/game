@@ -33,16 +33,17 @@ class GameMenu
         // initialise menu
         GameMenu( std::shared_ptr<LWindow> Window, Game *game );
 
+
         // renders the background texture
         void render_background();
-
         // shows all the buttons
         void render_buttons();
-
         void render_confirmation();
-
         // shows the highscores on the main menu
         void render_highscores();
+        // renders the CRT overlay effect
+        void render_CRT();
+
 
         // handle user input, returns true when quit is requested
         bool handle_events( SDL_Event &e, bool *menuActive );
@@ -60,14 +61,20 @@ class GameMenu
         // updates some of the internal variables
         void update();
 
+        void load_assets();
+
     private:
 
         std::shared_ptr<LWindow> window;
 
-        std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex;
+        std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex, CRT_Tex;
 
         // the sound made when you click a button
         std::shared_ptr<LAudio> buttonSound = nullptr;
+
+        // fonts
+        TTF_Font *sevenSegment36;
+
 
         std::string confirmationText = "";
 

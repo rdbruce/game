@@ -83,4 +83,4 @@ private:
 
 
 // renders a desired string centred on x
-void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred );
+void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TTF_Font *font = NULL, TextOrientation orientation = Centred );

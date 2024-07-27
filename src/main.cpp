@@ -91,11 +91,13 @@ int main(
         game.render_background();
         game.render_gameobjects();
         game.render_overlay();
+        game.render_darkness();
+
+        // UI rendering
         game.render_cell_health();
         game.render_player_health();
         game.render_clock();
         if (!inMenu) game.render_controls();
-
         game.render_framerate();
       }
 
@@ -105,6 +107,7 @@ int main(
         menu.render_buttons();
         menu.render_confirmation();
       }
+      menu.render_CRT();
 
       // Update screen
       SDL_RenderPresent(gHolder->gRenderer);

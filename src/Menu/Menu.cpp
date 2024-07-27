@@ -4,20 +4,7 @@
 GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game ) 
 : window(Window), game(game)
 {
-    BGTexture = std::make_shared<LTexture>(window);
-    if (!BGTexture->loadFromFile("../../assets/Menu/MainMenuBG.png")) {
-        std::cerr << "Failed to load menu background!" << std::endl;
-    }
-
-    gameOverTex = std::make_shared<LTexture>(window);
-    if (!gameOverTex->loadFromFile("../../assets/Menu/GameOver.png")) {
-        std::cerr << "Failed to load game over texture!" << std::endl;
-    }
-
-    buttonSound = std::make_shared<LAudio>();
-    if (!buttonSound->loadFromFile("../../assets/Audio/ThinkFastChucklenuts.wav")) {
-        std::cerr << "Failed to load button sound" << std::endl;
-    }
+    load_assets();
 
     // create buttons
     create_mainMenu_buttons();
@@ -48,13 +35,13 @@ void GameMenu::render_highscores()
     if (state == main_menu && confirmationText == "") {
         std::string txt = "HIGHSCORE:\nMOST NIGHTS SURVIVED:\nMOST ENEMIES KILLED:";
 
-        renderText(txt, 25, 25, window, {255,255,255,255}, Left_aligned);
+        renderText(txt, 25, 25, window, {255,255,255,255}, sevenSegment36, Left_aligned);
 
         txt =   std::to_string(highscores.highscore) + '\n' +
                 std::to_string(highscores.mostNightsSurvived) + '\n' +
                 std::to_string(highscores.mostEnemiesKilled);
 
-        renderText(txt, 500, 25, window, {255,255,255,255}, Left_aligned);
+        renderText(txt, 500, 25, window, {255,255,255,255}, sevenSegment36, Left_aligned);
     }
 }
 
@@ -76,6 +63,11 @@ void GameMenu::render_buttons()
             (*currButtons)[i]->render();
         }
     }
+}
+
+void GameMenu::render_CRT()
+{
+    CRT_Tex->renderAsBackground();
 }
 
 void GameMenu::enter_game_over()
@@ -228,6 +220,48 @@ void GameMenu::create_pauseMenu_buttons()
     rect.y = 375;
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_mainMenu);
     gameOverButtons.push_back(button);
+}
+
+void GameMenu::load_assets()
+{
+    BGTexture = std::make_shared<LTexture>(window);
+    if (!BGTexture->loadFromFile("../../assets/Menu/MainMenuBG.png")) {
+        std::cerr << "Failed to load menu background!" << std::endl;
+    }
+
+    gameOverTex = std::make_shared<LTexture>(window);
+    if (!gameOverTex->loadFromFile("../../assets/Menu/GameOver.png")) {
+        std::cerr << "Failed to load game over texture!" << std::endl;
+    }
+
+    buttonSound = std::make_shared<LAudio>();
+    if (!buttonSound->loadFromFile("../../assets/Audio/ThinkFastChucklenuts.wav")) {
+        std::cerr << "Failed to load button sound" << std::endl;
+    }
+
+    sevenSegment36 = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 36);
+    if (sevenSegment36 == NULL) {
+        std::cerr << "Failed to load seven segment font!" << std::endl;
+    }
+
+
+    auto CRT_Base = std::make_shared<LTexture>(window);
+    if (!CRT_Base->loadFromFile("../../assets/CRT_Base_Texture.png")) {
+        std::cerr << "Failed to load CRT Pixel texture!" << std::endl;
+    }
+
+    CRT_Tex = tEditor.createEmptyTexture(window->getWidth(), window->getHeight(), window);
+    int nx = CRT_Tex->getWidth() / CRT_Base->getWidth(), ny =( CRT_Tex->getHeight() / CRT_Base->getWidth())+1;
+
+    for (int i = 0; i <= nx; i++) {
+        int x = i * CRT_Base->getWidth();
+        for (int j = 0; j <= ny; j++) {
+            int y = j * CRT_Base->getHeight();
+            SDL_Rect rect = { x, y, CRT_Base->getWidth(), CRT_Base->getHeight() };
+            tEditor.renderTextureToTexture(CRT_Tex, CRT_Base, &rect);
+        }
+    }
+    CRT_Tex->setAlpha(50);
 }
 
 bool GameMenu::is_inGame() { return state == in_game || state == game_over; }
