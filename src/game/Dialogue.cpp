@@ -144,7 +144,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
 
                 case 11:
                 {
-                    std::string rend, txt = "Look just put [recipe] together\nand figure it out";
+                    std::string rend, txt = "Look just put\n \nand figure it out";
                     if (timer >= 0.0f) {
                         float t = 1.0f - (timer/0.25f);
                         int n = Max(1, t * txt.size());
@@ -153,8 +153,28 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     } else {
                         rend = txt;
                     }
-
                     renderText(rend, pos.x - camX, p.y - 60, game->window);
+
+                    std::string txt0 = "1 ", txt1 = " and 4 ", txt2 = " together";
+                    auto tex0 = std::make_unique<LTexture>(game->window),
+                         tex1 = std::make_unique<LTexture>(game->window),
+                         tex2 = std::make_unique<LTexture>(game->window);
+
+                    tex0->loadFromRenderedText(txt0, {255,255,255,255});
+                    tex1->loadFromRenderedText(txt1, {255,255,255,255});
+                    tex2->loadFromRenderedText(txt2, {255,255,255,255});
+
+                    int w = tex0->getWidth()+tex1->getWidth()+tex2->getWidth()+60,
+                        x = pos.x - camX - (w/2), y = p.y-30;
+
+                    SDL_Rect rect = {0, 0, 30, 30};
+
+                    tex0->render(x, y); x += tex0->getWidth();
+                    game->logTex->render(x, y, &rect); x += 30;
+                    tex1->render(x, y); x += tex1->getWidth();
+                    game->plankTex->render(x, y, &rect); x += 30;
+                    tex2->render(x, y);
+
                     break;
                 }
 
@@ -566,21 +586,26 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             if (game->currDialogue == bear_town_5_1) {
                 hp = 1; game->enter_dialogue(None); break;
             } else if (game->currDialogue == bear_town_5_2) {
-                hp = 19; timer = 0.25f; break;
+                hp = 18; timer = 0.25f; break;
             }
 
-            std::string rend, txt = "Give me [2 stone] for [berry]";
-            if (timer >= 0.0f) {
-                float t = 1.0f - (timer/0.25f);
-                int n = Max(1, t * txt.size());
-                rend = txt.substr(0, n);
-                timer -= get_deltaTime();
-            } else {
-                rend = txt;
-                game->enter_dialogue(bear_town_5);
-            }
+            game->enter_dialogue(bear_town_5);
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            std::string txt0 = "Give me 2 ", txt1 = " for ";
+            auto tex0 = std::make_unique<LTexture>(game->window),
+                 tex1 = std::make_unique<LTexture>(game->window);
+
+            tex0->loadFromRenderedText(txt0, {255,255,255,255});
+            tex1->loadFromRenderedText(txt1, {255,255,255,255});
+
+            int w = tex0->getWidth()+tex1->getWidth() + 60,
+                x = pos.x-camX-(w/2), y = p.y;
+            SDL_Rect rect = {0, 0, 30, 30};
+
+            tex0->render(x, y); x += tex0->getWidth();
+            game->stoneTex->render(x, y, &rect); x += 30;
+            tex1->render(x, y); x += tex1->getWidth();
+            game->berryTex->render(x, y, &rect);
             break;
         }
 
@@ -1052,7 +1077,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
             
             case bear_town_5:
             {
-                std::string rend, txt = "1. Sure thing!\n2. What do you need [stone] for?";
+                std::string rend, txt = "1. Sure thing!\n ";
 
                 if (timer >= 0.0f) {
                     float t = 1.0f - (timer/0.25f);
@@ -1062,8 +1087,23 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 } else {
                     rend = txt;
                 }
-
                 renderText(txt, pos.x-camX, p.y-60, game->window);
+
+                std::string txt0 = "2. What do you need ", txt1 = " for?";
+                auto tex0 = std::make_unique<LTexture>(game->window),
+                     tex1 = std::make_unique<LTexture>(game->window);
+
+                tex0->loadFromRenderedText(txt0, {255,255,255,255});
+                tex1->loadFromRenderedText(txt1, {255,255,255,255});
+
+                int w = tex0->getWidth()+tex1->getWidth()+30,
+                    x = pos.x - camX - (w/2), y = p.y-30;
+                SDL_Rect rect = {0, 0, 30, 30};
+
+                tex0->render(x, y); x += tex0->getWidth();
+                game->stoneTex->render(x, y, &rect); x += 30;
+                tex1->render(x, y); 
+
                 break; 
             }
 

@@ -279,7 +279,7 @@ void Game::render_controls()
                             controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
 
                             RMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Craft 2 ";
+                            txt = "Craft 1 ";
                             if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;

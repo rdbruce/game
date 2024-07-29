@@ -285,13 +285,13 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             switch (item2->get_type())
             {
                 case Plank_Item:
-                    // 2 logs and 4 planks craft one DAM
+                    // 1 log and 4 planks craft one DAM
                     // make sure there are adequate resources
-                    if (hp1 >= 2 && hp2 >= 4) {
+                    if (hp2 >= 4) {
                         // spawn one DAM item
                         res = spawnItemStack(Dam_Item, item1->get_pos(), 1);
                         // reduce the hp of the other item stacks
-                        item1->set_HP(hp1-2); item2->set_HP(hp2-4);
+                        item1->set_HP(hp1-1); item2->set_HP(hp2-4);
                     }
                     break;  
             }
@@ -301,13 +301,13 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             switch (item2->get_type())
             {
                 case Log_Item:
-                    // 2 logs and 4 planks craft one DAM
+                    // 1 logs and 4 planks craft one DAM
                     // make sure there are adequate resources
-                    if (hp1 >= 4 && hp2 >= 2) {
+                    if (hp1 >= 4) {
                         // spawn one DAM item
                         res = spawnItemStack(Dam_Item, item1->get_pos(), 1);
                         // reduce the hp of the other item stacks
-                        item1->set_HP(hp1-4); item2->set_HP(hp2-2);
+                        item1->set_HP(hp1-4); item2->set_HP(hp2-1);
                     }
                     break;
             }
@@ -335,9 +335,9 @@ std::shared_ptr<GameObject> Game::craftItem( std::shared_ptr<GameObject> item )
             break;
 
         case Dam_Item: {
-            // DAMs may be deconstructed back into 4 planks and 2 logs
+            // DAMs may be deconstructed back into 4 planks and 1 logs
             Vector2 p = item->get_pos();
-            res = spawnItemStack(Log_Item, p, 2);
+            res = spawnItemStack(Log_Item, p, 1);
             res->set_timer( 0.75f );
             res = spawnItemStack(Plank_Item, p, 4);
             res->set_timer( 0.75f );

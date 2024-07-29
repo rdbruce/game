@@ -169,7 +169,7 @@ class Game
 
 
         // the length (in seconds) of one day
-        float DAY_LENGTH = 10.0f;
+        float DAY_LENGTH = 300.0f;
         // the time elapsed between frames
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
