@@ -168,8 +168,6 @@ class Game
         SDL_Rect map;
 
 
-        // the length (in seconds) of one day
-        float DAY_LENGTH = 300.0f;
         // the time elapsed between frames
         float deltaTime = 0.0f;
         clock_t begin_time = 0; // used for calculating deltaTime
@@ -201,13 +199,34 @@ class Game
         Scene Base, Woods, Town;
         // true when switching between levels
         bool switching_scenes = false;
-        int barrier = BARRIER;
 
         // game objects that will be rendered a second time
         std::stack<GameObject*> secondRenders;
 
 
+
+
+
+        /* --------  constants:  -------- */
+
+        // the length (in seconds) of one day
+        float DAY_LENGTH = 300.0f;
+        int barrier = BARRIER;
+
+        // the radius (in cells) of the bomb's explosion
+        float BOMB_RADIUS = 3.0f;
+        // how much damage the bomb does upon detonation
+        int BOMB_DAMAGE = 3;
+
+        // the game will attempt an enemy spawn every x seconds
+        int ENEMY_SPAWN_RATE = 10;
+
+        // the amount of time (int seconds) it takes for birds to fly across the map
+        float BIRD_FLIGHT_DURATION = 3.0f;
         
+
+
+
 
         // images/textures
 
@@ -233,7 +252,7 @@ class Game
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
                                     berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
-                                    stoneTex, LMBTex, MMBTex, RMBTex, BearTex;
+                                    stoneTex, LMBTex, MMBTex, RMBTex, BearTex, BirdTex, BombTex;
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk;
@@ -288,6 +307,7 @@ class Game
 
         // spawns a wolf at a random location on the maps edge
         std::shared_ptr<GameObject> spawnWolf();
+        std::shared_ptr<GameObject> spawnBird();
 
         // checks if the river has been walled off, and removes water from the subsequent tiles
         void damRiver();

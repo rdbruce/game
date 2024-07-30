@@ -183,6 +183,121 @@ void GameObject::playerPositionFunc()
     set_pos(p);
 }
 
+void GameObject::birdPositionFunc()
+{
+    /*
+        find position using interpolation:
+
+        the quadratic function y = 4(x - 0.5)^2 produces a value 0-1 base on an interpolator, t,
+        valued 0-1. because of the "- 0.5", the minimum point of this parabola will be at t = 0.5.
+
+        the bottom of the parabola should be where the player is, and a bomb should be dropped 
+        at this position. Find t_target, which is target_x / map_width. then, find t, the
+        value 0-1 representing the duration into the flight, which is (time / total_fligt_time).
+        
+        then, find y using the above quadratic equation, y = 4(x - target_t)^2. this value (0-1)
+        can be used to interpolate between a min and max y value.
+    */
+
+    float dt = get_deltaTime();
+    Vector2Int dimensions = get_mapDimensions();
+    
+    float duration = game->BIRD_FLIGHT_DURATION,
+          t = timer / duration,
+          prev_t = (timer + dt) / duration,
+          target_t = velocity.x / dimensions.x;
+    
+    if (t <= target_t && prev_t > target_t) {
+        game->Instantiate(pos, Bomb, 1);
+    } else if (t <= 0) {
+        hp = 0;
+        return;
+    }
+
+    float x = t * dimensions.x;
+
+    float val = t - target_t;
+    t = 4.0f * val * val;
+
+    float sideLen = game->currLevel->cell_sideLen,
+          maxY = velocity.y + (2.0f * sideLen),
+          minY = velocity.y - sideLen;
+
+    float y = (minY * t) + (maxY * (1.0f - t));
+
+
+    set_pos(Vector2(x, y));
+    timer -= dt;
+}
+
+void GameObject::bombPositionFunc()
+{
+    float dt = get_deltaTime();
+
+    if (timer <= 0.25f) {
+        if (timer <= 0.0f) {
+            explodeBomb();
+        } else if (timer + dt > 0.25f) {
+            velocity = Vector2_Zero;
+            velocityFunc = &GameObject::deccelerateVelocityFunc;
+            hasCollision = true;
+        }
+    } else {
+        velocity = Vector2_Down * moveSpeed;
+    }
+
+    timer -= dt;
+}
+
+void GameObject::explodeBomb()
+{
+    auto vec = &game->currLevel->gameObjects;
+    int n = vec->size(), damage = game->BOMB_DAMAGE, 
+        sideLen = game->currLevel->cell_sideLen;
+    float r = game->BOMB_RADIUS * sideLen;
+
+    // damage nearby entities
+    for (int i = 0; i < n; i++) 
+    {
+        // won't interact with itself
+        if (i != idx) 
+        {
+            auto obj = (*vec)[i];
+
+            Vector2 disp = obj->pos - pos;
+            if (disp.length() < r && !obj->is_NPC()) 
+            {
+                // damage the object
+                obj->set_HP(obj->get_hp() - damage);
+                // knock the object away
+                disp.normalise();
+                Vector2 vel = disp * 10.0f * sideLen;
+                obj->set_velocity(vel);
+                obj->set_acceleration(vel * -1.0f);
+            }
+        }
+    }
+
+    // damage nearby cells
+    Vector2Int cell = get_cell();
+    int cellRadius = (int)game->BOMB_RADIUS;
+    Vector2Int gridDimensions = game->currLevel->gridDimensions;
+
+    int minX = Max(0, cell.x-cellRadius), 
+        maxX = Min(gridDimensions.x, cell.x + cellRadius),
+        minY = Max(0, cell.y-cellRadius),
+        maxY = Min(gridDimensions.y, cell.y + cellRadius);
+
+    for (int x = minX; x < maxX; x++) {
+        for (int y = minY; y < maxY; y++) {
+            Vector2Int currCell(x, y);
+            game->damageCell(currCell, damage);
+        }
+    }
+
+    hp = 0;
+}
+
 
 void GameObject::foxPositionFunc()
 {

@@ -6,10 +6,19 @@
 namespace Math
 {
     // initialise the global vectors
-    Vector2 Vector2_Zero( 0.0f, 0.0f );
-    Vector2 Vector2_One( 1.0f, 1.0f );
-    Vector2Int Vector2Int_Zero( 0, 0 );
-    Vector2Int Vector2Int_One( 1, 1 );
+    Vector2 Vector2_Zero  (  0.0f,  0.0f );
+    Vector2 Vector2_One   (  1.0f,  1.0f );
+    Vector2 Vector2_Up    (  0.0f,  1.0f );
+    Vector2 Vector2_Down  (  0.0f, -1.0f );
+    Vector2 Vector2_Left  ( -1.0f,  0.0f );
+    Vector2 Vector2_Right (  1.0f,  0.0f );
+
+    Vector2Int Vector2Int_Zero  (  0,  0 );
+    Vector2Int Vector2Int_One   (  1,  1 );
+    Vector2Int Vector2Int_Up    (  0,  1 );
+    Vector2Int Vector2Int_Down  (  0, -1 );
+    Vector2Int Vector2Int_Left  ( -1,  0 );
+    Vector2Int Vector2Int_Right (  1,  0 );
 
 
 

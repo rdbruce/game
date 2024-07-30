@@ -55,6 +55,10 @@ namespace Math
     // global 2D vectors, Vector2_Zero = zero magnitude vector, Vector2_One = (1, 1)
     extern Vector2 Vector2_Zero;
     extern Vector2 Vector2_One;
+    extern Vector2 Vector2_Up;
+    extern Vector2 Vector2_Down;
+    extern Vector2 Vector2_Left;
+    extern Vector2 Vector2_Right;
 
 
 
@@ -95,7 +99,10 @@ namespace Math
     // global Vector2Ints
     extern Vector2Int Vector2Int_Zero;
     extern Vector2Int Vector2Int_One;
-
+    extern Vector2Int Vector2Int_Up;
+    extern Vector2Int Vector2Int_Down;
+    extern Vector2Int Vector2Int_Left;
+    extern Vector2Int Vector2Int_Right;
 
 
 

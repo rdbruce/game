@@ -297,6 +297,52 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             moveSpeed = 0.0f;
             break;
         }
+
+        case Bird: {
+            // assign the texture
+            tex = game->BirdTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
+
+            // set up the hitbox
+            Vector2Int size(sideLen-2, sideLen-2);
+            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+            hitbox = { p.x, p.y, size.x, size.y };
+
+            // assign behaviour functions
+            velocityFunc = &GameObject::defaultVelocityFunc;
+            positionFunc = &GameObject::birdPositionFunc;
+            collisionFunc = &GameObject::defaultCollisionFunction;
+
+            // other attributes
+            max_hp = hp = 1;
+            timer = game->BIRD_FLIGHT_DURATION;
+            hasCollision = false;
+            velocity = pos;
+            break;
+        }
+
+        case Bomb: {
+            // assign the texture
+            tex = game->BombTex;
+            renderingFunc = &GameObject::defaultRenderFunc;
+
+            // set up the hitbox
+            Vector2Int size(sideLen-20, sideLen-20);
+            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+            hitbox = { p.x, p.y, size.x, size.y };
+            radius = Max(size.x/2, size.y/2);
+
+            // assign behaviour functions
+            velocityFunc = &GameObject::defaultVelocityFunc;
+            positionFunc = &GameObject::bombPositionFunc;
+            collisionFunc = &GameObject::defaultCollisionFunction;
+
+            max_hp = hp = 1;
+            timer = 0.5f;
+            moveSpeed = 2.6666667f * sideLen;
+            hasCollision = false;
+            break;
+        }
     }
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}
@@ -320,7 +366,7 @@ void GameObject::update()
         if (type == Player) {
             game->gameOver = true;
         } else {
-            if (is_enemy()) {
+            if (is_enemy() && type != Bird) {
                 game->scores.mostEnemiesKilled++;
                 game->scores.calculate_score();
             }

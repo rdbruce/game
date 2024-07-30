@@ -29,10 +29,12 @@ enum EntityType
     // enemy types
     ENEMY_MIN,
     Wolf,
+    Bird,
     ENEMY_MAX,          
 
     // end of enemy types
 
+    Bomb,
     Falling_Tree,
 
     // item types
@@ -243,6 +245,11 @@ class GameObject
         // adds velocity to the position. when the velocity reaches zero, set acceleration to zero.
         void thrownItemPositionFunc();
 
+        // flies along a fixed arc
+        void birdPositionFunc();
+        // drops to the ground, then explodes
+        void bombPositionFunc();
+
 
 
         // pathfinding!!!!
@@ -261,6 +268,8 @@ class GameObject
         void wolfEnterJumpAttack();
         // enters into the retreating velocity function
         void beginRetreat();
+        // blows up bombs, damaging nearby cells and entities
+        void explodeBomb();
 
 
 

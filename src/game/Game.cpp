@@ -128,7 +128,7 @@ void Game::attempt_enemy_spawn()
     // enemies may only spawn after 10 seconds into the night
     if (isNight && g_time >= 10.0f) {
         // spawn an enemy every 10 seconds
-        if ((int(g_time)%10) == 0 && (int(g_time-deltaTime)%10) != 0) {
+        if ((int(g_time)%ENEMY_SPAWN_RATE) == 0 && (int(g_time-deltaTime)%ENEMY_SPAWN_RATE) != 0) {
             validAttempt = true;
         }
     }
@@ -142,6 +142,10 @@ void Game::attempt_enemy_spawn()
         {
             case Wolf:
                 spawnWolf();
+                break;
+
+            case Bird:
+                spawnBird();
                 break;
 
             default: break; // invalid spawn type
@@ -211,6 +215,12 @@ std::shared_ptr<GameObject> Game::spawnWolf()
     // spawn a wolf at the chosen location
     if (validLocation) return Instantiate(Vector2(x,y), Wolf, -1);
     return nullptr;
+}
+
+std::shared_ptr<GameObject> Game::spawnBird()
+{
+    Vector2 playerPos = currLevel->player->get_pos();
+    return Instantiate(playerPos, Bird, 1);
 }
 
 
@@ -852,6 +862,14 @@ void Game::load_textures()
     BearTex = std::make_shared<LTexture>(window);
     if (!BearTex->loadFromFile("../../assets/Entities/Bear.png")) {
         std::cerr << "Failed to load bear texture!" << std::endl;
+    }
+    BirdTex = std::make_shared<LTexture>(window);
+    if (!BirdTex->loadFromFile("../../assets/Entities/Bird.png")) {
+        std::cerr << "Failed to load texture for bird!" << std::endl;
+    }
+    BombTex = std::make_shared<LTexture>(window);
+    if (!BombTex->loadFromFile("../../assets/Entities/Bomb.png")) {
+        std::cerr << "Failed to load texture for bomb!" << std::endl;
     }
 }
 
