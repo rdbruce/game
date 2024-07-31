@@ -74,6 +74,8 @@ class Game
         void render_darkness();
         // reders certain game objects a second time, when they are under a tree
         void render_gameobjects_under_trees();
+        // renders spoken dialogue
+        void render_dialogue();
 
 
         // finds the time elapsed between frames
@@ -202,6 +204,8 @@ class Game
 
         // game objects that will be rendered a second time
         std::stack<GameObject*> secondRenders;
+        // all dialogue to be rendered
+        std::stack<std::shared_ptr<DialogueRender>> dialogueRenders;
 
 
 

@@ -51,7 +51,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         game->enter_dialogue(fox_base_dialogue_1);
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -74,7 +75,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         game->enter_dialogue(fox_base_dialogue_2);
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 90, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-90), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -92,7 +94,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -120,7 +123,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         game->enter_dialogue(fox_base_dialogue_3);
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 90, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-90), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -138,7 +142,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -153,27 +158,16 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     } else {
                         rend = txt;
                     }
-                    renderText(rend, pos.x - camX, p.y - 60, game->window);
 
-                    std::string txt0 = "1 ", txt1 = " and 4 ", txt2 = " together";
-                    auto tex0 = std::make_unique<LTexture>(game->window),
-                         tex1 = std::make_unique<LTexture>(game->window),
-                         tex2 = std::make_unique<LTexture>(game->window);
+                    std::vector<std::string> vec = {rend, "1 ", " and 4 ", " together"};
+                    SDL_Color colour = {255,255,255,255};
 
-                    tex0->loadFromRenderedText(txt0, {255,255,255,255});
-                    tex1->loadFromRenderedText(txt1, {255,255,255,255});
-                    tex2->loadFromRenderedText(txt2, {255,255,255,255});
-
-                    int w = tex0->getWidth()+tex1->getWidth()+tex2->getWidth()+60,
-                        x = pos.x - camX - (w/2), y = p.y-30;
-
-                    SDL_Rect rect = {0, 0, 30, 30};
-
-                    tex0->render(x, y); x += tex0->getWidth();
-                    game->logTex->render(x, y, &rect); x += 30;
-                    tex1->render(x, y); x += tex1->getWidth();
-                    game->plankTex->render(x, y, &rect); x += 30;
-                    tex2->render(x, y);
+                    auto diag = std::make_shared<DialogueRender>(
+                        vec, Vector2Int(pos.x-camX, p.y-60), game->window, colour,
+                        Centred, &DialogueRender::fox_base_case11, 
+                        game->logTex, game->plankTex
+                    );
+                    game->dialogueRenders.push(diag);
 
                     break;
                 }
@@ -196,7 +190,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -231,7 +226,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         game->enter_dialogue(fox_town_1);
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -249,7 +245,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -265,7 +262,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 90, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-90), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -286,7 +284,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -296,7 +295,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
 
                 case 9:
                 {
-                    std::string rend, txt = "Oh those pricks...";
+                    std::string rend, txt = "Oh, those guys...";
                     if (timer >= 0.0f) {
                         float t = 1.0f - (timer/0.25f);
                         int n = Max(1, t * txt.size());
@@ -306,7 +305,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -331,7 +331,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         game->enter_dialogue(fox_town_2);
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 60, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-60), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -349,7 +350,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -370,7 +372,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -386,7 +389,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 30, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -407,7 +411,8 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         rend = txt;
                     }
 
-                    renderText(rend, pos.x - camX, p.y - 60, game->window);
+                    auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-60), game->window);
+                    game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -418,7 +423,6 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
             }
         }
     }
-
 }
 
 void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
@@ -461,7 +465,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 game->enter_dialogue(bear_town_1);
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -486,7 +491,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 game->enter_dialogue(bear_town_2);
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -511,7 +517,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 game->enter_dialogue(bear_town_3);
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -536,7 +543,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 game->enter_dialogue(bear_town_4);
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -554,7 +562,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 rend = txt;
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -575,7 +584,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 rend = txt;
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -591,21 +601,16 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
 
             game->enter_dialogue(bear_town_5);
 
-            std::string txt0 = "Give me 2 ", txt1 = " for ";
-            auto tex0 = std::make_unique<LTexture>(game->window),
-                 tex1 = std::make_unique<LTexture>(game->window);
+            std::vector<std::string> vec = {"Give me 2 ", " for "};
+            SDL_Color colour = {255,255,255,255};
 
-            tex0->loadFromRenderedText(txt0, {255,255,255,255});
-            tex1->loadFromRenderedText(txt1, {255,255,255,255});
+            auto diag = std::make_shared<DialogueRender>(
+                vec, Vector2Int(pos.x-camX, p.y), game->window, colour,
+                Centred, &DialogueRender::bear_town_case14,
+                game->stoneTex, game->berryTex
+            );
+            game->dialogueRenders.push(diag);
 
-            int w = tex0->getWidth()+tex1->getWidth() + 60,
-                x = pos.x-camX-(w/2), y = p.y;
-            SDL_Rect rect = {0, 0, 30, 30};
-
-            tex0->render(x, y); x += tex0->getWidth();
-            game->stoneTex->render(x, y, &rect); x += 30;
-            tex1->render(x, y); x += tex1->getWidth();
-            game->berryTex->render(x, y, &rect);
             break;
         }
 
@@ -623,7 +628,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 rend = txt;
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -644,7 +650,8 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 rend = txt;
             }
 
-            renderText(rend, pos.x - camX, p.y, game->window);
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
+            game->dialogueRenders.push(diag);
             break;
         }
 
@@ -680,7 +687,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. Where is here?\n2. What are YOU doing here?";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -688,7 +695,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-60, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 60),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break;
             }
 
@@ -699,7 +711,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. Where is here?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -712,7 +728,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "2. What are YOU doing here?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -723,7 +743,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. But how do I\nget past that river?";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -731,7 +751,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-60, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 60),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break;
             }
 
@@ -742,7 +767,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. But how do I\nget past that river?";
-                        renderText(txt, pos.x-camX, p.y-60, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 60),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -753,7 +782,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. How do I do THAT?\n2. How are YOU getting there?";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -761,7 +790,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-60, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 60),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break;
             }
 
@@ -772,7 +806,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. How do I do THAT?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -785,7 +823,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "2. How are YOU getting there?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -796,7 +838,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. What is this place?\n2. How did YOU make it up here?\n3. Who were all those wolves?";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -804,7 +846,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-90, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 90),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break;
             }
 
@@ -815,7 +862,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. What is this place?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -828,7 +879,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "2. How did YOU make it up here?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -841,7 +896,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "3. Who were all those wolves?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -852,7 +911,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. You could've told me that before!\n2. Do you have any advice?\n3. Can I just stay here?";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -860,7 +919,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-90, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 90),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break;
             }
 
@@ -871,7 +935,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. You could've told me that before!";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -884,7 +952,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "2. Do you have any advice?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -897,7 +969,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "3. Can I just stay here?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -908,7 +984,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. Hello\n2. What are you doing?";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -916,7 +992,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-60, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 60),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break; 
             }
 
@@ -927,7 +1008,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. Hello";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -940,7 +1025,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "2. What are you doing?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -951,7 +1040,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. Yes\n2. No";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -959,7 +1048,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-60, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 60),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break; 
             }
 
@@ -970,7 +1064,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. Yes";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -983,7 +1081,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. No";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -994,7 +1096,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. Where do you get\nall these berries?\n2. How do you survive\nwith all these wolves?";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -1002,7 +1104,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-120, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 120),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break; 
             }
 
@@ -1013,7 +1120,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. Where do you get\nall these berries?";
-                        renderText(txt, pos.x-camX, p.y-60, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 60),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1026,7 +1137,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "2. How do you survive\nwith all these wolves?";
-                        renderText(txt, pos.x-camX, p.y-60, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 60),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1037,7 +1152,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. Yeah!\n2. No thanks";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
@@ -1045,7 +1160,12 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend = txt;
                 }
 
-                renderText(txt, pos.x-camX, p.y-60, game->window);
+                auto diag = std::make_shared<DialogueRender>(
+                    rend, Vector2Int(pos.x - camX, p.y - 60),
+                    game->window
+                );
+                game->dialogueRenders.push(diag);
+
                 break; 
             }
 
@@ -1056,7 +1176,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. Yeah!";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1069,7 +1193,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. No Thanks";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1080,30 +1208,24 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                 std::string rend, txt = "1. Sure thing!\n ";
 
                 if (timer >= 0.0f) {
-                    float t = 1.0f - (timer/0.25f);
+                    float t = 1.0f - (timer/1.1f);
                     int n = Max(1, t * txt.size());
                     rend = txt.substr(0, n);
                     timer -= get_deltaTime();
                 } else {
                     rend = txt;
                 }
-                renderText(txt, pos.x-camX, p.y-60, game->window);
 
-                std::string txt0 = "2. What do you need ", txt1 = " for?";
-                auto tex0 = std::make_unique<LTexture>(game->window),
-                     tex1 = std::make_unique<LTexture>(game->window);
+                std::vector<std::string> vec = {rend, "2. What do you need ", " for?"};
+                SDL_Color colour = {255,255,255,255};
 
-                tex0->loadFromRenderedText(txt0, {255,255,255,255});
-                tex1->loadFromRenderedText(txt1, {255,255,255,255});
+                auto diag = std::make_shared<DialogueRender>(
+                    vec, Vector2Int(pos.x-camX, p.y-60), game->window,
+                    colour, Centred, &DialogueRender::bear_town_5_diag,
+                    game->stoneTex
+                );
 
-                int w = tex0->getWidth()+tex1->getWidth()+30,
-                    x = pos.x - camX - (w/2), y = p.y-30;
-                SDL_Rect rect = {0, 0, 30, 30};
-
-                tex0->render(x, y); x += tex0->getWidth();
-                game->stoneTex->render(x, y, &rect); x += 30;
-                tex1->render(x, y); 
-
+                game->dialogueRenders.push(diag);
                 break; 
             }
 
@@ -1114,7 +1236,11 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     if (timer < 1.0f) 
                     {
                         std::string txt = "1. Sure thing!";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        auto diag = std::make_shared<DialogueRender>(
+                            txt, Vector2Int(pos.x - camX, p.y - 30),
+                            game->window
+                        );
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1126,8 +1252,16 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     timer -= get_deltaTime();
                     if (timer < 1.0f) 
                     {
-                        std::string txt = "1. What do you need berries for?";
-                        renderText(txt, pos.x-camX, p.y-30, game->window);
+                        std::vector<std::string> vec = {"2. What do you need ", " for?"};
+                        SDL_Color colour = {255,255,255,255};
+
+                        auto diag = std::make_shared<DialogueRender>(
+                            vec, Vector2Int(pos.x-camX, p.y-30), game->window,
+                            colour, Centred, &DialogueRender::bear_town_5_2_diag,
+                            game->stoneTex
+                        );
+
+                        game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1312,4 +1446,124 @@ void Game::handle_dialogue( int e )
                     break;
             } break;
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+DialogueRender::DialogueRender(std::string txt, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour, TextOrientation orientation, void (DialogueRender::*func)(), std::shared_ptr<LTexture> tex0, std::shared_ptr<LTexture> tex1)
+: pos(pos), window(window), colour(colour), orientation(orientation), renderFunc(func), texture0(tex0), texture1(tex1)
+{
+    strings.push_back(txt);
+}
+
+DialogueRender::DialogueRender(std::vector<std::string> strings, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour, TextOrientation orientation, void (DialogueRender::*func)(), std::shared_ptr<LTexture> tex0, std::shared_ptr<LTexture> tex1)
+: strings(strings), pos(pos), window(window), colour(colour), orientation(orientation), renderFunc(func), texture0(tex0), texture1(tex1) {}
+
+
+void DialogueRender::render()
+{
+    (this->*renderFunc)();
+}
+
+void DialogueRender::defaultTextRender()
+{
+    renderText(strings[0], pos.x, pos.y, window);
+}
+
+void DialogueRender::bear_town_5_diag()
+{
+    if (strings.size() != 3) return;
+
+    renderText(strings[0], pos.x, pos.y, window);
+
+    std::string txt0 = strings[1], txt1 = strings[2];
+    auto tex0 = std::make_unique<LTexture>(window),
+         tex1 = std::make_unique<LTexture>(window); 
+    
+    tex0->loadFromRenderedText(txt0, colour);
+    tex1->loadFromRenderedText(txt1, colour);
+
+    int w = tex0->getWidth()+tex1->getWidth()+30,
+        x = pos.x - (w/2), y = pos.y+30;
+    SDL_Rect rect = {0, 0, 30, 30};
+
+    tex0->render(x, y); x += tex0->getWidth();
+    texture0->render(x, y, &rect); x += 30;
+    tex1->render(x, y); 
+}
+
+void DialogueRender::bear_town_5_2_diag()
+{
+    if (strings.size() != 2) return;
+
+    std::string txt0 = strings[0], txt1 = strings[1];
+    auto tex0 = std::make_unique<LTexture>(window),
+         tex1 = std::make_unique<LTexture>(window); 
+    
+    tex0->loadFromRenderedText(txt0, colour);
+    tex1->loadFromRenderedText(txt1, colour);
+
+    int w = tex0->getWidth()+tex1->getWidth()+30,
+        x = pos.x - (w/2), y = pos.y;
+    SDL_Rect rect = {0, 0, 30, 30};
+
+    tex0->render(x, y); x += tex0->getWidth();
+    texture0->render(x, y, &rect); x += 30;
+    tex1->render(x, y); 
+}
+
+void DialogueRender::bear_town_case14()
+{
+    if (strings.size() != 2) return;
+
+    std::string txt0 = strings[0], txt1 = strings[1]; 
+
+    auto tex0 = std::make_unique<LTexture>(window),
+         tex1 = std::make_unique<LTexture>(window); 
+    
+    tex0->loadFromRenderedText(txt0, colour);
+    tex1->loadFromRenderedText(txt1, colour);
+
+    int w = tex0->getWidth()+tex1->getWidth() + 60,
+        x = pos.x - (w/2), y = pos.y;
+    SDL_Rect rect = {0, 0, 30, 30};
+
+    tex0->render(x, y); x += tex0->getWidth();
+    texture0->render(x, y, &rect); x += 30;
+    tex1->render(x, y); x += tex1->getWidth();
+    texture1->render(x, y, &rect);
+}
+
+void DialogueRender::fox_base_case11()
+{
+    if (strings.size() != 4) return;
+
+    renderText(strings[0], pos.x, pos.y, window);
+
+    std::string txt0 = strings[1], txt1 = strings[2], txt2 = strings[3];
+    auto tex0 = std::make_unique<LTexture>(window),
+         tex1 = std::make_unique<LTexture>(window),
+         tex2 = std::make_unique<LTexture>(window);
+
+    tex0->loadFromRenderedText(txt0, colour);
+    tex1->loadFromRenderedText(txt1, colour);
+    tex2->loadFromRenderedText(txt2, colour);
+
+    int w = tex0->getWidth()+tex1->getWidth()+tex2->getWidth()+60,
+        x = pos.x - (w/2), y = pos.y + 30;
+    SDL_Rect rect = {0, 0, 30, 30};
+
+    tex0->render(x, y); x += tex0->getWidth();
+    texture0->render(x, y, &rect); x += 30;
+    tex1->render(x, y); x += tex1->getWidth();
+    texture1->render(x, y, &rect); x += 30;
+    tex2->render(x, y);
 }

@@ -492,3 +492,13 @@ void Game::render_gameobjects_under_trees()
         secondRenders.pop();
     }
 }
+
+void Game::render_dialogue()
+{
+    while (dialogueRenders.size())
+    {
+        auto diag = dialogueRenders.top();
+        diag->render();
+        dialogueRenders.pop();
+    }
+}

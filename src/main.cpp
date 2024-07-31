@@ -96,6 +96,7 @@ int main(
 
         // UI rendering
         game.render_cell_health();
+        game.render_dialogue();
         game.render_player_health();
         game.render_clock();
         if (!inMenu) game.render_controls();

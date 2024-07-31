@@ -1,6 +1,10 @@
 #pragma once
 
+#include "../engine/LTexture.hpp"
+#include "../engine/LWindow.hpp"
+
 #include <string>
+#include <vector>
 
 enum Dialogue
 {
@@ -47,4 +51,34 @@ enum Dialogue
     bear_town_5_1,
     bear_town_5_2,
     BEAR_DIAG_MAX,
+};
+
+
+class DialogueRender
+{
+    private:
+
+        std::vector<std::string> strings;
+        SDL_Color colour;
+        Vector2Int pos;
+        std::shared_ptr<LWindow> window = nullptr;
+        TextOrientation orientation;
+
+        std::shared_ptr<LTexture> texture0, texture1;
+
+        void (DialogueRender::*renderFunc)();
+
+    public: 
+
+        DialogueRender(std::string txt, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred, void (DialogueRender::*func)() = &DialogueRender::defaultTextRender, std::shared_ptr<LTexture> tex0 = nullptr, std::shared_ptr<LTexture> tex1 = nullptr);
+        DialogueRender(std::vector<std::string> strings, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred, void (DialogueRender::*func)() = &DialogueRender::defaultTextRender, std::shared_ptr<LTexture> tex0 = nullptr, std::shared_ptr<LTexture> tex1 = nullptr);
+
+        void render();
+
+        void defaultTextRender();
+
+        void bear_town_5_diag();
+        void bear_town_5_2_diag();
+        void bear_town_case14();
+        void fox_base_case11();
 };
