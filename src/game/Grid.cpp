@@ -220,10 +220,9 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
 
                 default: break;
             }
-            // preserve bits 16 (indestructible), and 13, 17-24 (water), 
-            // all others to 0
-            // bit 14: on if water (bit 13), off otherwise
-            num &= 0xFF9000;
+            
+            // clear bits of data, and toggle collision based on whether the cell is water by default
+            num &= ~(CELL_ID|HEALTH|OCCUPIED|BARRIER|TIMER|MAX_HEALTH);
             if (num&WATER && !(num&IS_DRIED)) num |= BARRIER;
             else num &= ~BARRIER;
             break;
@@ -292,8 +291,9 @@ void Game::update_cells( Scene *level )
 
                 if (type&WATER && !(type&IS_DRIED)) 
                 {
-                    int val = (int)DAY_LENGTH / 3;
-                    if ((int)g_time%val == 0 && int(g_time-deltaTime)%val != 0) {
+                    int val = (int)DAY_LENGTH / WATER_DAMAGE_INTERVAL;
+                    if ((int)g_time%val == 0 && int(g_time-deltaTime)%val != 0) 
+                    {
                         // interpolate between river beginning and end
                         // at the left of the map will damage equal to the cell's max hp,
                         // at the right of the map will deal one damage
@@ -304,7 +304,7 @@ void Game::update_cells( Scene *level )
                         float t = (float)x / (float)dimensions.x;
                         // t = 0 when x is zero (the max damage should be dealt), and
                         // t = 1 when x = dimensions.x (the minimum damage).
-                        int damage = ceilToInt(maxDamage * (1.0f-t));
+                        int damage = int(ceilf(maxDamage * (1.0f-t)) * WATER_DAMAGE_MULT);
 
                         damageCell(currCell, damage, level);
                     }
@@ -610,7 +610,7 @@ void Game::initialise_BGTexture() {
 
     for (int y = 0; y < ny; y++) {
         for (int x = 0; x < nx; x++) {
-            PlaceObjectInCell(Vector2Int(x, y), currLevel->grid[x][y], false);
+            drawCell(Vector2Int(x, y));
         }
     }
 }

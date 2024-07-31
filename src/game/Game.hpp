@@ -217,12 +217,14 @@ class Game
         float BOMB_RADIUS = 3.0f;
         // how much damage the bomb does upon detonation
         int BOMB_DAMAGE = 3;
-
         // the game will attempt an enemy spawn every x seconds
         int ENEMY_SPAWN_RATE = 10;
-
         // the amount of time (int seconds) it takes for birds to fly across the map
         float BIRD_FLIGHT_DURATION = 3.0f;
+        // the number of times each day or night buildings take damage from water
+        int WATER_DAMAGE_INTERVAL = 2;
+        // multiplies the amount of damage taken by buildings placed in water
+        float WATER_DAMAGE_MULT = 0.5f;
         
 
 
