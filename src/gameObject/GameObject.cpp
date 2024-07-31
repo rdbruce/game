@@ -338,8 +338,30 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             collisionFunc = &GameObject::defaultCollisionFunction;
 
             max_hp = hp = 1;
-            timer = 0.5f;
-            moveSpeed = 2.6666667f * sideLen;
+            timer = 0.75f;
+            acceleration = Vector2_Up * 8.0f * sideLen;
+            moveSpeed = sideLen;
+            hasCollision = false;
+            break;
+        }
+
+        case Target: {
+            // assign the texture
+            tex = game->TargetTex;
+            renderingFunc = &GameObject::targetRenderFunc;
+
+            // set up the hitbox
+            Vector2Int size(sideLen-20, sideLen-20);
+            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+            hitbox = { p.x, p.y, size.x, size.y };
+
+            // assign behaviour functions
+            velocityFunc = &GameObject::defaultVelocityFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
+            collisionFunc = &GameObject::defaultCollisionFunction;
+
+            max_hp = hp = 1;
+            timer = game->BIRD_FLIGHT_DURATION / 2.0f;
             hasCollision = false;
             break;
         }

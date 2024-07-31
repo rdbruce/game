@@ -51,9 +51,6 @@ class Scene
         Vector2Int gridDimensions; // dimensions of grid
         std::vector<std::vector<int>> grid; // 2d vector of all cells in the map
 
-        // used to assign isNight in the Game class when loaded
-        bool night = false;
-
         // pointers to the levels connected to this one
         Scene *above = nullptr, *below = nullptr, *left = nullptr, *right = nullptr;
 

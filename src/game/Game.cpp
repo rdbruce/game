@@ -125,8 +125,7 @@ void Game::attempt_enemy_spawn()
     // nothing will happen if the spawning attempt is invalid
     bool validAttempt = false;
 
-    // enemies may only spawn after 10 seconds into the night
-    if (isNight && g_time >= 10.0f) {
+    if (isNight && g_time >= DAY_TRANSITION_TIME) {
         // spawn an enemy every 10 seconds
         if ((int(g_time)%ENEMY_SPAWN_RATE) == 0 && (int(g_time-deltaTime)%ENEMY_SPAWN_RATE) != 0) {
             validAttempt = true;
@@ -137,6 +136,7 @@ void Game::attempt_enemy_spawn()
         // choose an enemy type to spawn in
         int range = ENEMY_MAX - ENEMY_MIN - 1;
         int type = (rand() % range) + (ENEMY_MIN+1);
+        type = Bird;
 
         switch (type)
         {
@@ -220,6 +220,8 @@ std::shared_ptr<GameObject> Game::spawnWolf()
 std::shared_ptr<GameObject> Game::spawnBird()
 {
     Vector2 playerPos = currLevel->player->get_pos();
+    Instantiate(playerPos, Target, 1);
+    birdSpawn->play();
     return Instantiate(playerPos, Bird, 1);
 }
 
@@ -426,7 +428,6 @@ void Game::dayNightCycle()
     if (g_time >= DAY_LENGTH) {
         // toggle night, and make sure all scene objects get updated
         isNight = !isNight;
-        Base.night = Woods.night = Town.night = isNight;
 
         // autosave the game
         save_game();
@@ -458,6 +459,8 @@ void Game::save_game()
     Base.Save("../../saves/curr/");
     Woods.Save("../../saves/curr/");
     Town.Save("../../saves/curr/");
+
+    save_gameData("../../saves/curr/gameData.txt");
 }
 
 
@@ -702,10 +705,41 @@ void Game::load_levels( std::string dir )
     Woods.assignNeighbours(&Base, nullptr);
     Town.assignNeighbours(nullptr, &Base);
 
-    isNight = currLevel->night;
+    isNight = false;
     g_time = 0.0f;
 
     interactRange = 3.0f * currLevel->cell_sideLen;
+
+    load_gameData(dir + "gameData.txt");
+}
+
+void Game::load_gameData( std::string filename )
+{
+    std::ifstream file(filename);
+
+    if (!file) {
+        std::cerr << "Couldn't open " << filename << std::endl;
+    } else {
+        std::string line;
+        std::getline(file, line);
+
+        std::istringstream iss( line );
+
+        iss >> std::dec >> isNight >> mayGatherStone;
+        file.close();
+    }
+}
+
+void Game::save_gameData( std::string filename )
+{
+    std::fstream file;
+    file.open(filename, std::ios::out);
+    if (!file) {
+        std::cerr << "Failed to open " << filename <<std::endl;
+    } else {
+        file << std::dec << isNight <<'\t'<< mayGatherStone;
+        file.close();
+    }
 }
 
 bool Game::is_under_tree( Vector2Int cell )
@@ -871,6 +905,10 @@ void Game::load_textures()
     if (!BombTex->loadFromFile("../../assets/Entities/Bomb.png")) {
         std::cerr << "Failed to load texture for bomb!" << std::endl;
     }
+    TargetTex = std::make_shared<LTexture>(window);
+    if (!TargetTex->loadFromFile("../../assets/Target.png")) {
+        std::cerr << "Failed to load texture for target!" << std::endl;
+    }
 }
 
 void Game::load_audio()
@@ -903,6 +941,10 @@ void Game::load_audio()
     bonk = std::make_shared<LAudio>();
     if (!bonk->loadFromFile("../../assets/Audio/EntitySounds/Bonk.wav")) {
         std::cerr << "Failed to load bonk sound!" << std::endl;
+    }
+    birdSpawn = std::make_shared<LAudio>();
+    if (!birdSpawn->loadFromFile("../../assets/Audio/EntitySounds/BirdSpawn.wav")) {
+        std::cerr << "Failed to load bird spawn sound!" << std::endl;
     }
 }
 

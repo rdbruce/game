@@ -681,11 +681,11 @@ void Game::removeWaterFollowingCell( Vector2Int cell )
         // render the new cell
         drawCell(currCell);
 
-        // 5% chance to spawn a stone item in each riverbed cell
+        // chance to spawn a stone item in each riverbed cell
         // this may only be done once per day
         if (mayGatherStone) {
             float random = (float)rand() / RAND_MAX;
-            if (random <= 0.05f) 
+            if (random <= STONE_SPAWN_CHANCE) 
             {
                 int sideLen = currLevel->cell_sideLen;
                 Vector2 pos(currCell.x*sideLen, currCell.y*sideLen);

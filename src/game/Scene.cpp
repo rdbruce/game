@@ -20,7 +20,7 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
         std::istringstream iss( line );
 
         int idxPlayer, idxHeld;
-        iss >> std::dec>>idxPlayer >> idxHeld >> cell_sideLen >> night;
+        iss >> std::dec>>idxPlayer >> idxHeld >> cell_sideLen;
         // if there is no player, there also shouldn't be a held object
         if (idxPlayer == -1) idxHeld = -1;
 
@@ -129,7 +129,7 @@ void Scene::Save( std::string directory )
     int idxPlayer = (player == nullptr)? -1 : player->get_idx(),
         idxHeld = (held == nullptr)? -1 : held->get_idx();
 
-    file << std::dec<<idxPlayer <<'\t'<< idxHeld <<'\t'<< cell_sideLen <<'\t'<< night <<'\n';
+    file << std::dec<<idxPlayer <<'\t'<< idxHeld <<'\t'<< cell_sideLen <<'\n';
 
 
     int n = gameObjects.size();

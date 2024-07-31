@@ -220,10 +220,10 @@ void GameObject::birdPositionFunc()
     t = 4.0f * val * val;
 
     float sideLen = game->currLevel->cell_sideLen,
-          maxY = velocity.y + (2.0f * sideLen),
+          maxY = velocity.y - (4.0f * sideLen),
           minY = velocity.y - sideLen;
 
-    float y = (minY * t) + (maxY * (1.0f - t));
+    float y = (maxY * t) + (minY * (1.0f - t));
 
 
     set_pos(Vector2(x, y));
@@ -238,13 +238,14 @@ void GameObject::bombPositionFunc()
         if (timer <= 0.0f) {
             explodeBomb();
         } else if (timer + dt > 0.25f) {
-            velocity = Vector2_Zero;
+            velocity = Vector2_Down * game->currLevel->cell_sideLen;
             velocityFunc = &GameObject::deccelerateVelocityFunc;
             hasCollision = true;
         }
-    } else {
-        velocity = Vector2_Down * moveSpeed;
     }
+
+    Vector2 newPos = pos + velocity * dt;
+    set_pos(newPos);
 
     timer -= dt;
 }
@@ -526,6 +527,23 @@ void GameObject::defaultRenderFunc( int camX, int camY, Uint8 alpha )
         white->render(wRect.x, wRect.y, &wRect);
         red->render(rRect.x, rRect.y, &rRect);
     }
+}
+
+void GameObject::targetRenderFunc( int camX, int camY, Uint8 alpha )
+{
+    if (timer <= 0.0f) {
+        hp = 0; return;
+    }
+
+    if (alpha == 255) {
+        game->secondRenders.push(this);
+    } else {
+        Vector2Int p(hitbox.x-camX, hitbox.y-camY);
+        tex->setAlpha(alpha);
+        tex->render(p.x, p.y, &hitbox);
+    }
+
+    timer -= get_deltaTime();
 }
 
 void GameObject::fallingTreeRenderFunc( int camX, int camY, Uint8 alpha )

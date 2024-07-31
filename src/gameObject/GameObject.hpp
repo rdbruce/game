@@ -36,6 +36,7 @@ enum EntityType
 
     Bomb,
     Falling_Tree,
+    Target,
 
     // item types
     ITEM_MIN,
@@ -317,6 +318,7 @@ class GameObject
         void defaultRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void fallingTreeRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void itemRenderFunc( int camX, int camY, Uint8 alpha = 255 );
+        void targetRenderFunc( int camX, int camY, Uint8 alpha = 255 );
 
         void foxRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void bearRenderFunc( int camX, int camY, Uint8 alpha = 255 );

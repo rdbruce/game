@@ -132,6 +132,10 @@ class Game
 
         // loads levels from files, chooses one to be the active level
         void load_levels( std::string dir );
+        // determines some miscellaneous data about the game state
+        void load_gameData( std::string filename );
+        void save_gameData( std::string filename );
+
         // renders every cell in the level, to be used when loading levels
         void initialise_BGTexture();
 
@@ -215,6 +219,8 @@ class Game
 
         // the length (in seconds) of one day
         float DAY_LENGTH = 300.0f;
+        // the amount of time it takes to transistion from day to night
+        float DAY_TRANSITION_TIME = 0.0f;
         int barrier = BARRIER;
 
         // the radius (in cells) of the bomb's explosion
@@ -222,13 +228,15 @@ class Game
         // how much damage the bomb does upon detonation
         int BOMB_DAMAGE = 3;
         // the game will attempt an enemy spawn every x seconds
-        int ENEMY_SPAWN_RATE = 10;
+        int ENEMY_SPAWN_RATE = 3;
         // the amount of time (int seconds) it takes for birds to fly across the map
         float BIRD_FLIGHT_DURATION = 3.0f;
         // the number of times each day or night buildings take damage from water
         int WATER_DAMAGE_INTERVAL = 2;
         // multiplies the amount of damage taken by buildings placed in water
         float WATER_DAMAGE_MULT = 0.5f;
+        // the probability of spawning a stone item in each cell when clearing the river
+        float STONE_SPAWN_CHANCE = 0.1f;
         
 
 
@@ -258,10 +266,12 @@ class Game
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
                                     berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
-                                    stoneTex, LMBTex, MMBTex, RMBTex, BearTex, BirdTex, BombTex;
+                                    stoneTex, LMBTex, MMBTex, RMBTex, BearTex, BirdTex, BombTex,
+                                    TargetTex;
 
         // all of the audio used by the game
-        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk;
+        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
+                                birdSpawn;
 
         // fonts
         TTF_Font *sevenSegment;
