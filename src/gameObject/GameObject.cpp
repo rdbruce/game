@@ -365,6 +365,28 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             hasCollision = false;
             break;
         }
+
+        case Bomb_Explosion_Indicator: {
+            // assign the texture
+            tex = game->dashed_circleTex;
+            renderingFunc = &GameObject::targetRenderFunc;
+
+            // set up the hitbox
+            radius = game->BOMB_RADIUS * sideLen;
+            Vector2Int size(radius * 2, radius * 2);
+            Vector2Int p(pos.x - radius, pos.y - radius);
+            hitbox = { p.x, p.y, size.x, size.y };
+
+            // assign behaviour functions
+            velocityFunc = &GameObject::defaultVelocityFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
+            collisionFunc = &GameObject::defaultCollisionFunction;
+
+            max_hp = hp = 1;
+            timer = 0.75f;
+            hasCollision = false;
+            break;
+        }
     }
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}

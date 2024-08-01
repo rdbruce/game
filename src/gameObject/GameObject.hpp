@@ -37,6 +37,7 @@ enum EntityType
     Bomb,
     Falling_Tree,
     Target,
+    Bomb_Explosion_Indicator,
 
     // item types
     ITEM_MIN,
@@ -322,7 +323,7 @@ class GameObject
 
         void foxRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void bearRenderFunc( int camX, int camY, Uint8 alpha = 255 );
-        void playerRenderFunc( int camx, int camY, Uint8 alpha = 255);
+        void playerRenderFunc( int camx, int camY, Uint8 alpha = 255 );
 };
 
 #endif

@@ -136,7 +136,6 @@ void Game::attempt_enemy_spawn()
         // choose an enemy type to spawn in
         int range = ENEMY_MAX - ENEMY_MIN - 1;
         int type = (rand() % range) + (ENEMY_MIN+1);
-        type = Bird;
 
         switch (type)
         {
@@ -908,6 +907,10 @@ void Game::load_textures()
     TargetTex = std::make_shared<LTexture>(window);
     if (!TargetTex->loadFromFile("../../assets/Target.png")) {
         std::cerr << "Failed to load texture for target!" << std::endl;
+    }
+    dashed_circleTex = std::make_shared<LTexture>(window);
+    if (!dashed_circleTex->loadFromFile("../../assets/DashedCircle.png")) {
+        std::cerr << "Failed to load texture for explosion indicator!" << std::endl;
     }
 }
 

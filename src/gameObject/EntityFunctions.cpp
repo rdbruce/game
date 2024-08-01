@@ -201,6 +201,8 @@ void GameObject::birdPositionFunc()
 
     float dt = get_deltaTime();
     Vector2Int dimensions = get_mapDimensions();
+
+    float sideLen = game->currLevel->cell_sideLen;
     
     float duration = game->BIRD_FLIGHT_DURATION,
           t = timer / duration,
@@ -209,6 +211,7 @@ void GameObject::birdPositionFunc()
     
     if (t <= target_t && prev_t > target_t) {
         game->Instantiate(pos, Bomb, 1);
+        game->Instantiate(Vector2(pos.x, pos.y + sideLen), Bomb_Explosion_Indicator, 1);
     } else if (t <= 0) {
         hp = 0;
         return;
@@ -219,8 +222,7 @@ void GameObject::birdPositionFunc()
     float val = t - target_t;
     t = 4.0f * val * val;
 
-    float sideLen = game->currLevel->cell_sideLen,
-          maxY = velocity.y - (4.0f * sideLen),
+    float maxY = velocity.y - (4.0f * sideLen),
           minY = velocity.y - sideLen;
 
     float y = (maxY * t) + (minY * (1.0f - t));
@@ -531,6 +533,14 @@ void GameObject::defaultRenderFunc( int camX, int camY, Uint8 alpha )
 
 void GameObject::targetRenderFunc( int camX, int camY, Uint8 alpha )
 {
+    timer -= get_deltaTime();
+
+    Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+        return;
+    }
+
     if (timer <= 0.0f) {
         hp = 0; return;
     }
@@ -538,12 +548,9 @@ void GameObject::targetRenderFunc( int camX, int camY, Uint8 alpha )
     if (alpha == 255) {
         game->secondRenders.push(this);
     } else {
-        Vector2Int p(hitbox.x-camX, hitbox.y-camY);
         tex->setAlpha(alpha);
         tex->render(p.x, p.y, &hitbox);
     }
-
-    timer -= get_deltaTime();
 }
 
 void GameObject::fallingTreeRenderFunc( int camX, int camY, Uint8 alpha )
