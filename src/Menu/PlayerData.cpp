@@ -75,7 +75,7 @@ void PlayerData::render(int x, int y, std::shared_ptr<LWindow> window, SDL_Color
     else {
         renderText(name, x, y, window, colour, font, Left_aligned);
     }
-    x += 200;
+    x += 150;
 
     std::string txt;
     if (name == "---") 

@@ -267,7 +267,6 @@ void GameObject::itemSpawnFunc()
             velocityFunc = &GameObject::deccelerateVelocityFunc;
             positionFunc = &GameObject::thrownItemPositionFunc;
             hasCollision = true;
-            velocity = Vector2_Zero;
             return;
         }
     }

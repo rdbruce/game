@@ -34,24 +34,33 @@ void GameMenu::render_highscores()
 {
     if (state == main_menu && confirmationText == "") 
     {
-        int x = 25, y = 25;
-        renderText("HIGHSCORES", 25, 25, window, {255,255,255,255}, sevenSegment36, Left_aligned);
-        y += 30;
+        SDL_Rect rect = {25, 25, 400, 240};
+
+        renderText("HIGHSCORES", rect.x+(rect.w/2), rect.y, window, {255,0,0,255}, sevenSegment36);
+        rect.y += 55;
+
+        int x = rect.x + 160, y = rect.y;
+
+        renderText("SCORE", x, y, window, {255,0,0,255}, sevenSegment24); x += 75;
+        renderText("NIGHSTS\nSURVIVED", x, y, window, {255,0,0,255}, sevenSegment18); x += 75;
+        renderText("ENEMIES\nKILLED", x, y, window, {255,0,0,255}, sevenSegment18);
+
+        rect.y += 55;
 
         for (int i = 1; i <= num_highscores; i++)
         {
             if (set_score_name == i) 
             {
-                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36, currChar, {255,0,0,255});
-                int X = x + 425;
+                highscores[i].render(rect.x, rect.y, window, {255,255,255,255}, sevenSegment24, currChar, {255,0,0,255});
+                x = rect.x + 425;
                 std::string str = "NEW HIGHSCORE!";
-                renderText(str, X, y, window, {255,0,0,255}, sevenSegment36, Left_aligned);
+                renderText(str, rect.x, rect.y, window, {255,0,0,255}, sevenSegment24, Left_aligned);
             } 
             else 
             {
-                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36);
+                highscores[i].render(rect.x, rect.y, window, {255,255,255,255}, sevenSegment24);
             }
-            y += 30;
+            rect.y += 45;
         }
     }
 }
@@ -288,7 +297,7 @@ void GameMenu::create_mainMenu_buttons()
     }
     
     int x = window->getWidth() - 325, y = 175;
-    SDL_Rect rect = {x, y, 250, 83};
+    SDL_Rect rect = {x, y, 262, 62};
     auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
     menuButtons.push_back(button);
     
@@ -297,7 +306,7 @@ void GameMenu::create_mainMenu_buttons()
     if (!newGameTexture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
         std::cerr << "Failed to load new game button texture!" << std::endl;
     }
-    rect.y += 125;
+    rect.y += 87;
     button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation);
     menuButtons.push_back(button);
 
@@ -305,7 +314,7 @@ void GameMenu::create_mainMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/SettingsButton.png")) {
         std::cerr << "Failed to load settings button texture!" << std::endl;
     }
-    rect.y += 125;
+    rect.y += 87;
     button = std::make_shared<Button>(this, rect, texture);
     menuButtons.push_back(button);
 
@@ -313,28 +322,28 @@ void GameMenu::create_mainMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ExitButton.png")) {
         std::cerr << "Failed to load texture for exit button" << std::endl;
     }
-    rect.y += 125;
+    rect.y += 87;
     button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop);
     menuButtons.push_back(button);
 
 
-    rect.x = (window->getWidth()/2) - 125; rect.y = 250;
-    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game);
-    gameOverButtons.push_back(button);
-
-    rect = {100, 300, 250, 83};
+    rect.w *= 0.9; rect.h *= 0.9; rect.x = 212-(rect.w/2);
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
         std::cerr << "failed to load reset button texture!" << std::endl;
     }
     button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation);
     menuButtons.push_back(button);
+
+    rect = {(window->getWidth()/2) - 131, 300, 262, 62};
+    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game);
+    gameOverButtons.push_back(button);
 }
 
 void GameMenu::create_pauseMenu_buttons()
 {
-    int x = (window->getWidth()/2) - 125, y = 125;
-    SDL_Rect rect = {x, y, 250, 83};
+    int x = (window->getWidth()/2) - 131, y = 125;
+    SDL_Rect rect = {x, y, 262, 62};
 
     auto texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ResumeButton.png")) {
@@ -348,7 +357,7 @@ void GameMenu::create_pauseMenu_buttons()
     if (!MenuTexture->loadFromFile("../../assets/Menu/Buttons/MainMenuButton.png")) {
         std::cerr << "failed to load main menu button texture!" << std::endl;
     }
-    rect.y += 125;
+    rect.y += 87;
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation);
     pauseButtons.push_back(button);
 
@@ -361,7 +370,7 @@ void GameMenu::create_pauseMenu_buttons()
     button = std::make_shared<Button>(this, rect, texture);
     confirmationButtons.push_back(button);
 
-    rect.y += 125;
+    rect.y += 87;
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/NoButton.png")) {
         std::cerr << "Failed to load texture for no button!" << std::endl;
@@ -369,8 +378,7 @@ void GameMenu::create_pauseMenu_buttons()
     button = std::make_shared<Button>(this, rect, texture);
     confirmationButtons.push_back(button);
 
-
-    rect.y = 375;
+    rect.y = 425;
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover);
     gameOverButtons.push_back(button);
 }
@@ -392,6 +400,16 @@ void GameMenu::load_assets()
         std::cerr << "Failed to load button sound" << std::endl;
     }
 
+    sevenSegment18 = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 18);
+    if (sevenSegment18 == NULL) {
+        std::cerr << "Failed to load seven segment font!" << std::endl;
+    }
+
+    sevenSegment24 = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 24);
+    if (sevenSegment24 == NULL) {
+        std::cerr << "Failed to load seven segment font!" << std::endl;
+    }
+    
     sevenSegment36 = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 36);
     if (sevenSegment36 == NULL) {
         std::cerr << "Failed to load seven segment font!" << std::endl;

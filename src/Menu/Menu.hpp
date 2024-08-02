@@ -76,7 +76,7 @@ class GameMenu
         std::shared_ptr<LAudio> buttonSound = nullptr;
 
         // fonts
-        TTF_Font *sevenSegment36;
+        TTF_Font *sevenSegment18, *sevenSegment24, *sevenSegment36;
 
 
         std::string confirmationText = "";

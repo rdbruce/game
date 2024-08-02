@@ -16,7 +16,7 @@ LWindow::LWindow()
   wKeyboardFocus = false;
   wFullScreen = false;
   wMinimized = false;
-  wWidth = 1280;
+  wWidth = 720;
   wHeight = 720;
 
   // Initialize SDL
