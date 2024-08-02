@@ -43,7 +43,7 @@ void Button::continue_game()
 {
     menu->game->load_levels("../../saves/curr/");
     menu->game->initialise_BGTexture();
-    menu->game->scores.loadFromFile("../../saves/data/CurrScores.txt");
+    menu->game->scores = menu->highscores[0];
     enter_game();
 }
 
@@ -65,7 +65,7 @@ void Button::load_new_game()
     // save the game to overwrite any existing save data
     menu->game->save_game();
     menu->game->scores.reset();
-    menu->game->scores.Save("../../saves/data/CurrScores.txt");
+    menu->save_highscores();
     enter_game();
 }
 
@@ -106,6 +106,41 @@ void Button::go_to_mainMenu()
     menu->isActive = true;
     menu->currButtons = &menu->menuButtons;
     menu->confirmationText = "";
-    menu->highscores.set_newHighscores(menu->game->scores);
-    menu->game->scores.Save("../../saves/data/CurrScores.txt");
+    menu->highscores[0] = menu->game->scores;
+}
+
+void Button::go_to_main_menu_from_gameover()
+{
+    menu->highscores[0] = menu->game->scores;
+    int idx = menu->new_highscore();
+
+    if (idx != 0) 
+    {
+        PlayerData newHighscore = menu->highscores[0];
+        newHighscore.name = "___";
+        menu->highscores[idx] = newHighscore;
+        menu->set_score_name = idx;
+    }
+
+    go_to_mainMenu();
+}
+
+void Button::reset_highscores_confirmation()
+{
+    auto yes = menu->confirmationButtons[0], no = menu->confirmationButtons[1];
+
+    yes->set_func(&Button::reset_highscores);
+    no->set_func(&Button::go_to_mainMenu);
+
+    menu->confirmationText = "This will permanently erase\nall highscores!";
+    menu->currButtons = &menu->confirmationButtons;
+}
+
+void Button::reset_highscores()
+{
+    int n = menu->num_highscores;
+    for (int i = 1; i <= n; i++) {
+        menu->highscores[i].reset();
+    }
+    go_to_mainMenu();
 }

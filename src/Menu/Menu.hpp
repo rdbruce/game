@@ -63,6 +63,9 @@ class GameMenu
 
         void load_assets();
 
+        void load_highscores();
+        void save_highscores();
+
     private:
 
         std::shared_ptr<LWindow> window;
@@ -91,10 +94,19 @@ class GameMenu
 
         TextureManipulator tEditor;
 
-        PlayerData highscores;
+        int num_highscores;
+        int set_score_name = 0;
+        int currChar = 0;
+        // [0] = the data struct for the current game, all other are highscores
+        PlayerData highscores[6];
 
         // checks to see if the player clicks any buttons
         void leftClickFunc();
 
         void enter_game_over();
+
+        // returns the index of the highscore the latest game was better than
+        int new_highscore();
+
+        void rename_highscore( SDL_Keycode sym );
 };

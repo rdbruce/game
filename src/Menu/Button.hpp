@@ -70,4 +70,9 @@ class Button
         void exit_decline();
         // exits the game, and goes to the main menu
         void go_to_mainMenu();
+
+        void reset_highscores_confirmation();
+        void reset_highscores();
+
+        void go_to_main_menu_from_gameover();
 };

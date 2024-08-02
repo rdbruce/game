@@ -11,7 +11,7 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
     create_pauseMenu_buttons();
 
     // load player highscores
-    highscores.loadFromFile("../../saves/data/HighScores.txt");
+    load_highscores();
 }
 
 void GameMenu::render_background()
@@ -32,16 +32,27 @@ void GameMenu::render_background()
 
 void GameMenu::render_highscores()
 {
-    if (state == main_menu && confirmationText == "") {
-        std::string txt = "HIGHSCORE:\nMOST NIGHTS SURVIVED:\nMOST ENEMIES KILLED:";
+    if (state == main_menu && confirmationText == "") 
+    {
+        int x = 25, y = 25;
+        renderText("HIGHSCORES", 25, 25, window, {255,255,255,255}, sevenSegment36, Left_aligned);
+        y += 30;
 
-        renderText(txt, 25, 25, window, {255,255,255,255}, sevenSegment36, Left_aligned);
-
-        txt =   std::to_string(highscores.highscore) + '\n' +
-                std::to_string(highscores.mostNightsSurvived) + '\n' +
-                std::to_string(highscores.mostEnemiesKilled);
-
-        renderText(txt, 500, 25, window, {255,255,255,255}, sevenSegment36, Left_aligned);
+        for (int i = 1; i <= num_highscores; i++)
+        {
+            if (set_score_name == i) 
+            {
+                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36, currChar, {255,0,0,255});
+                int X = x + 425;
+                std::string str = "NEW HIGHSCORE!";
+                renderText(str, X, y, window, {255,0,0,255}, sevenSegment36, Left_aligned);
+            } 
+            else 
+            {
+                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36);
+            }
+            y += 30;
+        }
     }
 }
 
@@ -84,15 +95,24 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
     switch (e.type)
     {
         case SDL_KEYDOWN:
-            if (e.key.keysym.sym == SDLK_ESCAPE && state == in_game) {
-                if (currButtons == &pauseButtons) isActive = !isActive;
-                confirmationText = "";
-                currButtons = &pauseButtons;
-                game->clear_input();
+
+            switch (e.key.keysym.sym)
+            {
+                case SDLK_ESCAPE:
+                    if (state == in_game) {
+                        if (currButtons == &pauseButtons) isActive = !isActive;
+                        confirmationText = "";
+                        currButtons = &pauseButtons;
+                        game->clear_input();
+                    }
+                    break;
+
+                default:
+                    if (set_score_name != 0) rename_highscore(e.key.keysym.sym);
             }
             break;
 
-        case SDL_MOUSEBUTTONUP:
+        case SDL_MOUSEBUTTONDOWN:
             if (e.button.button == SDL_BUTTON_LEFT) leftClickFunc();
             break;
     }
@@ -101,6 +121,51 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
     update();
 
     return state == Quit;
+}
+
+void GameMenu::rename_highscore( SDL_Keycode sym )
+{
+    char *ch = &highscores[set_score_name].name[currChar];
+    switch (sym)
+    {
+        case SDLK_UP:
+            if (*ch == '_' || *ch == 'Z') *ch = 'A';
+            else (*ch)++;
+            break;
+
+        case SDLK_DOWN:
+            if (*ch == '_' || *ch == 'A') *ch = 'Z';
+            else (*ch)--;
+            break;
+
+        case SDLK_BACKSPACE:
+            *ch = '_';
+        case SDLK_LEFT:
+            currChar = Max(0, currChar-1);
+            break;
+
+        case SDLK_RIGHT:
+            currChar = Min(2, currChar+1);
+            break;
+
+        case SDLK_RETURN:
+            if (currChar < 2) currChar++;
+            else {
+                int i;
+                std::string name = highscores[set_score_name].name;
+                for (i = 0; i < 3; i++) {
+                    if (name[i] == '_') break;
+                }
+                if (i == 3) set_score_name = currChar = 0;
+            }
+            break;
+
+        default:
+            if (sym >= SDLK_a && sym <= SDLK_z) {
+                *ch = (int)sym - 32; 
+                currChar = Min(2, currChar+1);
+            }
+    }
 }
 
 void GameMenu::leftClickFunc()
@@ -127,12 +192,92 @@ bool GameMenu::is_active() { return isActive; }
 void GameMenu::update()
 {
     if (state == Quit) {
-        highscores.Save("../../saves/data/HighScores.txt");
-        game->scores.Save("../../saves/data/CurrScores.txt");
-    } 
-    else if (state == game_over) {
-        highscores.set_newHighscores(game->scores);
+        save_highscores();
     }
+}
+
+void GameMenu::load_highscores()
+{
+    std::string filename = "../../saves/data/High_Scores.txt";
+    std::ifstream file(filename);
+
+    if (!file) {
+        std::cerr << "Couldn't open " << filename << std::endl;
+
+    } else {
+        std::string line;
+        std::getline(file, line);
+
+        std::istringstream iss(line);
+
+        PlayerData currGame;
+        currGame.loadFromIss( &iss );
+        highscores[0] = currGame;
+
+        std::getline(file, line);
+        iss = std::istringstream(line);
+        iss >> num_highscores;
+
+        for (int i = 1; i <= num_highscores; i++)
+        {
+            std::getline(file, line);
+            iss = std::istringstream(line);
+            PlayerData data;
+            data.loadFromIss(&iss);
+            highscores[i] = data;
+        }
+    }
+}
+
+void GameMenu::save_highscores()
+{
+    std::fstream file;
+    std::string filename = "../../saves/data/High_Scores.txt";
+    file.open(filename, std::ios::out);
+
+    if (!file) 
+    {
+        std::cerr << "Failed to save to " << filename << std::endl;
+    } 
+    else 
+    {
+        highscores[0].Save(&file);
+
+        file <<std::dec<< num_highscores << '\n';
+
+        for (int i = 1; i <= num_highscores; i++) {
+            highscores[i].Save(&file);
+        }
+
+        file.close();
+    }
+}
+
+int GameMenu::new_highscore()
+{
+    int newScore = highscores[0].highscore,
+        newEnemyCount = highscores[0].mostEnemiesKilled,
+        newNightCount = highscores[0].mostNightsSurvived;
+
+    int i;
+    for (i = num_highscores; i > 0; i--) 
+    {
+        PlayerData curr = highscores[i];
+
+        // this used to be a huge if-else chain but i did some proofs with
+        // propositional logic and made it far more elegant lol
+
+        bool p = newScore < curr.highscore,
+             q = newScore == curr.highscore,
+             a = newNightCount < curr.mostNightsSurvived,
+             b = newNightCount == curr.mostNightsSurvived,
+             c = newEnemyCount <= curr.mostEnemiesKilled;
+
+        bool eval = p || (q && (a || ( b && c)));
+
+        if (eval) break;
+    }
+    return (i + 1)%6;
 }
 
 void GameMenu::create_mainMenu_buttons()
@@ -176,6 +321,14 @@ void GameMenu::create_mainMenu_buttons()
     rect.x = (window->getWidth()/2) - 125; rect.y = 250;
     button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game);
     gameOverButtons.push_back(button);
+
+    rect = {100, 300, 250, 83};
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
+        std::cerr << "failed to load reset button texture!" << std::endl;
+    }
+    button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation);
+    menuButtons.push_back(button);
 }
 
 void GameMenu::create_pauseMenu_buttons()
@@ -218,7 +371,7 @@ void GameMenu::create_pauseMenu_buttons()
 
 
     rect.y = 375;
-    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_mainMenu);
+    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover);
     gameOverButtons.push_back(button);
 }
 

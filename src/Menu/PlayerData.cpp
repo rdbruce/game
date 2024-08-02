@@ -15,26 +15,12 @@ bool PlayerData::loadFromFile( std::string filename )
         std::getline(file, line);
 
         std::istringstream iss(line);
-        iss >> std::dec >> mostNightsSurvived >> mostEnemiesKilled >> highscore;
+        iss >> name >>std::dec>> mostNightsSurvived >> mostEnemiesKilled >> highscore;
 
         return true;
     }
 }
 
-bool PlayerData::Save( std::string filename )
-{
-    std::fstream file;
-    file.open(filename, std::ios::out);
-
-    if (!file) {
-        std::cerr << "Failed to save to " << filename << std::endl;
-        return false;
-    
-    } else {
-        file << std::dec << mostNightsSurvived <<'\t'<< mostEnemiesKilled <<'\t'<< highscore;
-        return true;
-    }
-}
 
 void PlayerData::set_newHighscores(int nightsSurvived, int enemiesKilled, int score)
 {
@@ -55,5 +41,57 @@ void PlayerData::calculate_score()
 
 void PlayerData::reset()
 {
+    name = "---";
     highscore = mostEnemiesKilled = mostNightsSurvived = 0;
+}
+
+void PlayerData::loadFromIss( std::istringstream *iss )
+{
+    *iss >> name >>std::dec>> mostNightsSurvived >> mostEnemiesKilled >> highscore;
+}
+
+void PlayerData::Save( std::fstream *file )
+{
+    *file << name <<'\t'<<std::dec<< mostNightsSurvived <<'\t'<< mostEnemiesKilled <<'\t'<< highscore <<'\n';
+}
+
+void PlayerData::render(int x, int y, std::shared_ptr<LWindow> window, SDL_Color colour, TTF_Font *font, int colouredLetter, SDL_Color altColor)
+{
+    if (colouredLetter != -1) 
+    {
+        int n = name.size(), X = x;
+        for (int i = 0; i < n; i++) 
+        {
+            std::string str = {name[i]};
+            SDL_Color col = (i == colouredLetter)? altColor : colour;
+            auto rend = std::make_unique<LTexture>(window);
+            if (!rend->loadFromRenderedText(str, col, font)) {
+                std::cerr << "failed to load rendered text!" << std::endl;
+            }
+            rend->render(X, y); 
+            X += rend->getWidth();
+        }
+    } 
+    else {
+        renderText(name, x, y, window, colour, font, Left_aligned);
+    }
+    x += 200;
+
+    std::string txt;
+    if (name == "---") 
+    {
+        txt = "-";
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
+        renderText(txt, x, y, window, colour, font, Left_aligned);
+    }
+    else 
+    {
+        std::string txt = std::to_string(highscore);
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
+        txt = std::to_string(mostNightsSurvived);
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
+        txt = std::to_string(mostEnemiesKilled);
+        renderText(txt, x, y, window, colour, font, Left_aligned);
+    }
 }

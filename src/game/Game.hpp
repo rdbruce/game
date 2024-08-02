@@ -220,7 +220,7 @@ class Game
         // the length (in seconds) of one day
         float DAY_LENGTH = 300.0f;
         // the amount of time it takes to transistion from day to night
-        float DAY_TRANSITION_TIME = 0.0f;
+        float DAY_TRANSITION_TIME = 10.0f;
         int barrier = BARRIER;
 
         // the radius (in cells) of the bomb's explosion
