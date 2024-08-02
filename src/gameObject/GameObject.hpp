@@ -272,6 +272,10 @@ class GameObject
         void beginRetreat();
         // blows up bombs, damaging nearby cells and entities
         void explodeBomb();
+        // when the player is in water, push them to the nearest river bank
+        void playerReturnToShore();
+        // go towards the centre of the map until a non barrier cell is reached
+        void itemSpawnFunc();
 
 
 

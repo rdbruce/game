@@ -232,6 +232,52 @@ void GameObject::birdPositionFunc()
     timer -= dt;
 }
 
+void GameObject::playerReturnToShore()
+{
+    Vector2Int cell = get_cell();
+    int num = game->currLevel->grid[cell.x][cell.y];
+
+    if (!(num&WATER)) 
+    {
+        // return to normal behaviour
+        velocity = Vector2_Zero;
+        positionFunc = &GameObject::playerPositionFunc;
+        velocityFunc = &GameObject::deccelerateVelocityFunc;
+        hasCollision = true;
+    } else {
+        Vector2Int dimensions = get_mapDimensions();
+        Vector2 dir = (pos.y >= dimensions.y/2)? Vector2_Up : Vector2_Down;
+
+        dir.x = 0.5f;
+        dir.normalise();
+
+        velocity = dir * 3.0f * game->currLevel->cell_sideLen;
+    }
+}
+
+void GameObject::itemSpawnFunc()
+{
+    Vector2Int cell = get_cell(), gridDimension = game->currLevel->gridDimensions;
+
+    if (cell.x == Clamp(0, gridDimension.x-1, cell.x) && cell.y == Clamp(0, gridDimension.y-1, cell.y))
+    {
+        int num = game->currLevel->grid[cell.x][cell.y];
+        if (!(num&BARRIER) || num&WATER) 
+        {
+            velocityFunc = &GameObject::deccelerateVelocityFunc;
+            positionFunc = &GameObject::thrownItemPositionFunc;
+            hasCollision = true;
+            velocity = Vector2_Zero;
+            return;
+        }
+    }
+
+    Vector2Int target = get_mapDimensions() / 2;
+    Vector2 dir = getUnitVector(pos, Vector2(target.x, target.y));
+
+    velocity = dir * 3.0f * game->currLevel->cell_sideLen;
+}
+
 void GameObject::bombPositionFunc()
 {
     float dt = get_deltaTime();

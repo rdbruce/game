@@ -92,14 +92,14 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour functions
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            velocityFunc = &GameObject::itemSpawnFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
             collisionFunc = &GameObject::stationaryItemCollisionFunction;
 
             // other attributes
             max_hp = 5;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hasCollision = false;
             moveSpeed = 0.5f;
             break;
         }
@@ -116,14 +116,14 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour functions
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            velocityFunc = &GameObject::itemSpawnFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
             collisionFunc = &GameObject::stationaryItemCollisionFunction;
 
             // other attributes
             max_hp = 6;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hasCollision = false;
             moveSpeed = 0.333333333f;
             break;
         }
@@ -140,14 +140,14 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour functions
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            velocityFunc = &GameObject::itemSpawnFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
             collisionFunc = &GameObject::stationaryItemCollisionFunction;
 
             // other attributes
             max_hp = 10;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hasCollision = false;
             moveSpeed = 0.5f;
             break;
         }
@@ -164,14 +164,14 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour functions
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            velocityFunc = &GameObject::itemSpawnFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
             collisionFunc = &GameObject::stationaryItemCollisionFunction;
 
             // other attributes
             max_hp = 8;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hasCollision = false;
             moveSpeed = 0.5f;
             break;
         }
@@ -189,14 +189,14 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour functions
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            velocityFunc = &GameObject::itemSpawnFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
             collisionFunc = &GameObject::stationaryItemCollisionFunction;
 
             // other attributes
             max_hp = 4;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hasCollision = false;
             moveSpeed = 0.5f;
             break;
         }
@@ -238,14 +238,14 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour functions
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            velocityFunc = &GameObject::itemSpawnFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
             collisionFunc = &GameObject::stationaryItemCollisionFunction;
 
             // other attributes
             max_hp = 5;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hasCollision = false;
             moveSpeed = 0.0f;
             break;
         }
@@ -262,14 +262,14 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             radius = Max(size.x/2, size.y/2);
 
             // assign behaviour function
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            velocityFunc = &GameObject::itemSpawnFunc;
+            positionFunc = &GameObject::defaultPositionFunc;
             collisionFunc = &GameObject::stationaryItemCollisionFunction;
 
             // other attributes
             max_hp = 4;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
+            hasCollision = false;
             moveSpeed = 1.5f;
             break;
         }

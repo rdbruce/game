@@ -644,10 +644,8 @@ void Game::damRiver()
             int num = currLevel->grid[i][y];
             if (num&IS_DRIED) {
                 Vector2Int curr(i, y);
-                num &= ~IS_DRIED;
-                if (!is_occupied(curr)) num |= BARRIER;
-                currLevel->grid[i][y] = num;
-                drawCell(curr);
+                currLevel->grid[i][y] &= ~IS_DRIED;
+                PlaceObjectInCell(curr, EMPTY, false);
             }
         }
     }

@@ -18,6 +18,13 @@ void GameObject::defaultCollisionFunction()
     // walls
     defaultHandleSideCollisionsWithWalls();
     defaultHandleCornerCollisionsWithWalls();
+
+    // die if in water
+    Vector2Int cell = get_cell();
+    int num = game->currLevel->grid[cell.x][cell.y];
+    if ((num&(WATER|BARRIER)) == (WATER|BARRIER)) {
+        hp = 0;
+    }
 }
 
 
@@ -34,6 +41,15 @@ void GameObject::playerCollisionFunction()
     // walls
     defaultHandleSideCollisionsWithWalls();
     defaultHandleCornerCollisionsWithWalls();
+
+    Vector2Int cell = get_cell();
+    int num = game->currLevel->grid[cell.x][cell.y];
+    if ((num&(WATER|BARRIER)) == (WATER|BARRIER)) {
+        hp -= 4;
+        positionFunc = &GameObject::defaultPositionFunc;
+        velocityFunc = &GameObject::playerReturnToShore;
+        hasCollision = false;
+    }
 }
 
 
@@ -55,6 +71,12 @@ void GameObject::stationaryItemCollisionFunction()
     // walls
     defaultHandleSideCollisionsWithWalls();
     defaultHandleCornerCollisionsWithWalls();
+
+    Vector2Int cell = get_cell();
+    int num = game->currLevel->grid[cell.x][cell.y];
+    if ((num&(WATER|BARRIER)) == (WATER|BARRIER)) {
+        if (!is_held()) hp = 0;
+    }
 }
 
 
