@@ -54,7 +54,7 @@ void GameMenu::render_highscores()
                 highscores[i].render(rect.x, rect.y, window, {255,255,255,255}, sevenSegment24, currChar, {255,0,0,255});
                 x = rect.x + 425;
                 std::string str = "NEW HIGHSCORE!";
-                renderText(str, rect.x, rect.y, window, {255,0,0,255}, sevenSegment24, Left_aligned);
+                renderText(str, x, rect.y, window, {255,0,0,255}, sevenSegment24, Left_aligned);
             } 
             else 
             {
@@ -77,7 +77,7 @@ void GameMenu::render_confirmation() {
 
 void GameMenu::render_buttons()
 {
-    if (isActive) {
+    if (isActive && !set_score_name) {
         int n = currButtons->size();
         for (int i = 0; i < n; i++) {
             (*currButtons)[i]->render();
