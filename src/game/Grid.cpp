@@ -264,6 +264,7 @@ void Game::drawCell( Vector2Int cell )
         case 6: {
             std::shared_ptr<LTexture> black = tEditor.createSolidColour(sideLen, sideLen, 0x000000FF, window);
             tEditor.renderTextureToTexture(BGTexture, black, &cellRect);
+            black->free();
             break;
         }
 
@@ -366,6 +367,8 @@ void Game::RemoveTreeFromOverlay( Vector2Int cell )
     int sideLen = currLevel->cell_sideLen;
     int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
     map = { 0, 0, nx*sideLen, ny*sideLen };
+
+    if (overlayTexture != nullptr) overlayTexture->free();
     overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);
 
     for (int y = 0; y < ny; y++) {
@@ -408,6 +411,8 @@ void Game::render_cell_health()
 
                 white->render(wRect.x + renderOffset.x, wRect.y + renderOffset.y, &wRect);
                 red->render(rRect.x + renderOffset.x, rRect.y + renderOffset.y, &rRect);
+
+                white->free(); red->free();
             }
         }
     }
@@ -606,8 +611,8 @@ void Game::initialise_BGTexture()
     int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
     map = { 0, 0, nx*sideLen, ny*sideLen };
 
-    if (BGTexture != nullptr) BGTexture->~LTexture();
-    if (overlayTexture != nullptr) overlayTexture->~LTexture();
+    if (BGTexture != nullptr) BGTexture->free();
+    if (overlayTexture != nullptr) overlayTexture->free();
     
     BGTexture = tEditor.createEmptyTexture(map.w, map.h, window);
     overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);

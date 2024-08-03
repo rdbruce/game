@@ -573,6 +573,8 @@ void GameObject::defaultRenderFunc( int camX, int camY, Uint8 alpha )
 
         white->render(wRect.x, wRect.y, &wRect);
         red->render(rRect.x, rRect.y, &rRect);
+
+        white->free(); red->free();
     }
 }
 
@@ -636,5 +638,6 @@ void GameObject::itemRenderFunc( int camX, int camY, Uint8 alpha )
             std::cerr << "failed to load health display!" << std::endl;
         }
         itemCountTex->render(p.x+hitbox.w-(itemCountTex->getWidth()/2), p.y+hitbox.h-(itemCountTex->getHeight()/2));
+        itemCountTex->free();
     }
 }

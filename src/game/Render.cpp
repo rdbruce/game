@@ -460,9 +460,11 @@ void Game::render_clock()
     }
     int w = clockTex->getWidth(), x = camera.w-106 + renderOffset.x;
     clockTex->render(x, renderOffset.y + 25);
+    clockTex->free();
 
     auto bar = tEditor.createSolidColour(75, 5, 0x000000D0, window);
     bar->render(x+3, renderOffset.y + 10);
+    bar->free();
 
     if (isNight) 
     {
@@ -470,6 +472,7 @@ void Game::render_clock()
         if (wRed > 0) {
             bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
             bar->render(x+(81-wRed), renderOffset.y + 7);
+            bar->free();
         }
     }
     else
@@ -478,6 +481,7 @@ void Game::render_clock()
         if (wRed > 0) {
             bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
             bar->render(x, renderOffset.y + 7);
+            bar->free();
         }
     }
 }

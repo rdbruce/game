@@ -94,6 +94,7 @@ void Game::handle_events( SDL_Event& e )
 void Game::update_gameobjects()
 {
     for (int i = 0; i < currLevel->gameObjects.size(); i++) {
+        std::cout << i <<' '<< currLevel->gameObjects.size() <<'\n';
         if (switching_scenes) {
             switching_scenes = false; return;
         }
@@ -408,6 +409,9 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     initialise_BGTexture();
 
     switching_scenes = true;
+
+    while(secondRenders.size()) secondRenders.pop();
+    while(dialogueRenders.size()) dialogueRenders.pop();
 }
 
 
