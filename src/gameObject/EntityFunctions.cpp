@@ -262,10 +262,10 @@ void GameObject::itemSpawnFunc()
     if (cell.x == Clamp(0, gridDimension.x-1, cell.x) && cell.y == Clamp(0, gridDimension.y-1, cell.y))
     {
         int num = game->currLevel->grid[cell.x][cell.y];
-        if (!(num&BARRIER) || num&WATER) 
+        if (!(num&BARRIER) || num&WATER || is_held()) 
         {
             velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::thrownItemPositionFunc;
+            positionFunc = (is_held())? &GameObject::heldItemPositionFunc : &GameObject::thrownItemPositionFunc;
             hasCollision = true;
             return;
         }
@@ -549,7 +549,7 @@ void GameObject::defaultRenderFunc( int camX, int camY, Uint8 alpha )
 {
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     tex->setAlpha(alpha);
@@ -582,7 +582,7 @@ void GameObject::targetRenderFunc( int camX, int camY, Uint8 alpha )
 
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
 
@@ -602,7 +602,7 @@ void GameObject::fallingTreeRenderFunc( int camX, int camY, Uint8 alpha )
 {
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     // timer is initialised to 1.0f, use it as an interpolator
@@ -617,7 +617,7 @@ void GameObject::itemRenderFunc( int camX, int camY, Uint8 alpha )
 {
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(-hitbox.w, game->camera.w, p.x) || p.y != Clamp(-hitbox.h, game->camera.h, p.y)) {
+    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     tex->setAlpha(alpha);

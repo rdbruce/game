@@ -10,9 +10,9 @@ bool Button::isPressed( int x, int y )
     return x>=rect.x && x<=r && y>=rect.y && y<=b;
 }
 
-void Button::render()
+void Button::render( int dx, int dy )
 {
-    tex->render(rect.x, rect.y, &rect);
+    tex->render(rect.x + dx, rect.y + dy, &rect);
 }
 
 void Button::set_func( void (Button::*newFunc)() ) {

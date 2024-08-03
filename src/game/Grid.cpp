@@ -406,8 +406,8 @@ void Game::render_cell_health()
 
                 SDL_Rect wRect = {p.x, p.y, wWhite, 20}, rRect = {p.x+wWhite, p.y, wRed, 20};
 
-                white->render(wRect.x, wRect.y, &wRect);
-                red->render(rRect.x, rRect.y, &rRect);
+                white->render(wRect.x + renderOffset.x, wRect.y + renderOffset.y, &wRect);
+                red->render(rRect.x + renderOffset.x, rRect.y + renderOffset.y, &rRect);
             }
         }
     }
@@ -600,10 +600,14 @@ void Game::damageCell( Vector2Int cell, int damage, Scene *level )
 }
 
 
-void Game::initialise_BGTexture() {
+void Game::initialise_BGTexture() 
+{
     int sideLen = currLevel->cell_sideLen;
     int nx = currLevel->gridDimensions.x, ny = currLevel->gridDimensions.y;
     map = { 0, 0, nx*sideLen, ny*sideLen };
+
+    if (BGTexture != nullptr) BGTexture->~LTexture();
+    if (overlayTexture != nullptr) overlayTexture->~LTexture();
     
     BGTexture = tEditor.createEmptyTexture(map.w, map.h, window);
     overlayTexture = tEditor.createEmptyTexture(map.w, map.h, window);

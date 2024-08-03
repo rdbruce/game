@@ -145,8 +145,12 @@ class Game
         bool game_over();
         // makes game_over false
         void new_game();
+
+
         // tracks the player's score
         PlayerData scores;
+        // where in the window to render the game
+        Vector2Int renderOffset;
 
 
     private:

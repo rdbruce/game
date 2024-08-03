@@ -7,7 +7,7 @@ bool is_in_region(Vector2 p, SDL_Rect rect) {
 
 void Game::render_controls()
 {
-    SDL_Rect mRect = {0, 70, 24, 30};
+    SDL_Rect mRect = {0+renderOffset.x, 70+renderOffset.y, 24, 30};
     std::string txt;
 
     if (currLevel->held != nullptr) 
@@ -43,7 +43,7 @@ void Game::render_controls()
                 std::cerr << "couldn't render controls text!" << std::endl;
                 return;
             }
-            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
+            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
         
         } 
         else 
@@ -69,7 +69,7 @@ void Game::render_controls()
                 std::cerr << "couldn't render controls text!" << std::endl;
                 return;
             }
-            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
+            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
             
 
             // middle click to throw the stack
@@ -93,7 +93,7 @@ void Game::render_controls()
                 std::cerr << "couldn't render controls text!" << std::endl;
                 return;
             }
-            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
+            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
         }
 
 
@@ -137,7 +137,7 @@ void Game::render_controls()
                 return;
             }
             RMBTex->render(mRect.x, mRect.y, &mRect);
-            controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
         }
 
 
@@ -169,7 +169,7 @@ void Game::render_controls()
                     return;
                 }
                 LMBTex->render(mRect.x, mRect.y, &mRect);
-                controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+                controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
             }
 
             if (is_occupied(cell)) {
@@ -180,7 +180,7 @@ void Game::render_controls()
                         std::cerr << "couldn't render controls text!" << std::endl;
                         return;
                     }
-                    controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+                    controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
                 }
             }
         } else {
@@ -201,7 +201,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
 
                             RMBTex->render(mRect.x, mRect.y, &mRect);
                             txt = "Craft 2 ";
@@ -209,7 +209,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.w, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
+                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
 
                             SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
                             plankTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
@@ -226,7 +226,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
+                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
                             break;
                         }
 
@@ -237,7 +237,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
 
                             if (obj->get_hp() >= 4) 
                             {
@@ -247,7 +247,7 @@ void Game::render_controls()
                                     std::cerr << "couldn't render controls text!" << std::endl;
                                     return;
                                 }
-                                controlsTex->render(mRect.w, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
+                                controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
 
                                 SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
                                 closed_doorTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
@@ -264,7 +264,7 @@ void Game::render_controls()
                                     std::cerr << "couldn't render controls text!" << std::endl;
                                     return;
                                 }
-                                controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
+                                controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
                             }
                             break;
                         }
@@ -276,7 +276,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
 
                             RMBTex->render(mRect.x, mRect.y, &mRect);
                             txt = "Craft 1 ";
@@ -284,7 +284,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.w, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
+                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
 
                             SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
                             logTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
@@ -311,7 +311,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
+                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
                             break;
                         }
 
@@ -322,7 +322,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
 
                             RMBTex->render(mRect.x, mRect.y, &mRect);
                             txt = "Craft 4 ";
@@ -330,7 +330,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.w, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
+                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
 
                             SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
                             plankTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
@@ -347,7 +347,7 @@ void Game::render_controls()
                                 std::cerr << "couldn't render controls text!" << std::endl;
                                 return;
                             }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0; mRect.y += 30;
+                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
                             break;
                         }
 
@@ -359,7 +359,7 @@ void Game::render_controls()
                                     std::cerr << "couldn't render controls text!" << std::endl;
                                     return;
                                 }
-                                controlsTex->render(mRect.w, mRect.y); mRect.y += 30;
+                                controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
                             }
                             break;
                     }
@@ -396,12 +396,12 @@ void Game::render_framerate()
         std::cerr << "couldn't render FPS!" << std::endl;
         return;
     }
-    fpsTex->render(0, 0);
+    fpsTex->render(renderOffset.x, renderOffset.y);
 }
 
 void Game::render_player_health()
 {
-    SDL_Rect heartRect = {0, 30, 50, 50};
+    SDL_Rect heartRect = {0+renderOffset.x, 30+renderOffset.y, 50, 50};
     int full = currLevel->player->get_hp();
 
     for (int i = 0; i < 5; i++) 
@@ -414,11 +414,11 @@ void Game::render_player_health()
 
 // renders the scene's background
 void Game::render_background() {
-    BGTexture->render(0, 0, &camera, &camera);
+    BGTexture->render(renderOffset.x, renderOffset.y, &camera, &camera);
 }
 
 void Game::render_overlay() {
-    overlayTexture->render(0, 0, &camera, &camera);
+    overlayTexture->render(renderOffset.x, renderOffset.y, &camera, &camera);
 }
 
 void Game::render_darkness() 
@@ -431,7 +431,7 @@ void Game::render_darkness()
         int alpha = 100.0f * t;
         darknessTex = tEditor.createSolidColour(camera.w, camera.h, alpha, window);
     }
-    darknessTex->renderAsBackground();
+    darknessTex->render(renderOffset.x, renderOffset.y, &camera);
 }
 
 
@@ -441,8 +441,7 @@ void Game::render_gameobjects() {
         if (switching_scenes) {
             switching_scenes = false; return;
         }
-        // if (currLevel->gameObjects[i]->get_type() == Bear_NPC) continue;
-        currLevel->gameObjects[i]->render( camera.x, camera.y );
+        currLevel->gameObjects[i]->render( camera.x-renderOffset.x, camera.y-renderOffset.y );
     }
 }
 
@@ -459,18 +458,18 @@ void Game::render_clock()
     if (!clockTex->loadFromRenderedText(txt, {255,0,0,255}, sevenSegment)) {
         std::cerr << "Failed to create clock" << std::endl;
     }
-    int w = clockTex->getWidth(), x = window->getWidth()-106;
-    clockTex->render(x, 25);
+    int w = clockTex->getWidth(), x = camera.w-106 + renderOffset.x;
+    clockTex->render(x, renderOffset.y + 25);
 
     auto bar = tEditor.createSolidColour(75, 5, 0x000000D0, window);
-    bar->render(x+3, 10);
+    bar->render(x+3, renderOffset.y + 10);
 
     if (isNight) 
     {
         int wRed = 81.0f * (1.0f-t);
         if (wRed > 0) {
             bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
-            bar->render(x+(81-wRed), 7);
+            bar->render(x+(81-wRed), renderOffset.y + 7);
         }
     }
     else
@@ -478,7 +477,7 @@ void Game::render_clock()
         int wRed = t * 81.0f;
         if (wRed > 0) {
             bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
-            bar->render(x, 7);
+            bar->render(x, renderOffset.y + 7);
         }
     }
 }
@@ -488,7 +487,7 @@ void Game::render_gameobjects_under_trees()
     while (secondRenders.size())
     {
         auto obj = secondRenders.top();
-        obj->render( camera.x, camera.y, 100);
+        obj->render( camera.x-renderOffset.x, camera.y-renderOffset.y, 100);
         secondRenders.pop();
     }
 }

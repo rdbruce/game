@@ -24,10 +24,15 @@ public:
   int getWidth();
   int getHeight();
 
+  float getScaleX();
+  float getScaleY();
+
   // Window focii
   bool hasMouseFocus();
   bool hasKeyboardFocus();
   bool isMinimized();
+
+  void toggleFullscreen();
 
   // Initializes variables
   LWindow();
@@ -42,6 +47,10 @@ private:
   // Window dimensions
   int wWidth;
   int wHeight;
+
+  // scaling factor
+  float scaleX = 1.0f;
+  float scaleY = 1.0f;
 
   // Window focus
   bool wMouseFocus;

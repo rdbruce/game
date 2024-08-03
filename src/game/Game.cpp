@@ -115,6 +115,9 @@ Vector2 Game::find_mouse_pos()
     int x, y;
     // get the coordinates of the mouse on the screen
     SDL_GetMouseState(&x, &y);
+    x /= window->getScaleX(); y /= window->getScaleY();
+    x -= renderOffset.x; y -= renderOffset.y;
+
     // convert that to coordinates in the game
     return Vector2(x+camera.x, y+camera.y);
 }

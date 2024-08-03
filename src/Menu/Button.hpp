@@ -42,7 +42,7 @@ class Button
         void execute_function();
 
         // renders the button
-        void render();
+        void render( int dx, int dy );
         
         
         /* BELOW ARE A BUNCH OF DIFFERENT BUTTON FUNCTIONS */

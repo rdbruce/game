@@ -4,6 +4,8 @@
 GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game ) 
 : window(Window), game(game)
 {
+    wRect = {0, 0, window->getWidth(), window->getHeight()};
+
     load_assets();
 
     // create buttons
@@ -19,12 +21,12 @@ void GameMenu::render_background()
     if (isActive) 
     {
         auto tex = (state == main_menu)? BGTexture :
-                   tEditor.createSolidColour(window->getWidth(), window->getHeight(), 180, window);
-        tex->renderAsBackground();
+                   tEditor.createSolidColour(wRect.w, wRect.h, 180, window);
+        tex->render(wRect.x, wRect.y, &wRect);
 
         if (state == game_over) {
-            int x = window->getWidth()/2;
-            SDL_Rect rect = {x-150, 75, 300, 166};
+            int x = (wRect.w/2) + wRect.x;
+            SDL_Rect rect = {x-150, wRect.y + 75, 300, 166};
             gameOverTex->render(rect.x, rect.y, &rect);
         }
     }
@@ -34,7 +36,7 @@ void GameMenu::render_highscores()
 {
     if (state == main_menu && confirmationText == "") 
     {
-        SDL_Rect rect = {25, 25, 400, 240};
+        SDL_Rect rect = {wRect.x+25, wRect.y+25, 400, 240};
 
         renderText("HIGHSCORES", rect.x+(rect.w/2), rect.y, window, {255,0,0,255}, sevenSegment36);
         rect.y += 55;
@@ -69,7 +71,7 @@ void GameMenu::render_confirmation() {
     if (confirmationText != "") 
     {
         std::string txt = "Are you sure?\n" + confirmationText;
-        int x = window->getWidth()/2, y = 65;
+        int x = (wRect.w/2) + wRect.x, y = 65 + wRect.y;
         
         renderText(txt, x, y, window);
     }
@@ -80,14 +82,14 @@ void GameMenu::render_buttons()
     if (isActive && !set_score_name) {
         int n = currButtons->size();
         for (int i = 0; i < n; i++) {
-            (*currButtons)[i]->render();
+            (*currButtons)[i]->render( wRect.x, wRect.y );
         }
     }
 }
 
 void GameMenu::render_CRT()
 {
-    CRT_Tex->renderAsBackground();
+    CRT_Tex->render(wRect.x, wRect.y, &wRect);
 }
 
 void GameMenu::enter_game_over()
@@ -95,6 +97,19 @@ void GameMenu::enter_game_over()
     isActive = true;
     currButtons = &gameOverButtons;
     state = game_over;
+}
+
+void GameMenu::render_aspect_ratio()
+{
+    int w = wRect.x, h = wRect.h;
+    if (w) 
+    {
+        SDL_Rect rect = {0, 0, w, h};
+        
+        aspectRatio->render(rect.x, rect.y, &rect);
+        rect.x += rect.w + wRect.w;
+        aspectRatio->render(rect.x, rect.y, &rect);
+    }
 }
 
 bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
@@ -116,6 +131,18 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
                     }
                     break;
 
+                case SDLK_F11:
+                    // WARNING!! this will cause the game to crash if you literally
+                    // hold down F11 to spam fullscreen toggle, so don't do that!
+                    window->toggleFullscreen();
+
+                    sizeChange = true;
+
+                    if (state == in_game || state == game_over) {
+                        game->initialise_BGTexture();
+                    }
+                    break;
+
                 default:
                     if (set_score_name != 0) rename_highscore(e.key.keysym.sym);
             }
@@ -126,8 +153,6 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
             break;
     }
     *menuActive = isActive;
-
-    update();
 
     return state == Quit;
 }
@@ -183,6 +208,8 @@ void GameMenu::leftClickFunc()
         // find the coordinates of the mouse click
         int x, y;
         SDL_GetMouseState(&x, &y);
+        x /= window->getScaleX(); y /= window->getScaleY();
+        x -= wRect.x; y -= wRect.y;
 
         // check all the buttons to see if they were clicked
         for (int i = 0; i < currButtons->size(); i++) {
@@ -202,6 +229,29 @@ void GameMenu::update()
 {
     if (state == Quit) {
         save_highscores();
+    }
+
+    if (sizeChange) 
+    {
+        create_CRT_Texture();
+
+        int w = wRect.x, h = wRect.h;
+        // if (aspectRatio != nullptr) aspectRatio->~LTexture();
+        aspectRatio = tEditor.createSolidColour(w, h, 0x000000FF, window);
+
+        w = window->getWidth(), h = window->getHeight();
+
+        if (w > h) {
+            wRect.y = 0;
+            int s = wRect.w * window->getScaleX();
+            wRect.x = (w - s)/4;
+        } else {
+            wRect.x = 0;
+            int s = wRect.h * window->getScaleY();
+            wRect.y = (h - s)/4;
+        }
+
+        game->renderOffset = Vector2Int(wRect.x, wRect.y);
     }
 }
 
@@ -296,7 +346,7 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load continue button texture!" << std::endl;
     }
     
-    int x = window->getWidth() - 325, y = 175;
+    int x = wRect.w - 325, y = 175;
     SDL_Rect rect = {x, y, 262, 62};
     auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
     menuButtons.push_back(button);
@@ -335,14 +385,14 @@ void GameMenu::create_mainMenu_buttons()
     button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation);
     menuButtons.push_back(button);
 
-    rect = {(window->getWidth()/2) - 131, 300, 262, 62};
+    rect = {(wRect.w/2) - 131, 300, 262, 62};
     button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game);
     gameOverButtons.push_back(button);
 }
 
 void GameMenu::create_pauseMenu_buttons()
 {
-    int x = (window->getWidth()/2) - 131, y = 125;
+    int x = (wRect.w/2) - 131, y = 125;
     SDL_Rect rect = {x, y, 262, 62};
 
     auto texture = std::make_shared<LTexture>(window);
@@ -416,12 +466,20 @@ void GameMenu::load_assets()
     }
 
 
-    auto CRT_Base = std::make_shared<LTexture>(window);
+    CRT_Base = std::make_shared<LTexture>(window);
     if (!CRT_Base->loadFromFile("../../assets/CRT_Base_Texture.png")) {
         std::cerr << "Failed to load CRT Pixel texture!" << std::endl;
     }
 
-    CRT_Tex = tEditor.createEmptyTexture(window->getWidth(), window->getHeight(), window);
+    create_CRT_Texture();
+
+    int w = wRect.x, h = wRect.h;
+    aspectRatio = tEditor.createSolidColour(w, h, 0x000000FF, window);
+}
+
+void GameMenu::create_CRT_Texture()
+{
+    CRT_Tex = tEditor.createEmptyTexture(wRect.w, wRect.h, window);
     int nx = CRT_Tex->getWidth() / CRT_Base->getWidth(), ny =( CRT_Tex->getHeight() / CRT_Base->getWidth())+1;
 
     for (int i = 0; i <= nx; i++) {

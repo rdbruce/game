@@ -43,6 +43,8 @@ class GameMenu
         void render_highscores();
         // renders the CRT overlay effect
         void render_CRT();
+        // renders black bars on either side of the game
+        void render_aspect_ratio();
 
 
         // handle user input, returns true when quit is requested
@@ -66,11 +68,15 @@ class GameMenu
         void load_highscores();
         void save_highscores();
 
+        void create_CRT_Texture();
+
     private:
 
         std::shared_ptr<LWindow> window;
+        SDL_Rect wRect;
 
-        std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex, CRT_Tex;
+        std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex, 
+                                  CRT_Tex, CRT_Base, aspectRatio = nullptr;
 
         // the sound made when you click a button
         std::shared_ptr<LAudio> buttonSound = nullptr;
@@ -88,6 +94,7 @@ class GameMenu
                                              gameOverButtons; // play again/main menu
 
         bool isActive = true;
+        bool sizeChange = false;
         State state = main_menu;
 
         Game *game = nullptr;

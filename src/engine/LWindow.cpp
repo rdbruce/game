@@ -102,10 +102,16 @@ void LWindow::handleEvent(SDL_Event &e)
     {
     // Get new dimensions and repaint on window size change
     case SDL_WINDOWEVENT_SIZE_CHANGED:
+    {
       wWidth = e.window.data1;
       wHeight = e.window.data2;
+      // change scaling factor
+      scaleX = (float)wWidth / 720.0f; scaleY = (float)wHeight / 720.0f;
+      scaleX = scaleY = (scaleX < scaleY)? scaleX : scaleY;
+      SDL_RenderSetScale(gRenderer, scaleX, scaleY);
       SDL_RenderPresent(gRenderer);
       break;
+    }
 
     // Repaint on exposure
     case SDL_WINDOWEVENT_EXPOSED:
@@ -160,10 +166,11 @@ void LWindow::handleEvent(SDL_Event &e)
       SDL_SetWindowTitle(gWindow, caption.str().c_str());
     }
   }
-  // Enter exit full screen on f11 key
-  else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_F11)
-  {
-    if (wFullScreen)
+}
+
+void LWindow::toggleFullscreen()
+{
+  if (wFullScreen)
     {
       SDL_SetWindowFullscreen(gWindow, 0);
       wFullScreen = false;
@@ -174,7 +181,6 @@ void LWindow::handleEvent(SDL_Event &e)
       wFullScreen = true;
       wMinimized = false;
     }
-  }
 }
 
 int LWindow::getWidth()
@@ -186,6 +192,9 @@ int LWindow::getHeight()
 {
   return wHeight;
 }
+
+float LWindow::getScaleX() { return scaleX; }
+float LWindow::getScaleY() { return scaleY; }
 
 bool LWindow::hasMouseFocus()
 {

@@ -65,6 +65,7 @@ int main(
       if (!inMenu) game.handle_events(e);
     }
 
+    menu.update();
     game.update_deltaTime();
     if (!inMenu) 
     {
@@ -81,7 +82,7 @@ int main(
     if (!gHolder->isMinimized())
     {
       // Clear screen
-      SDL_SetRenderDrawColor(gHolder->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+      SDL_SetRenderDrawColor(gHolder->gRenderer, 0, 0, 0, 0xFF);
       SDL_RenderClear(gHolder->gRenderer);
 
       // Render background
@@ -110,6 +111,7 @@ int main(
         menu.render_confirmation();
       }
       menu.render_CRT();
+      menu.render_aspect_ratio();
 
       // Update screen
       SDL_RenderPresent(gHolder->gRenderer);
