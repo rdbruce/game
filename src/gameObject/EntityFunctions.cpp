@@ -264,6 +264,7 @@ void GameObject::itemSpawnFunc()
         int num = game->currLevel->grid[cell.x][cell.y];
         if (!(num&BARRIER) || num&WATER || is_held()) 
         {
+            acceleration = velocity * -1.0f;
             velocityFunc = &GameObject::deccelerateVelocityFunc;
             positionFunc = (is_held())? &GameObject::heldItemPositionFunc : &GameObject::thrownItemPositionFunc;
             hasCollision = true;
@@ -350,7 +351,7 @@ void GameObject::explodeBomb()
 void GameObject::foxPositionFunc()
 {
     // attempt to move back to a point
-    Vector2 target = (game->currLevel == &game->Base)? Vector2(1500.0f, 1950.0f) : Vector2(609.0f, 230.0f);
+    Vector2 target = (game->currLevel == &game->Base)? Vector2(2000.0f, 2600.0f) : Vector2(913.0f, 345.0f);
     Vector2 dist = target - pos;
     Vector2 vel = Vector2_Zero;
 
@@ -373,7 +374,7 @@ void GameObject::defaultPositionFunc()
 
 void GameObject::bearPositionFunc()
 {
-    Vector2 newPos(1240.0f, 200.0f);
+    Vector2 newPos(1860.0f, 300.0f);
     set_pos(newPos);
 }
 

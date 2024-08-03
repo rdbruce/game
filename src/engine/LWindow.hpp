@@ -32,7 +32,7 @@ public:
   bool hasKeyboardFocus();
   bool isMinimized();
 
-  void toggleFullscreen();
+  bool toggleFullscreen();
 
   // Initializes variables
   LWindow();

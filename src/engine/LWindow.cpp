@@ -16,8 +16,8 @@ LWindow::LWindow()
   wKeyboardFocus = false;
   wFullScreen = false;
   wMinimized = false;
-  wWidth = 720;
-  wHeight = 720;
+  wWidth = 1024;
+  wHeight = 1024;
 
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0)
@@ -106,7 +106,7 @@ void LWindow::handleEvent(SDL_Event &e)
       wWidth = e.window.data1;
       wHeight = e.window.data2;
       // change scaling factor
-      scaleX = (float)wWidth / 720.0f; scaleY = (float)wHeight / 720.0f;
+      scaleX = (float)wWidth / 1024.0f; scaleY = (float)wHeight / 1024.0f;
       scaleX = scaleY = (scaleX < scaleY)? scaleX : scaleY;
       SDL_RenderSetScale(gRenderer, scaleX, scaleY);
       SDL_RenderPresent(gRenderer);
@@ -168,7 +168,7 @@ void LWindow::handleEvent(SDL_Event &e)
   }
 }
 
-void LWindow::toggleFullscreen()
+bool LWindow::toggleFullscreen()
 {
   if (wFullScreen)
     {
@@ -181,6 +181,7 @@ void LWindow::toggleFullscreen()
       wFullScreen = true;
       wMinimized = false;
     }
+    return wFullScreen;
 }
 
 int LWindow::getWidth()

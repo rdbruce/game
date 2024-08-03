@@ -222,7 +222,7 @@ class Game
         /* --------  constants:  -------- */
 
         // the length (in seconds) of one day
-        float DAY_LENGTH = 300.0f;
+        float DAY_LENGTH = 240.0f;
         // the amount of time it takes to transistion from day to night
         float DAY_TRANSITION_TIME = 10.0f;
         int barrier = BARRIER;
@@ -240,7 +240,7 @@ class Game
         // multiplies the amount of damage taken by buildings placed in water
         float WATER_DAMAGE_MULT = 0.5f;
         // the probability of spawning a stone item in each cell when clearing the river
-        float STONE_SPAWN_CHANCE = 0.1f;
+        float STONE_SPAWN_CHANCE = 0.075f;
         
 
 

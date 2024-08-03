@@ -66,6 +66,7 @@ void Button::load_new_game()
     menu->game->save_game();
     menu->game->scores.reset();
     menu->save_highscores();
+    srand(time(NULL));
     enter_game();
 }
 

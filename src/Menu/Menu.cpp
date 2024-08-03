@@ -25,8 +25,7 @@ void GameMenu::render_background()
         tex->render(wRect.x, wRect.y, &wRect);
 
         if (state == game_over) {
-            int x = (wRect.w/2) + wRect.x;
-            SDL_Rect rect = {x-150, wRect.y + 75, 300, 166};
+            SDL_Rect rect = {(wRect.w-GAMEOVER_TXT_WIDTH)/2 + wRect.x, 128, GAMEOVER_TXT_WIDTH, GAMEOVER_TEX_HEIGHT};
             gameOverTex->render(rect.x, rect.y, &rect);
         }
     }
@@ -36,33 +35,32 @@ void GameMenu::render_highscores()
 {
     if (state == main_menu && confirmationText == "") 
     {
-        SDL_Rect rect = {wRect.x+25, wRect.y+25, 400, 240};
+        int x = 64 + wRect.x, y = 256;
 
-        renderText("HIGHSCORES", rect.x+(rect.w/2), rect.y, window, {255,0,0,255}, sevenSegment36);
-        rect.y += 55;
+        renderText("HIGHSCORES", HIGHSCORE_CENTREPOS+wRect.x, y, window, {255,0,0,255}, sevenSegment48);
+        y += 55; x += 128;
 
-        int x = rect.x + 160, y = rect.y;
+        renderText("SCORE", x, y, window, {255,0,0,255}, sevenSegment36); x += 128;
+        renderText("NIGHTS\nSURVIVED", x, y, window, {255,0,0,255}, sevenSegment24); x += 128;
+        renderText("ENEMIES\nKILLED", x, y, window, {255,0,0,255}, sevenSegment24);
 
-        renderText("SCORE", x, y, window, {255,0,0,255}, sevenSegment24); x += 75;
-        renderText("NIGHSTS\nSURVIVED", x, y, window, {255,0,0,255}, sevenSegment18); x += 75;
-        renderText("ENEMIES\nKILLED", x, y, window, {255,0,0,255}, sevenSegment18);
-
-        rect.y += 55;
+        x = 64; y += 96;
 
         for (int i = 1; i <= num_highscores; i++)
         {
             if (set_score_name == i) 
             {
-                highscores[i].render(rect.x, rect.y, window, {255,255,255,255}, sevenSegment24, currChar, {255,0,0,255});
-                x = rect.x + 425;
+                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36, currChar, {255,0,0,255});
+                x += 425;
                 std::string str = "NEW HIGHSCORE!";
-                renderText(str, x, rect.y, window, {255,0,0,255}, sevenSegment24, Left_aligned);
+                renderText(str, x, y, window, {255,0,0,255}, sevenSegment36, Left_aligned);
+                x -= 425;
             } 
             else 
             {
-                highscores[i].render(rect.x, rect.y, window, {255,255,255,255}, sevenSegment24);
+                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36);
             }
-            rect.y += 45;
+            y += 64;
         }
     }
 }
@@ -97,6 +95,7 @@ void GameMenu::enter_game_over()
     isActive = true;
     currButtons = &gameOverButtons;
     state = game_over;
+    confirmationText = "";
 }
 
 void GameMenu::render_aspect_ratio()
@@ -114,8 +113,6 @@ void GameMenu::render_aspect_ratio()
 
 bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
 {
-    if (game->game_over() && state == in_game) enter_game_over();
-
     switch (e.type)
     {
         case SDL_KEYDOWN:
@@ -134,9 +131,9 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
                 case SDLK_F11:
                     // WARNING!! this will cause the game to crash if you literally
                     // hold down F11 to spam fullscreen toggle, so don't do that!
-                    window->toggleFullscreen();
+                    fullscreen = window->toggleFullscreen();
 
-                    sizeChange = true;
+                    sizeChange++;
 
                     if (state == in_game || state == game_over) {
                         game->initialise_BGTexture();
@@ -204,7 +201,7 @@ void GameMenu::rename_highscore( SDL_Keycode sym )
 
 void GameMenu::leftClickFunc()
 {
-    if (isActive) {
+    if (isActive && !set_score_name) {
         // find the coordinates of the mouse click
         int x, y;
         SDL_GetMouseState(&x, &y);
@@ -227,31 +224,37 @@ bool GameMenu::is_active() { return isActive; }
 
 void GameMenu::update()
 {
+    if (game->game_over() && state == in_game) enter_game_over();
+
     if (state == Quit) {
         save_highscores();
     }
 
     if (sizeChange) 
     {
-        create_CRT_Texture();
+        if (sizeChange == 2) 
+        {
+            create_CRT_Texture();
 
-        int w = wRect.x, h = wRect.h;
-        // if (aspectRatio != nullptr) aspectRatio->~LTexture();
-        aspectRatio = tEditor.createSolidColour(w, h, 0x000000FF, window);
+            if (aspectRatio != nullptr) aspectRatio->free();
 
-        w = window->getWidth(), h = window->getHeight();
+            if (fullscreen) 
+            {
+                int w = window->getWidth(), h = window->getHeight(),
+                    s = wRect.w * window->getScaleX();
 
-        if (w > h) {
-            wRect.y = 0;
-            int s = wRect.w * window->getScaleX();
-            wRect.x = (w - s)/4;
-        } else {
-            wRect.x = 0;
-            int s = wRect.h * window->getScaleY();
-            wRect.y = (h - s)/4;
-        }
+                    wRect.x = (w - s)/2; wRect.y = 0;
 
-        game->renderOffset = Vector2Int(wRect.x, wRect.y);
+                    aspectRatio = tEditor.createSolidColour(w, h, 0x000000FF, window);
+            }
+            else
+            {
+                wRect.x = wRect.y = 0;
+            }
+
+            game->renderOffset = Vector2Int(wRect.x, wRect.y);
+            sizeChange = 0;
+        } else sizeChange++;
     }
 }
 
@@ -346,8 +349,8 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load continue button texture!" << std::endl;
     }
     
-    int x = wRect.w - 325, y = 175;
-    SDL_Rect rect = {x, y, 262, 62};
+    int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
+    SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
     auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
     menuButtons.push_back(button);
     
@@ -356,7 +359,7 @@ void GameMenu::create_mainMenu_buttons()
     if (!newGameTexture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
         std::cerr << "Failed to load new game button texture!" << std::endl;
     }
-    rect.y += 87;
+    rect.y += 175;
     button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation);
     menuButtons.push_back(button);
 
@@ -364,7 +367,7 @@ void GameMenu::create_mainMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/SettingsButton.png")) {
         std::cerr << "Failed to load settings button texture!" << std::endl;
     }
-    rect.y += 87;
+    rect.y += 175;
     button = std::make_shared<Button>(this, rect, texture);
     menuButtons.push_back(button);
 
@@ -372,12 +375,12 @@ void GameMenu::create_mainMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ExitButton.png")) {
         std::cerr << "Failed to load texture for exit button" << std::endl;
     }
-    rect.y += 87;
+    rect.y += 175;
     button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop);
     menuButtons.push_back(button);
 
 
-    rect.w *= 0.9; rect.h *= 0.9; rect.x = 212-(rect.w/2);
+    rect.x = HIGHSCORE_CENTREPOS - (BUTTON_WIDTH/2);
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
         std::cerr << "failed to load reset button texture!" << std::endl;
@@ -385,15 +388,14 @@ void GameMenu::create_mainMenu_buttons()
     button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation);
     menuButtons.push_back(button);
 
-    rect = {(wRect.w/2) - 131, 300, 262, 62};
+    rect = {(wRect.w-BUTTON_WIDTH)/2, wRect.h/2, BUTTON_WIDTH, BUTTON_HEIGHT};
     button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game);
     gameOverButtons.push_back(button);
 }
 
 void GameMenu::create_pauseMenu_buttons()
 {
-    int x = (wRect.w/2) - 131, y = 125;
-    SDL_Rect rect = {x, y, 262, 62};
+    SDL_Rect rect = {(wRect.w-BUTTON_WIDTH)/2, 128, BUTTON_WIDTH, BUTTON_HEIGHT};
 
     auto texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ResumeButton.png")) {
@@ -407,12 +409,12 @@ void GameMenu::create_pauseMenu_buttons()
     if (!MenuTexture->loadFromFile("../../assets/Menu/Buttons/MainMenuButton.png")) {
         std::cerr << "failed to load main menu button texture!" << std::endl;
     }
-    rect.y += 87;
+    rect.y += 175;
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation);
     pauseButtons.push_back(button);
 
 
-    rect.y = 175;
+    rect.y = 256;
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/YesButton.png")) {
         std::cerr << "Failed to load texture for yes button!" << std::endl;
@@ -420,7 +422,7 @@ void GameMenu::create_pauseMenu_buttons()
     button = std::make_shared<Button>(this, rect, texture);
     confirmationButtons.push_back(button);
 
-    rect.y += 87;
+    rect.y += 175;
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/NoButton.png")) {
         std::cerr << "Failed to load texture for no button!" << std::endl;
@@ -428,7 +430,7 @@ void GameMenu::create_pauseMenu_buttons()
     button = std::make_shared<Button>(this, rect, texture);
     confirmationButtons.push_back(button);
 
-    rect.y = 425;
+    rect = {(wRect.w-BUTTON_WIDTH)/2, (wRect.h/2)+175, BUTTON_WIDTH, BUTTON_HEIGHT};
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover);
     gameOverButtons.push_back(button);
 }
@@ -450,8 +452,8 @@ void GameMenu::load_assets()
         std::cerr << "Failed to load button sound" << std::endl;
     }
 
-    sevenSegment18 = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 18);
-    if (sevenSegment18 == NULL) {
+    sevenSegment48 = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 48);
+    if (sevenSegment48 == NULL) {
         std::cerr << "Failed to load seven segment font!" << std::endl;
     }
 
@@ -480,7 +482,7 @@ void GameMenu::load_assets()
 void GameMenu::create_CRT_Texture()
 {
     CRT_Tex = tEditor.createEmptyTexture(wRect.w, wRect.h, window);
-    int nx = CRT_Tex->getWidth() / CRT_Base->getWidth(), ny =( CRT_Tex->getHeight() / CRT_Base->getWidth())+1;
+    int nx = CRT_Tex->getWidth() / CRT_Base->getWidth(), ny =( CRT_Tex->getHeight() / CRT_Base->getWidth())+2;
 
     for (int i = 0; i <= nx; i++) {
         int x = i * CRT_Base->getWidth();

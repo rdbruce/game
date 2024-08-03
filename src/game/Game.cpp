@@ -94,7 +94,6 @@ void Game::handle_events( SDL_Event& e )
 void Game::update_gameobjects()
 {
     for (int i = 0; i < currLevel->gameObjects.size(); i++) {
-        std::cout << i <<' '<< currLevel->gameObjects.size() <<'\n';
         if (switching_scenes) {
             switching_scenes = false; return;
         }
@@ -676,7 +675,7 @@ void Game::spawnNPCs()
         if (Town.gameObjects[i]->get_type() == Fox_NPC) break;
     }
     if (i == n) {
-        Vector2 pos(609.0f, -50.0f);
+        Vector2 pos(913.0f, -50.0f);
         Instantiate(pos, Fox_NPC, 1, &Town);
     }
 
@@ -688,7 +687,7 @@ void Game::spawnNPCs()
             if (Base.gameObjects[i]->get_type() == Fox_NPC) break;
         }
         if (i == n) {
-            Vector2 pos(1500.0f, 2300.0f);
+            Vector2 pos(2000.0f, 3050.0f);
             Instantiate(pos, Fox_NPC, 1, &Base);
         }
     }

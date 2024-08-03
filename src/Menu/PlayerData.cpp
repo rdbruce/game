@@ -75,22 +75,22 @@ void PlayerData::render(int x, int y, std::shared_ptr<LWindow> window, SDL_Color
     else {
         renderText(name, x, y, window, colour, font, Left_aligned);
     }
-    x += 150;
+    x += 128;
 
     std::string txt;
     if (name == "---") 
     {
         txt = "-";
-        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
-        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 128;
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 128;
         renderText(txt, x, y, window, colour, font, Left_aligned);
     }
     else 
     {
         std::string txt = std::to_string(highscore);
-        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 128;
         txt = std::to_string(mostNightsSurvived);
-        renderText(txt, x, y, window, colour, font, Left_aligned); x += 75;
+        renderText(txt, x, y, window, colour, font, Left_aligned); x += 128;
         txt = std::to_string(mostEnemiesKilled);
         renderText(txt, x, y, window, colour, font, Left_aligned);
     }

@@ -72,6 +72,12 @@ class GameMenu
 
     private:
 
+        /* -------- CONSTANTS -------- */
+        int BUTTON_WIDTH = 384, BUTTON_HEIGHT = BUTTON_WIDTH/3;
+        int GAMEOVER_TXT_WIDTH = 384, GAMEOVER_TEX_HEIGHT = 213;
+        int HIGHSCORE_CENTREPOS = 256;
+
+
         std::shared_ptr<LWindow> window;
         SDL_Rect wRect;
 
@@ -82,7 +88,7 @@ class GameMenu
         std::shared_ptr<LAudio> buttonSound = nullptr;
 
         // fonts
-        TTF_Font *sevenSegment18, *sevenSegment24, *sevenSegment36;
+        TTF_Font *sevenSegment48, *sevenSegment24, *sevenSegment36;
 
 
         std::string confirmationText = "";
@@ -94,7 +100,10 @@ class GameMenu
                                              gameOverButtons; // play again/main menu
 
         bool isActive = true;
-        bool sizeChange = false;
+        int sizeChange = 0;
+        bool fullscreen = false;
+
+
         State state = main_menu;
 
         Game *game = nullptr;
