@@ -117,16 +117,25 @@ void GameObject::defaultHandleCollisionsWithGameObjects()
                 Vector2 newVel = disp * (2.0f * sideLen);
 
                 // objects damage each other
-                if (!other->is_enemy() && is_enemy() && damage != 0) {
-                    if (!(other->get_velocity().length() > 3.0f * sideLen))
-                    newVel *= float(damage + 1);
-                    other->set_HP( other->get_hp() - damage );
-                    damage = 0;
+                if (!other->is_enemy() && is_enemy() && damage != 0 && attackTimer <= 0) 
+                {
+                    if (!(other->get_velocity().length() > game->ITEM_MINIMUM_DAMAGE_VELOCITY * sideLen))
+                    {
+                        newVel *= float(damage + 1);
+                        other->set_HP( other->get_hp() - damage );
+                        damage = 0;
+                        attackTimer = attackInterval;
+                        other->set_velocity(newVel);
+                        other->set_acceleration(newVel * -1.5f);
+                    }
+                } else {
+                    other->set_velocity(newVel);
+                    other->set_acceleration(newVel * -1.5f);
                 }
-                other->set_velocity(newVel);
-                other->set_acceleration(newVel * -1.5f);
+                
             }
         }
+        attackTimer -= get_deltaTime();
     }
 }
 
@@ -184,9 +193,11 @@ void GameObject::itemsHandleCollisionsWithGameObjects()
             Vector2 newVel = disp * (2.0f * sideLen);
 
             // if the item is moving, damage the enemy it hit
-            if (other->is_enemy()) {
+            if (other->is_enemy()) 
+            {
                 // make sure that it is moving fast enough
-                if (velocity.length() > 3.0f * sideLen && timer <= 0.0f) {
+                if (velocity.length() > game->ITEM_MINIMUM_DAMAGE_VELOCITY * sideLen && timer <= 0.0f) 
+                {
                     // calculate the damage by multiplying the speed by the number of items in the stack
                     int dam = ceilToInt(hp * moveSpeed);
                     // damage the enemy

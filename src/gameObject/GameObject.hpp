@@ -146,6 +146,8 @@ class GameObject
 
         // used for entities with functions dependent on time intervals
         float timer = 0.0f;
+        // the amount of time passed between attacks
+        float attackInterval = 0.0f, attackTimer = 0.0f;
 
         // position and size of the hitbox
         SDL_Rect hitbox;

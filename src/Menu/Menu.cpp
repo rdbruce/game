@@ -44,7 +44,7 @@ void GameMenu::render_highscores()
         renderText("NIGHTS\nSURVIVED", x, y, window, {255,0,0,255}, sevenSegment24); x += 128;
         renderText("ENEMIES\nKILLED", x, y, window, {255,0,0,255}, sevenSegment24);
 
-        x = 64; y += 96;
+        x = 64 + wRect.x; y += 96;
 
         for (int i = 1; i <= num_highscores; i++)
         {

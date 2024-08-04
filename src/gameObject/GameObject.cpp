@@ -52,6 +52,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             // other attributes
             moveSpeed = 3.2f * sideLen;
             max_hp = 3;
+            attackInterval = 1.0f;
             hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
             hasCollision = false;
             break;

@@ -580,17 +580,18 @@ void Game::damageCell( Vector2Int cell, int damage, Scene *level )
     if (level == NULL) level = currLevel;
 
     if (damage == 0) return;
-    int num = currLevel->grid[cell.x][cell.y];
+    int num = level->grid[cell.x][cell.y];
 
     // nothing in the cell to damage, or it cannot be damaged
     if ((num&255) == 0 || (num&CAN_DIE) == 0) return;
 
     // find the current amount of health in the cell
     // bit shift it to represent as a regular value
-    int health = (num&HEALTH)>>8;
+    int health = (num&HEALTH)>>8,
+        maxHealth = (num&MAX_HEALTH)>>17;
 
     // subtract the amount of damage dealth
-    health = Max(0, health-damage);
+    health = Clamp(0, maxHealth, health-damage);
 
     // bit shift health to be in the right position
     health <<= 8;
@@ -598,7 +599,7 @@ void Game::damageCell( Vector2Int cell, int damage, Scene *level )
     num &= ~HEALTH;
     // set the health bits to the new value
     num |= health;
-    currLevel->grid[cell.x][cell.y] = num;
+    level->grid[cell.x][cell.y] = num;
 
     // if the health is now non-positive, destroy the cell
     if (health <= 0) PlaceObjectInCell(cell, EMPTY, true);

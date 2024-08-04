@@ -299,15 +299,17 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             switch (item2->get_type())
             {
                 case Plank_Item:
+                {
                     // 1 log and 4 planks craft one DAM
                     // make sure there are adequate resources
-                    if (hp2 >= 4) {
-                        // spawn one DAM item
-                        res = spawnItemStack(Dam_Item, item1->get_pos(), 1);
-                        // reduce the hp of the other item stacks
-                        item1->set_HP(hp1-1); item2->set_HP(hp2-4);
+                    int num = Min(hp1, hp2/4);
+                    if (num > 0)
+                    {
+                        res = spawnItemStack(Dam_Item, item1->get_pos(), num);
+                        item1->set_HP(hp1 - num); item2->set_HP(hp2 - (4 * num));
                     }
-                    break;  
+                    break;
+                }
             }
             break;
 
@@ -315,15 +317,17 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
             switch (item2->get_type())
             {
                 case Log_Item:
+                {
                     // 1 logs and 4 planks craft one DAM
                     // make sure there are adequate resources
-                    if (hp1 >= 4) {
-                        // spawn one DAM item
-                        res = spawnItemStack(Dam_Item, item1->get_pos(), 1);
-                        // reduce the hp of the other item stacks
-                        item1->set_HP(hp1-4); item2->set_HP(hp2-1);
+                    int num = Min(hp1/4, hp2);
+                    if (num > 0)
+                    {
+                        res = spawnItemStack(Dam_Item, item1->get_pos(), num);
+                        item1->set_HP(hp1 - (4 * num)); item2->set_HP(hp2 - num);
                     }
                     break;
+                }
             }
             break;
     }
@@ -501,9 +505,9 @@ void Game::leftClickFunc()
     float sideLen = currLevel->cell_sideLen;
     Vector2Int cell(mPos.x/sideLen, mPos.y/sideLen);
     // do something depending on the type of building in the clicked cell
-    int val = currLevel->grid[cell.x][cell.y]&255;
+    int val = currLevel->grid[cell.x][cell.y];
 
-    switch (val)
+    switch (val&255)
     {
         case 7: // clicked a closed door, open it
             if (r <= interactRange) PlaceObjectInCell(cell, OPEN_DOOR, true);
@@ -531,9 +535,14 @@ void Game::leftClickFunc()
                         } else if (obj->is_NPC()) {
                             obj->set_HP( obj->get_hp()+1 );
                             obj->set_timer( 0.25f );
+                            return;
                         }
                     }
                 }
+                // repair whatever cell that was clicked, if possible
+                int health = val&HEALTH, maxHealth = val&MAX_HEALTH;
+                if (health < maxHealth) damageCell(cell, -2);
+
             // if an item IS held, throw it :)
             } else if (currLevel->held != nullptr) {
                 if (currLevel->held->get_type() == Stone_Item && currLevel->held->get_hp() >= 2) 
