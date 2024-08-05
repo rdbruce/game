@@ -9,6 +9,7 @@
 #include "../engine/LAudio.hpp"
 
 #include "../gameObject/GameObject.hpp"
+#include "../gameObject/Animations.hpp"
 
 #include "Scene.hpp"
 #include "CellTypes.hpp"
@@ -263,6 +264,8 @@ class Game
 
         // loads all of the games textures from file
         void load_textures();
+        // loads textures for all the animation containers
+        void load_animations();
         // loads all of the audio mp3s from file
         void load_audio();
         // loads all the fonts from file
@@ -282,6 +285,9 @@ class Game
                                     berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
                                     stoneTex, LMBTex, MMBTex, RMBTex, BearTex, BirdTex, BombTex,
                                     TargetTex, dashed_circleTex;
+
+        // animation containers
+        std::shared_ptr<Animations> playerAnimations;
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,

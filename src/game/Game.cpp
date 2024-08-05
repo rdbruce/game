@@ -12,6 +12,7 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 
     // do this first!!!
     load_textures();
+    load_animations();
     load_audio();
     load_fonts();
 
@@ -967,4 +968,50 @@ void Game::load_fonts()
     if (sevenSegment == NULL) {
         std::cerr << "Failed to load seven segment font!" << std::endl;
     }
+}
+
+void Game::load_animations()
+{
+    // player animations
+    std::vector<std::shared_ptr<LTexture>> front, back, left, right;
+    float df = 1.0f, db = 1.0f, dl = 1.0f, dr = 1.0f;
+
+    std::string path = "../../assets/Entities/Player/";
+    std::string path1 = path + "back/";
+    for (int i = 0; i < 4; i++) 
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        back.push_back(newTex);
+    }
+
+    path1 = path + "front/";    
+    for (int i = 0; i < 4; i++) 
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        front.push_back(newTex);
+    }
+    
+    path1 = path + "left/";    
+    for (int i = 0; i < 4; i++) 
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        left.push_back(newTex);
+    }
+    
+    path1 = path + "right/";    
+    for (int i = 0; i < 4; i++) 
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        right.push_back(newTex);
+    }
+
+    playerAnimations = std::make_shared<Animations>(front, back, left, right, df, db, dl, dr);
 }

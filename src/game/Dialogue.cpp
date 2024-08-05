@@ -670,6 +670,8 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
     if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
+    tex = animatePlayer();
+
     tex->setAlpha(alpha);
     tex->render(p.x, p.y, &hitbox);
     tex->setAlpha(255); 

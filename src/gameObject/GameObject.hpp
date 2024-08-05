@@ -330,6 +330,9 @@ class GameObject
         void foxRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void bearRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void playerRenderFunc( int camx, int camY, Uint8 alpha = 255 );
+
+        // animation
+        std::shared_ptr<LTexture> animatePlayer();
 };
 
 #endif
