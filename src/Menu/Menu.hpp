@@ -97,7 +97,8 @@ class GameMenu
         std::vector<std::shared_ptr<Button>> menuButtons, // buttons in the main menu
                                              pauseButtons, // pause menu
                                              confirmationButtons, // yes/no
-                                             gameOverButtons; // play again/main menu
+                                             gameOverButtons, // play again/main menu
+                                             settingsButtons; // edit game settings
 
         bool isActive = true;
         int sizeChange = 0;

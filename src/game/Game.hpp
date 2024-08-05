@@ -221,6 +221,9 @@ class Game
 
         /* --------  constants:  -------- */
 
+        // the highest framerate you can achieve, -1 for uncapped
+        float MIN_DELTATIME = 0.008333333333f; // 120fps
+
         // the length (in seconds) of one day
         float DAY_LENGTH = 240.0f;
         // the amount of time it takes to transistion from day to night
@@ -239,8 +242,13 @@ class Game
         int WATER_DAMAGE_INTERVAL = 2;
         // multiplies the amount of damage taken by buildings placed in water
         float WATER_DAMAGE_MULT = 0.5f;
+
         // the probability of spawning a stone item in each cell when clearing the river
         float STONE_SPAWN_CHANCE = 0.075f;
+        // chances for an enemy to spawn each successful spawn attempt
+        float BIRD_SPAWN_CHANCE = 0.25f;
+        // currently, wolf spawn chance will be 1 - this ^^
+
         // how fast an object needs to be going (in number of cells/sec) to deal damage
         float ITEM_MINIMUM_DAMAGE_VELOCITY = 2.0f;
         

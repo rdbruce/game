@@ -106,6 +106,13 @@ void Game::update_gameobjects()
 void Game::update_deltaTime() {
     clock_t t = clock(); // current time
     deltaTime = float(t - begin_time) / CLOCKS_PER_SEC;
+
+    while (deltaTime < MIN_DELTATIME)
+    {
+        t = clock();
+        deltaTime = float(t - begin_time) / CLOCKS_PER_SEC;
+    }
+
     begin_time = t;
 }
 
@@ -135,23 +142,11 @@ void Game::attempt_enemy_spawn()
         }
     }
 
-    if (validAttempt) {
-        // choose an enemy type to spawn in
-        int range = ENEMY_MAX - ENEMY_MIN - 1;
-        int type = (rand() % range) + (ENEMY_MIN+1);
-
-        switch (type)
-        {
-            case Wolf:
-                spawnWolf();
-                break;
-
-            case Bird:
-                spawnBird();
-                break;
-
-            default: break; // invalid spawn type
-        }
+    if (validAttempt) 
+    {
+        float r = (float)rand() / RAND_MAX;
+        if (r <= BIRD_SPAWN_CHANCE) spawnBird();
+        else spawnWolf();
     }
 }
 
