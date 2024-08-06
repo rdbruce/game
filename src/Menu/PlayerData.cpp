@@ -135,6 +135,7 @@ void Settings::Save( std::string filename )
 void Settings::reset()
 {
     volume = MIX_MAX_VOLUME;
-    flags = 10;
+    // leave fullscreen unaltered
+    flags = 10|(flags&FULLSCREEN);
     max_framrate = -1;
 }

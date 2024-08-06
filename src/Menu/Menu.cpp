@@ -195,7 +195,7 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
                     settings.flags &= ~FULLSCREEN;
                     settings.flags |= fullscreen << 4;
 
-                    int idx = settingsButtons.size() - 2;
+                    int idx = settingsButtons.size() - 3;
                     auto checkbox = settingsButtons[idx];
                     if (fullscreen != checkbox->is_toggled()) checkbox->swap_textures();
 
