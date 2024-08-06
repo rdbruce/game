@@ -21,7 +21,7 @@ enum State
     in_game,
     Quit,
     game_over,
-    settings
+    settings_menu
 };
 
 
@@ -48,6 +48,8 @@ class GameMenu
         void render_aspect_ratio();
         // renders the settings menu
         void render_settings();
+        // calls the games render framerate function
+        void render_FPS();
 
 
         // handle user input, returns true when quit is requested
@@ -81,6 +83,7 @@ class GameMenu
         /* -------- CONSTANTS -------- */
         int BUTTON_WIDTH = 384, BUTTON_HEIGHT = BUTTON_WIDTH/3;
         int SLIDER_HEIGHT = 66, SLIDER_WIDTH = 20;
+        int CHECKBOX_SIDELENGTH = 64;
         int GAMEOVER_TXT_WIDTH = 384, GAMEOVER_TEX_HEIGHT = 213;
         int HIGHSCORE_CENTREPOS = 256;
 
@@ -126,6 +129,9 @@ class GameMenu
         int currChar = 0;
         // [0] = the data struct for the current game, all other are highscores
         PlayerData highscores[6];
+
+        // user settings
+        Settings settings, prevSettings;
 
         // checks to see if the player clicks any buttons
         void leftClickFunc();

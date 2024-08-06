@@ -1,8 +1,8 @@
 #include "Button.hpp"
 #include "Menu.hpp"
 
-Button::Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)() )
-: menu(Menu), rect(Rect), tex(Tex), func(Func) {}
+Button::Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)(), std::shared_ptr<LTexture> AltTex )
+: menu(Menu), rect(Rect), tex(Tex), func(Func), altTex(AltTex) {}
 
 bool Button::isPressed( int x, int y )
 {
@@ -27,6 +27,8 @@ void Button::execute_function() {
     (this->*func)();
 }
 
+bool Button::is_toggled() { return isToggled; }
+
 void Button::doNothing() {}
 
 void Button::volume_slider()
@@ -43,6 +45,7 @@ void Button::volume_slider()
     // find and set the new global volume
     float t = float(x - minX) / (maxX - minX);
     int newVolume = MIX_MAX_VOLUME * t;
+    menu->settings.volume = newVolume;
     Mix_Volume(-1, newVolume);
 }
 
@@ -164,10 +167,104 @@ void Button::reset_highscores()
     go_to_mainMenu();
 }
 
+void Button::go_to_main_menu_from_settings()
+{
+    menu->settings.Save("../../saves/data/UserSettings.txt");
+    go_to_mainMenu();
+}
+
 void Button::go_to_settings()
 {
-    menu->state = settings;
+    menu->prevSettings = menu->settings;
+    menu->state = settings_menu;
     menu->isActive = true;
     menu->currButtons = &menu->settingsButtons;
     menu->confirmationText = "";
+}
+
+void Button::revert_settings()
+{
+    menu->settings = menu->prevSettings;
+    apply_settings();
+}
+
+void Button::reset_settings()
+{
+    menu->settings.reset();
+    apply_settings();
+}
+
+void Button::apply_settings()
+{
+    Mix_Volume(-1, menu->settings.volume);
+
+    int idx = menu->settingsButtons.size() - 1;
+    auto slider = menu->settingsButtons[idx];
+
+    int minX = 72, maxX = 504;
+    float t = (float)menu->settings.volume / MIX_MAX_VOLUME;
+    int x = (minX * (1.0f - t)) + (maxX * t);
+
+    int X, Y;
+    slider->get_pos(&X, &Y);
+    slider->set_pos(x, Y);
+
+    idx -= 1;
+    auto checkbox = menu->settingsButtons[idx];
+    if (bool(menu->settings.flags&SHOW_FPS) != checkbox->is_toggled()) checkbox->swap_textures();
+
+    idx -= 1;
+    checkbox = menu->settingsButtons[idx];
+    if (menu->fullscreen != bool(menu->settings.flags&FULLSCREEN)) 
+    {
+        menu->fullscreen = menu->window->toggleFullscreen();
+        menu->sizeChange++;
+        if (menu->state == in_game || menu->state == game_over) {
+            menu->game->initialise_BGTexture();
+        }
+        menu->settings.flags &= ~FULLSCREEN;
+        menu->settings.flags |= menu->fullscreen << 4;
+    }
+    if (menu->fullscreen != checkbox->is_toggled()) checkbox->swap_textures();
+
+    idx -= 1;
+    checkbox = menu->settingsButtons[idx];
+    if (bool(menu->settings.flags&CRT_FILTER) != checkbox->is_toggled()) checkbox->swap_textures();
+}
+
+void Button::get_pos( int *x, int *y )
+{
+    *x = rect.x; *y = rect.y;
+}
+
+void Button::swap_textures()
+{
+    auto temp = tex;
+    tex = altTex;
+    altTex = temp;
+    isToggled = !isToggled;
+}
+
+void Button::toggle_CRT()
+{
+    menu->settings.flags ^= CRT_FILTER;
+    swap_textures();
+}
+
+void Button::toggle_fullscreen()
+{
+    menu->fullscreen = menu->window->toggleFullscreen();
+    menu->sizeChange++;
+    if (menu->state == in_game || menu->state == game_over) {
+        menu->game->initialise_BGTexture();
+    }
+    menu->settings.flags &= ~FULLSCREEN;
+    menu->settings.flags |= menu->fullscreen << 4;
+    swap_textures();
+}
+
+void Button::toggle_FPS()
+{
+    menu->settings.flags ^= SHOW_FPS;
+    swap_textures();
 }

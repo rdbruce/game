@@ -649,19 +649,12 @@ std::shared_ptr<LTexture> GameObject::animatePlayer()
     float s = moveSpeed;
     Uint8 inputs = get_inputKeys();
     float dt = get_deltaTime();
-    Vector2Int map = get_mapDimensions();
     if (inputs&16) s *= 2.0f;
-    Vector2 vel(
-        // horizontal velocity: bit 1=d; move right (+x), bit 3=a; move left (-x)
-        (bool(inputs&1)-bool(inputs&4)),
-        // vertical velocity: bit 2=s; move down (+y), bit 4=w; move up (-y)
-        (bool(inputs&2)-bool(inputs&8))
-    );
-    // normalise the vector so that players can't walk faster by moving diagonally
+    Vector2 vel((bool(inputs&1)-bool(inputs&4)), (bool(inputs&2)-bool(inputs&8)));
     vel.normalise(); 
     vel *= s; // multiply the unit vector by movement speed
     vel += velocity;
-    
+
 
     FacingDirection look = Default; float idx = -1.0f;
     if (vel == Vector2_Zero) 
@@ -675,7 +668,6 @@ std::shared_ptr<LTexture> GameObject::animatePlayer()
         else look = Right;
 
         idx = 0.0f;
-    
     } 
     else 
     {

@@ -109,7 +109,7 @@ int main(
         menu.render_buttons();
         menu.render_confirmation();
       }
-      game.render_framerate();
+      menu.render_FPS();
       menu.render_CRT();
       menu.render_aspect_ratio();
 

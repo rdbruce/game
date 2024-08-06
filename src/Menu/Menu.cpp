@@ -8,20 +8,26 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
 
     load_assets();
 
+    // load player highscores
+    load_highscores();
+    settings.loadFromFile("../../saves/data/UserSettings.txt");
+
     // create buttons
     create_mainMenu_buttons();
     create_pauseMenu_buttons();
     create_settings_buttons();
 
-    // load player highscores
-    load_highscores();
+    if (settings.flags & FULLSCREEN) {
+        fullscreen = window->toggleFullscreen();
+        sizeChange++;
+    }
 }
 
 void GameMenu::render_background()
 {
     if (isActive) 
     {
-        auto tex = (state == main_menu || state == settings)? BGTexture :
+        auto tex = (state == main_menu || state == settings_menu)? BGTexture :
                    tEditor.createSolidColour(wRect.w, wRect.h, 180, window);
         tex->render(wRect.x, wRect.y, &wRect);
 
@@ -34,7 +40,7 @@ void GameMenu::render_background()
 
 void GameMenu::render_settings()
 {
-    if (state == settings)
+    if (state == settings_menu)
     {
         int x = 64 + wRect.x, y = 256;
 
@@ -52,6 +58,20 @@ void GameMenu::render_settings()
         auto grey = tEditor.createSolidColour(432, 3, 0x0F0F0FF0, window);
         rect.w = 432;
         grey->render(x + 16, y, &rect);
+
+        y += 96; rect.w = 464;
+        renderText("Graphics", x, y, window, {255,255,255,255}, NULL, Left_aligned);
+        y += 35;
+
+        white->render(x, y, &rect);
+        y += 57;
+        renderText("CRT Filter", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, NULL, Left_aligned);
+
+        y += CHECKBOX_SIDELENGTH + 16;
+        renderText("Fullscreen", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, NULL, Left_aligned);
+        
+        y += CHECKBOX_SIDELENGTH + 16;
+        renderText("Show framerate", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, NULL, Left_aligned);
 
         white->free();
         grey->free();
@@ -113,9 +133,14 @@ void GameMenu::render_buttons()
     }
 }
 
+void GameMenu::render_FPS()
+{
+    if (settings.flags&SHOW_FPS) game->render_framerate();
+}
+
 void GameMenu::render_CRT()
 {
-    CRT_Tex->render(wRect.x, wRect.y, &wRect);
+    if (settings.flags&CRT_FILTER) CRT_Tex->render(wRect.x, wRect.y, &wRect);
 }
 
 void GameMenu::enter_game_over()
@@ -157,6 +182,7 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
                     break;
 
                 case SDLK_F11:
+                {
                     // WARNING!! this will cause the game to crash if you literally
                     // hold down F11 to spam fullscreen toggle, so don't do that!
                     fullscreen = window->toggleFullscreen();
@@ -166,7 +192,15 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
                     if (state == in_game || state == game_over) {
                         game->initialise_BGTexture();
                     }
+                    settings.flags &= ~FULLSCREEN;
+                    settings.flags |= fullscreen << 4;
+
+                    int idx = settingsButtons.size() - 2;
+                    auto checkbox = settingsButtons[idx];
+                    if (fullscreen != checkbox->is_toggled()) checkbox->swap_textures();
+
                     break;
+                }
 
                 default:
                     if (set_score_name != 0) rename_highscore(e.key.keysym.sym);
@@ -181,7 +215,7 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
             if (e.button.button == SDL_BUTTON_LEFT) leftClickFunc();
         
         default:
-            if (isOnVolumeSlider && currButtons == &settingsButtons) {
+            if (isOnVolumeSlider && state == settings_menu) {
                 int idx = settingsButtons.size()-1;
                 settingsButtons[idx]->execute_function();
             }
@@ -253,7 +287,7 @@ void GameMenu::leftClickFunc()
         int x, y;
         get_mousePos(&x, &y);
 
-        if (currButtons == &settingsButtons)
+        if (state == settings_menu)
         {
             int idx = settingsButtons.size()-1;
             if (settingsButtons[idx]->isPressed(x, y)) isOnVolumeSlider = true;
@@ -503,7 +537,7 @@ void GameMenu::create_settings_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/RevertButton.png")) {
         std::cerr << "Failed to load revert settings button" <<'\n';
     }
-    button = std::make_shared<Button>(this, rect, texture);
+    button = std::make_shared<Button>(this, rect, texture, &Button::revert_settings);
     settingsButtons.push_back(button);
     rect.y += 175;
 
@@ -511,7 +545,7 @@ void GameMenu::create_settings_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
         std::cerr << "Failed to load reset settings button" <<'\n';
     }
-    button = std::make_shared<Button>(this, rect, texture);
+    button = std::make_shared<Button>(this, rect, texture, &Button::reset_settings);
     settingsButtons.push_back(button);
     rect.y += 175;
 
@@ -519,17 +553,47 @@ void GameMenu::create_settings_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ReturnButton.png")) {
         std::cerr << "Failed to load return button" <<'\n';
     }
-    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_main_menu_from_settings);
     settingsButtons.push_back(button);
 
-    rect = {504, 356, SLIDER_WIDTH, SLIDER_HEIGHT};
+
+
+    rect = {64, 560, CHECKBOX_SIDELENGTH, CHECKBOX_SIDELENGTH};
+    
+    auto unselected = std::make_shared<LTexture>(window),
+         selected   = std::make_shared<LTexture>(window);
+    if (!unselected->loadFromFile("../../assets/Menu/Buttons/UnselectedCheckbox.png")) {
+        std::cerr << "Failed to load unselected checkbox!" << std::endl;
+    }
+    if (!selected->loadFromFile("../../assets/Menu/Buttons/SelectedCheckbox.png")) {
+        std::cerr << "Failed to load selected checkbox!" << std::endl;
+    }
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_CRT, selected);
+    settingsButtons.push_back(button);
+    if (settings.flags&CRT_FILTER) button->swap_textures();
+
+    rect.y += CHECKBOX_SIDELENGTH + 16;
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_fullscreen, selected);
+    settingsButtons.push_back(button);
+    if (settings.flags&FULLSCREEN) button->swap_textures();
+    
+    rect.y += CHECKBOX_SIDELENGTH + 16;
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_FPS, selected);
+    settingsButtons.push_back(button);
+    if (settings.flags&SHOW_FPS) button->swap_textures();
+    
+
+    int minX = 72, maxX = 504;
+    float t = (float)settings.volume / MIX_MAX_VOLUME;
+    x = (minX * (1.0f - t)) + (maxX * t);
+
+    rect = {x, 356, SLIDER_WIDTH, SLIDER_HEIGHT};
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/Slider.png")) {
         std::cerr << "Failed to load volume slider" <<'\n';
     }
     button = std::make_shared<Button>(this, rect, texture, &Button::volume_slider);
     settingsButtons.push_back(button);
-
 }
 
 void GameMenu::load_assets()

@@ -95,3 +95,46 @@ void PlayerData::render(int x, int y, std::shared_ptr<LWindow> window, SDL_Color
         renderText(txt, x, y, window, colour, font, Left_aligned);
     }
 }
+
+
+
+bool Settings::loadFromFile( std::string filename )
+{
+    std::ifstream file(filename);
+
+    if (!file)
+    {
+        std::cerr << "Couldn't open " << filename <<'\n';
+        return false;
+    }
+    else 
+    {
+        std::string line;
+        std::getline(file, line);
+        std::istringstream iss(line);
+        iss >>std::dec>> volume >> flags >> max_framrate;
+        return true;
+    }
+}
+
+void Settings::Save( std::string filename )
+{
+    std::fstream file;
+    file.open(filename, std::ios::out);
+
+    if (!file) {
+        std::cerr << "Failed to save to " << filename << std::endl;
+    }
+    else 
+    {
+        file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate;
+        file.close();
+    }
+}
+
+void Settings::reset()
+{
+    volume = MIX_MAX_VOLUME;
+    flags = 10;
+    max_framrate = -1;
+}
