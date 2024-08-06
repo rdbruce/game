@@ -104,12 +104,21 @@ void Game::update_gameobjects()
 
 
 // finds the time elapsed between frames
-void Game::update_deltaTime() {
+void Game::update_deltaTime() 
+{
     clock_t t = clock(); // current time
     deltaTime = float(t - begin_time) / CLOCKS_PER_SEC;
 
+    // NOTE: it seems that this method of finding deltaTime, that is, using the clock_t type, is 
+    // only accurate to 1ms. therefore, it is impossible to cap at an exact framerate unless said
+    // framerate can be represented as an integer number of milliseconds
+
+    // for instance, it is possible to cap the game at 125fps, since 1/125 = 0.008 = 8 ms
+    // it is impossible to cap the game at 120 fps, since 1/120 = 0.008333 = 8.3333 ms, which is not
+    // an integer. rounding up to the next integer, 9ms, attempting to cap the framerate
+    // at 120 will actually cap at 111fps (1/0.009 = 111.111) 
     while (deltaTime < MIN_DELTATIME)
-    {
+    {   
         t = clock();
         deltaTime = float(t - begin_time) / CLOCKS_PER_SEC;
     }

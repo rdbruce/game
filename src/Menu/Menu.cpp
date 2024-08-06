@@ -11,6 +11,7 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
     // create buttons
     create_mainMenu_buttons();
     create_pauseMenu_buttons();
+    create_settings_buttons();
 
     // load player highscores
     load_highscores();
@@ -20,7 +21,7 @@ void GameMenu::render_background()
 {
     if (isActive) 
     {
-        auto tex = (state == main_menu)? BGTexture :
+        auto tex = (state == main_menu || state == settings)? BGTexture :
                    tEditor.createSolidColour(wRect.w, wRect.h, 180, window);
         tex->render(wRect.x, wRect.y, &wRect);
 
@@ -28,6 +29,32 @@ void GameMenu::render_background()
             SDL_Rect rect = {(wRect.w-GAMEOVER_TXT_WIDTH)/2 + wRect.x, 128, GAMEOVER_TXT_WIDTH, GAMEOVER_TEX_HEIGHT};
             gameOverTex->render(rect.x, rect.y, &rect);
         }
+    }
+}
+
+void GameMenu::render_settings()
+{
+    if (state == settings)
+    {
+        int x = 64 + wRect.x, y = 256;
+
+        renderText("Audio", x, y, window, {255,255,255,255}, NULL, Left_aligned);
+        y += 35;
+
+        auto white = tEditor.createSolidColour(464, 3, 0xFFFFFFFF, window);
+        SDL_Rect rect = {x, y, 464, 3};
+        white->render(x, y, &rect);
+        y += 8;
+
+        renderText("Volume", x, y, window, {255,255,255,255}, NULL, Left_aligned);
+        y += 90;
+
+        auto grey = tEditor.createSolidColour(432, 3, 0x0F0F0FF0, window);
+        rect.w = 432;
+        grey->render(x + 16, y, &rect);
+
+        white->free();
+        grey->free();
     }
 }
 
@@ -77,7 +104,8 @@ void GameMenu::render_confirmation() {
 
 void GameMenu::render_buttons()
 {
-    if (isActive && !set_score_name) {
+    if (isActive && !set_score_name) 
+    {
         int n = currButtons->size();
         for (int i = 0; i < n; i++) {
             (*currButtons)[i]->render( wRect.x, wRect.y );
@@ -145,10 +173,21 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
             }
             break;
 
+        case SDL_MOUSEBUTTONUP:
+            if (e.button.button == SDL_BUTTON_LEFT) isOnVolumeSlider = false;
+            break;
+        
         case SDL_MOUSEBUTTONDOWN:
             if (e.button.button == SDL_BUTTON_LEFT) leftClickFunc();
+        
+        default:
+            if (isOnVolumeSlider && currButtons == &settingsButtons) {
+                int idx = settingsButtons.size()-1;
+                settingsButtons[idx]->execute_function();
+            }
             break;
     }
+
     *menuActive = isActive;
 
     return state == Quit;
@@ -199,14 +238,26 @@ void GameMenu::rename_highscore( SDL_Keycode sym )
     }
 }
 
+void GameMenu::get_mousePos( int *x, int *y)
+{
+    SDL_GetMouseState(x, y);
+    *x /= window->getScaleX(); *y /= window->getScaleY();
+    *x -= wRect.x; *y -= wRect.y;
+}
+
 void GameMenu::leftClickFunc()
 {
-    if (isActive && !set_score_name) {
+    if (isActive && !set_score_name) 
+    {
         // find the coordinates of the mouse click
         int x, y;
-        SDL_GetMouseState(&x, &y);
-        x /= window->getScaleX(); y /= window->getScaleY();
-        x -= wRect.x; y -= wRect.y;
+        get_mousePos(&x, &y);
+
+        if (currButtons == &settingsButtons)
+        {
+            int idx = settingsButtons.size()-1;
+            if (settingsButtons[idx]->isPressed(x, y)) isOnVolumeSlider = true;
+        }
 
         // check all the buttons to see if they were clicked
         for (int i = 0; i < currButtons->size(); i++) {
@@ -368,7 +419,7 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load settings button texture!" << std::endl;
     }
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, texture);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_settings);
     menuButtons.push_back(button);
 
     texture = std::make_shared<LTexture>(window);
@@ -433,6 +484,52 @@ void GameMenu::create_pauseMenu_buttons()
     rect = {(wRect.w-BUTTON_WIDTH)/2, (wRect.h/2)+175, BUTTON_WIDTH, BUTTON_HEIGHT};
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover);
     gameOverButtons.push_back(button);
+}
+
+void GameMenu::create_settings_buttons()
+{
+    int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
+    SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
+
+    auto texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ControlsButton.png")) {
+        std::cerr << "Failed to load controls button" <<'\n';
+    }
+    auto button = std::make_shared<Button>(this, rect, texture);
+    settingsButtons.push_back(button);
+    rect.y += 175;
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/RevertButton.png")) {
+        std::cerr << "Failed to load revert settings button" <<'\n';
+    }
+    button = std::make_shared<Button>(this, rect, texture);
+    settingsButtons.push_back(button);
+    rect.y += 175;
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
+        std::cerr << "Failed to load reset settings button" <<'\n';
+    }
+    button = std::make_shared<Button>(this, rect, texture);
+    settingsButtons.push_back(button);
+    rect.y += 175;
+
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/ReturnButton.png")) {
+        std::cerr << "Failed to load return button" <<'\n';
+    }
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu);
+    settingsButtons.push_back(button);
+
+    rect = {504, 356, SLIDER_WIDTH, SLIDER_HEIGHT};
+    texture = std::make_shared<LTexture>(window);
+    if (!texture->loadFromFile("../../assets/Menu/Buttons/Slider.png")) {
+        std::cerr << "Failed to load volume slider" <<'\n';
+    }
+    button = std::make_shared<Button>(this, rect, texture, &Button::volume_slider);
+    settingsButtons.push_back(button);
+
 }
 
 void GameMenu::load_assets()

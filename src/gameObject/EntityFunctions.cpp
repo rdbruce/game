@@ -645,28 +645,25 @@ void GameObject::itemRenderFunc( int camX, int camY, Uint8 alpha )
 
 std::shared_ptr<LTexture> GameObject::animatePlayer()
 {
-    FacingDirection look = Default; float idx = -1.0f;
 
     float s = moveSpeed;
     Uint8 inputs = get_inputKeys();
     float dt = get_deltaTime();
     Vector2Int map = get_mapDimensions();
-
     if (inputs&16) s *= 2.0f;
-
     Vector2 vel(
         // horizontal velocity: bit 1=d; move right (+x), bit 3=a; move left (-x)
         (bool(inputs&1)-bool(inputs&4)),
         // vertical velocity: bit 2=s; move down (+y), bit 4=w; move up (-y)
         (bool(inputs&2)-bool(inputs&8))
     );
-
     // normalise the vector so that players can't walk faster by moving diagonally
     vel.normalise(); 
     vel *= s; // multiply the unit vector by movement speed
-
     vel += velocity;
+    
 
+    FacingDirection look = Default; float idx = -1.0f;
     if (vel == Vector2_Zero) 
     {
         Vector2 mPos = game->find_mouse_pos();

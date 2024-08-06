@@ -75,4 +75,10 @@ class Button
         void reset_highscores();
 
         void go_to_main_menu_from_gameover();
+
+        // enter the settings menu
+        void go_to_settings();
+
+        // follow the mouse, adjust volume
+        void volume_slider();
 };

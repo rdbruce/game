@@ -223,7 +223,7 @@ class Game
         /* --------  constants:  -------- */
 
         // the highest framerate you can achieve, -1 for uncapped
-        float MIN_DELTATIME = 0.008333333333f; // 120fps
+        float MIN_DELTATIME = -1.0f; // 120fps
 
         // the length (in seconds) of one day
         float DAY_LENGTH = 240.0f;

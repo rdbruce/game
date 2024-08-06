@@ -20,7 +20,8 @@ enum State
     main_menu,
     in_game,
     Quit,
-    game_over
+    game_over,
+    settings
 };
 
 
@@ -45,6 +46,8 @@ class GameMenu
         void render_CRT();
         // renders black bars on either side of the game
         void render_aspect_ratio();
+        // renders the settings menu
+        void render_settings();
 
 
         // handle user input, returns true when quit is requested
@@ -56,9 +59,10 @@ class GameMenu
 
         // creates all the button objects for the main menu
         void create_mainMenu_buttons();
-
         // creates all the button objects for the in-game pause menu
         void create_pauseMenu_buttons();
+        // creates all the button objects for the settings menu
+        void create_settings_buttons();
 
         // updates some of the internal variables
         void update();
@@ -70,10 +74,13 @@ class GameMenu
 
         void create_CRT_Texture();
 
+        void get_mousePos( int *x, int *y );
+
     private:
 
         /* -------- CONSTANTS -------- */
         int BUTTON_WIDTH = 384, BUTTON_HEIGHT = BUTTON_WIDTH/3;
+        int SLIDER_HEIGHT = 66, SLIDER_WIDTH = 20;
         int GAMEOVER_TXT_WIDTH = 384, GAMEOVER_TEX_HEIGHT = 213;
         int HIGHSCORE_CENTREPOS = 256;
 
@@ -103,6 +110,9 @@ class GameMenu
         bool isActive = true;
         int sizeChange = 0;
         bool fullscreen = false;
+
+        // whether or not left click is currently being held down
+        bool isOnVolumeSlider = false;
 
 
         State state = main_menu;

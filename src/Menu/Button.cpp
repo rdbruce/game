@@ -29,6 +29,23 @@ void Button::execute_function() {
 
 void Button::doNothing() {}
 
+void Button::volume_slider()
+{
+    int x, y;
+    menu->get_mousePos(&x, &y);
+    x -= rect.w/2;
+
+    int minX = 72, maxX = 504;
+
+    x = Clamp(minX, maxX, x);
+    rect.x = x;
+
+    // find and set the new global volume
+    float t = float(x - minX) / (maxX - minX);
+    int newVolume = MIX_MAX_VOLUME * t;
+    Mix_Volume(-1, newVolume);
+}
+
 void Button::enter_game()
 {
     menu->game->new_game();
@@ -145,4 +162,12 @@ void Button::reset_highscores()
         menu->highscores[i].reset();
     }
     go_to_mainMenu();
+}
+
+void Button::go_to_settings()
+{
+    menu->state = settings;
+    menu->isActive = true;
+    menu->currButtons = &menu->settingsButtons;
+    menu->confirmationText = "";
 }
