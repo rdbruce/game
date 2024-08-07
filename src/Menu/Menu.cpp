@@ -8,19 +8,15 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
 
     load_assets();
 
-    // load player highscores
-    load_highscores();
-    settings.loadFromFile("../../saves/data/UserSettings.txt");
+    load_data();
 
     // create buttons
     create_mainMenu_buttons();
     create_pauseMenu_buttons();
     create_settings_buttons();
 
-    if (settings.flags & FULLSCREEN) {
-        fullscreen = window->toggleFullscreen();
-        sizeChange++;
-    }
+    auto continueButton = menuButtons[0];
+    if (mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
 }
 
 void GameMenu::render_background()
@@ -145,6 +141,9 @@ void GameMenu::render_CRT()
 
 void GameMenu::enter_game_over()
 {
+    mayContinue = false;
+    auto continueButton = menuButtons[0];
+    if (mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
     isActive = true;
     currButtons = &gameOverButtons;
     state = game_over;
@@ -312,7 +311,7 @@ void GameMenu::update()
     if (game->game_over() && state == in_game) enter_game_over();
 
     if (state == Quit) {
-        save_highscores();
+        save_data();
     }
 
     if (sizeChange) 
@@ -376,6 +375,34 @@ void GameMenu::load_highscores()
     }
 }
 
+void GameMenu::load_data()
+{
+    // load highscores
+    load_highscores();
+
+    // load settings
+    std::string filename = "../../saves/data/UserSettings.txt";
+    std::ifstream file(filename);
+
+    if (!file) std::cerr << "Couldn't open " << filename <<'\n';
+    else 
+    {
+        settings.loadFromFile(&file);
+        std::string line;
+        std::getline(file, line);
+        std::istringstream iss(line);
+        iss >> mayContinue;
+        file.close();
+    }
+    // commit loaded settings
+    Mix_Volume(-1, settings.volume);
+
+    if (settings.flags & FULLSCREEN) {
+        fullscreen = window->toggleFullscreen();
+        sizeChange++;
+    }
+}
+
 void GameMenu::save_highscores()
 {
     std::fstream file;
@@ -398,6 +425,24 @@ void GameMenu::save_highscores()
 
         file.close();
     }
+}
+
+void GameMenu::save_data()
+{
+    save_highscores();
+
+    std::string filename = "../../saves/data/UserSettings.txt";
+    std::fstream file;
+    file.open(filename, std::ios::out);
+
+    if (!file) {
+        std::cerr << "Failed to save to " << filename <<'\n';
+    } else {
+        settings.Save(&file);
+        file << mayContinue;
+        file.close();
+    }
+
 }
 
 int GameMenu::new_highscore()
@@ -433,10 +478,12 @@ void GameMenu::create_mainMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ContinueButton.png")) {
         std::cerr << "Failed to load continue button texture!" << std::endl;
     }
+
+    auto greyContinue = tEditor.greyscaleTexture("../../assets/Menu/Buttons/ContinueButton.png", window);
     
     int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
-    auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game);
+    auto button = std::make_shared<Button>(this, rect, greyContinue, &Button::continue_game, texture);
     menuButtons.push_back(button);
     
 
@@ -553,7 +600,7 @@ void GameMenu::create_settings_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ReturnButton.png")) {
         std::cerr << "Failed to load return button" <<'\n';
     }
-    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_main_menu_from_settings);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu);
     settingsButtons.push_back(button);
 
 

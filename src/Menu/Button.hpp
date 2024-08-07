@@ -85,8 +85,6 @@ class Button
 
         // enter the settings menu
         void go_to_settings();
-        // goes to main menu, and saves settings to file
-        void go_to_main_menu_from_settings();
         // sets settings back to what they were before editing
         void revert_settings();
         // resets settings to default

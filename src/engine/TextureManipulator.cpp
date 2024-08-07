@@ -155,3 +155,59 @@ std::shared_ptr<LTexture> TextureManipulator::createSolidColour( int width, int 
     SDL_SetRenderTarget(renderer, NULL);
     return res;
 }
+
+std::shared_ptr<LTexture> TextureManipulator::greyscaleTexture( std::string filename, std::shared_ptr<LWindow> window )
+{
+    SDL_Surface *loadedSurface = IMG_Load(filename.c_str());
+
+    auto res = std::make_shared<LTexture>(window);
+    // the final texture 
+    SDL_Texture *newTexture = NULL;
+
+    if (loadedSurface == NULL) 
+    {
+        std::cerr << "Failed to load " << filename << std::endl;
+    } 
+    else 
+    {
+        // Color key image
+        SDL_SetColorKey(loadedSurface, SDL_TRUE,
+                        SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
+
+        // make the surface greyscaled
+        int n = loadedSurface->w * loadedSurface->h;
+        SDL_PixelFormat *format = loadedSurface->format;
+        for (int i = 0; i < n; i++)
+        {
+            Uint32 *targetPixel = (Uint32 *) ((Uint8 *)loadedSurface->pixels + (i*format->BytesPerPixel));
+            Uint8   r = ((*targetPixel)>>format->Rshift)&255,
+                    g = ((*targetPixel)>>format->Gshift)&255,
+                    b = ((*targetPixel)>>format->Bshift)&255,
+                    a = ((*targetPixel)>>format->Ashift)&255;
+
+            int average = (r + g + b) / 3;
+            r = g = b = (Uint8)average;
+
+            Uint32 newCol = Uint32(r)<<format->Rshift | Uint32(g)<<format->Gshift | Uint32(b)<<format->Bshift | Uint32(a)<<format->Ashift;
+            *targetPixel = newCol;
+        }
+
+        // create the texture from the surface
+        newTexture = SDL_CreateTextureFromSurface(window->gRenderer, loadedSurface);
+        if (newTexture == NULL) 
+        {
+            std::cerr << "Failed to create texture from " << filename <<' '<< SDL_GetError() << std::endl;
+        }
+        else 
+        {
+            // get image dimensions
+            res->mWidth = loadedSurface->w;
+            res->mHeight = loadedSurface->h;
+        }
+        // cleanup the surface
+        SDL_FreeSurface(loadedSurface);
+    }
+
+    res->mTexture = newTexture;
+    return res;
+}

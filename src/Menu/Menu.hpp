@@ -71,6 +71,10 @@ class GameMenu
 
         void load_assets();
 
+        // loads highscores, settings, and misc data
+        void load_data();
+        void save_data();
+
         void load_highscores();
         void save_highscores();
 
@@ -113,6 +117,7 @@ class GameMenu
         bool isActive = true;
         int sizeChange = 0;
         bool fullscreen = false;
+        bool mayContinue = false;
 
         // whether or not left click is currently being held down
         bool isOnVolumeSlider = false;

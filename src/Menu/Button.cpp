@@ -61,10 +61,13 @@ void Button::enter_game()
 
 void Button::continue_game()
 {
-    menu->game->load_levels("../../saves/curr/");
-    menu->game->initialise_BGTexture();
-    menu->game->scores = menu->highscores[0];
-    enter_game();
+    if (menu->mayContinue) 
+    {
+        menu->game->load_levels("../../saves/curr/");
+        menu->game->initialise_BGTexture();
+        menu->game->scores = menu->highscores[0];
+        enter_game();
+    }
 }
 
 void Button::new_game_confirmation()
@@ -86,6 +89,11 @@ void Button::load_new_game()
     menu->game->save_game();
     menu->game->scores.reset();
     menu->save_highscores();
+
+    menu->mayContinue = true;
+    auto continueButton = menu->menuButtons[0];
+    if (menu->mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
+    
     srand(time(NULL));
     enter_game();
 }
@@ -164,12 +172,6 @@ void Button::reset_highscores()
     for (int i = 1; i <= n; i++) {
         menu->highscores[i].reset();
     }
-    go_to_mainMenu();
-}
-
-void Button::go_to_main_menu_from_settings()
-{
-    menu->settings.Save("../../saves/data/UserSettings.txt");
     go_to_mainMenu();
 }
 

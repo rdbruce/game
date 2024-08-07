@@ -20,6 +20,9 @@ class TextureManipulator
         void renderTextureToTexture( std::shared_ptr<LTexture> target, std::shared_ptr<LTexture> source, SDL_Rect *targetRect, double angle, SDL_RendererFlip flip = SDL_FLIP_NONE );
         void renderTextureToTexture( std::shared_ptr<LTexture> target, SDL_Texture *source, SDL_Rect *targetRect );
 
+        // creates a greyscaled texture
+        std::shared_ptr<LTexture> greyscaleTexture( std::string filename, std::shared_ptr<LWindow> window );
+
         // creates an empty LTexture of the specified dimensions with the desired LWindow
         std::shared_ptr<LTexture> createEmptyTexture( int width, int height, std::shared_ptr<LWindow> gHolder, SDL_TextureAccess access = SDL_TEXTUREACCESS_TARGET );
         

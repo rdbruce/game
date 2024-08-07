@@ -41,7 +41,9 @@ struct PlayerData
 struct Settings
 {
     bool loadFromFile( std::string filename );
+    void loadFromFile( std::ifstream *file );
     void Save( std::string filename );
+    void Save( std::fstream *file );
 
     // sets all members to default settings
     void reset();

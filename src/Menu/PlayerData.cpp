@@ -113,8 +113,17 @@ bool Settings::loadFromFile( std::string filename )
         std::getline(file, line);
         std::istringstream iss(line);
         iss >>std::dec>> volume >> flags >> max_framrate;
+        file.close();
         return true;
     }
+}
+
+void Settings::loadFromFile( std::ifstream *file )
+{
+    std::string line;
+    std::getline(*file, line);
+    std::istringstream iss(line);
+    iss >>std::dec>> volume >> flags >> max_framrate;
 }
 
 void Settings::Save( std::string filename )
@@ -127,10 +136,15 @@ void Settings::Save( std::string filename )
     }
     else 
     {
-        file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate;
+        file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate <<'\n';
         file.close();
     }
 }
+
+void Settings::Save( std::fstream *file )
+{
+    *file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate <<'\n';
+} 
 
 void Settings::reset()
 {
