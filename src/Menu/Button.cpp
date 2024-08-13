@@ -136,6 +136,7 @@ void Button::go_to_mainMenu()
     menu->currButtons = &menu->menuButtons;
     menu->confirmationText = "";
     menu->highscores[0] = menu->game->scores;
+    menu->game->stop_music();
 }
 
 void Button::go_to_main_menu_from_gameover()

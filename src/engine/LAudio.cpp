@@ -1,6 +1,8 @@
 #include "LAudio.hpp"
 #include <iostream>
 
+int g_channel = 0;
+
 LAudio::LAudio()
 {
     // open that audio device for playback
@@ -38,7 +40,28 @@ bool LAudio::loadFromFile(std::string path)
     return chunk != NULL;
 }
 
-void LAudio::play()
+void LAudio::play( int Channel )
 {
-    Mix_PlayChannel(-1, chunk, 0);
+    if (Channel == -1) 
+    {
+        // channel 0 reserved for music
+        if (g_channel == 0) g_channel++;
+
+        // find a channel to play the audio on
+        channel = g_channel;
+        g_channel = (g_channel+1) % NUM_AVAILABLE_CHANNELS;
+    }
+    else
+    {
+        if (g_channel == Channel) g_channel = (g_channel+1) % NUM_AVAILABLE_CHANNELS;
+        channel = Channel;
+    }
+
+    Mix_PlayChannel(channel, chunk, 0);
+}
+
+void LAudio::stop()
+{
+    if (channel != -1) Mix_HaltChannel(channel);
+    channel = -1;
 }

@@ -147,6 +147,9 @@ class Game
         // makes game_over false
         void new_game();
 
+        // stops music from playing
+        void stop_music();
+
 
         // tracks the player's score
         PlayerData scores;
@@ -292,6 +295,10 @@ class Game
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
                                 birdSpawn;
+
+        // music
+        std::shared_ptr<LAudio> currSong = nullptr;
+        std::shared_ptr<LAudio> nightMusic;
 
         // fonts
         TTF_Font *sevenSegment;

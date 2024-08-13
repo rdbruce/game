@@ -5,6 +5,8 @@
 
 #include <string>
 
+#define NUM_AVAILABLE_CHANNELS 8
+
 class LAudio
 {
     public:
@@ -21,10 +23,15 @@ class LAudio
         void free();
 
         // plays the audio
-        void play();
+        void play( int Channel = -1 );
+
+        // halts the audio
+        void stop();
 
     private:
 
         // the actual audio
         Mix_Chunk *chunk = NULL;
+
+        int channel = -1;
 };

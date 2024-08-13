@@ -439,9 +439,14 @@ std::shared_ptr<GameObject> Game::moveEntityToLevel( std::shared_ptr<GameObject>
 void Game::dayNightCycle()
 {
     // after x seconds
-    if (g_time >= DAY_LENGTH) {
+    if (g_time >= DAY_LENGTH) 
+    {
+        stop_music();
+
         // toggle night, and make sure all scene objects get updated
         isNight = !isNight;
+
+        if (isNight) nightMusic->play(0);
 
         // autosave the game
         save_game();
@@ -449,20 +454,37 @@ void Game::dayNightCycle()
         g_time = 0.0f;
         return;
 
-    } else if (g_time == 0.0f && !isNight) {
-        if (!firstDay) {
-            scores.mostNightsSurvived++;
-            scores.calculate_score();
+    } 
+    else if (g_time == 0.0f) 
+    {
+        stop_music();
+
+        if (!isNight)
+        {
+            if (!firstDay) {
+                scores.mostNightsSurvived++;
+                scores.calculate_score();
+            }
+            else firstDay = false;
+            // reset daily booleans
+            mayGatherStone = true;
+            // spawn npcs
+            spawnNPCs();
         }
-        else firstDay = false;
-        // reset daily booleans
-        mayGatherStone = true;
-        // spawn npcs
-        spawnNPCs();
+        else
+        {
+            currSong = nightMusic;
+            nightMusic->play(0);
+        }
     }
 
     // update time
     g_time += deltaTime;
+}
+
+void Game::stop_music()
+{
+    if (currSong != nullptr) currSong->stop();
 }
 
 void Game::enter_dialogue( Dialogue newDialogue ) { currDialogue = newDialogue; }
@@ -968,6 +990,11 @@ void Game::load_audio()
     birdSpawn = std::make_shared<LAudio>();
     if (!birdSpawn->loadFromFile("../../assets/Audio/EntitySounds/BirdSpawn.wav")) {
         std::cerr << "Failed to load bird spawn sound!" << std::endl;
+    }
+
+    nightMusic = std::make_shared<LAudio>();
+    if (!nightMusic->loadFromFile("../../assets/Audio/Music/NightMusic.wav")) {
+        std::cerr << "failed to load NightMusic.wav!" << std::endl;
     }
 }
 
