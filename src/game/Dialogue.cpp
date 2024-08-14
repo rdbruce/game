@@ -1500,6 +1500,8 @@ void DialogueRender::bear_town_5_diag()
     tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
     tex1->render(x, y); 
+
+    tex0->free(); tex1->free();
 }
 
 void DialogueRender::bear_town_5_2_diag()
@@ -1520,6 +1522,8 @@ void DialogueRender::bear_town_5_2_diag()
     tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
     tex1->render(x, y); 
+
+    tex0->free(); tex1->free();
 }
 
 void DialogueRender::bear_town_case14()
@@ -1542,6 +1546,8 @@ void DialogueRender::bear_town_case14()
     texture0->render(x, y, &rect); x += 30;
     tex1->render(x, y); x += tex1->getWidth();
     texture1->render(x, y, &rect);
+
+    tex0->free(); tex1->free();
 }
 
 void DialogueRender::fox_base_case11()
@@ -1568,4 +1574,6 @@ void DialogueRender::fox_base_case11()
     tex1->render(x, y); x += tex1->getWidth();
     texture1->render(x, y, &rect); x += 30;
     tex2->render(x, y);
+
+    tex0->free(); tex1->free(); tex2->free();
 }

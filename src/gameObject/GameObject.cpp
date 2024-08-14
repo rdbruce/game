@@ -1,5 +1,6 @@
 #include "GameObject.hpp"
 #include "../game/Game.hpp"
+#include "AStarPathfinding.hpp"
 
 // constructor
 GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game *game, int sideLen ) 
@@ -392,6 +393,16 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}
 
+
+GameObject::~GameObject()
+{
+    // clean up all existing pathfinding nodes
+    AStar::LinkedCell *curr = path;
+    for (AStar::LinkedCell *next = curr; curr != nullptr; curr = next) {
+        next = curr->next;
+        delete curr;
+    }
+}
 
 
 void GameObject::render( int camX, int camY, Uint8 alpha )

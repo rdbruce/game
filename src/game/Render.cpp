@@ -10,367 +10,380 @@ void Game::render_controls()
     SDL_Rect mRect = {0+renderOffset.x, 70+renderOffset.y, 24, 30};
     std::string txt;
 
-    if (currLevel->held != nullptr) 
-    {
-        int hp = currLevel->held->get_hp();
-        if (hp == 1) 
+    Vector2 mPos = find_mouse_pos();
+
+    // if something is held
+    if (currLevel->held != nullptr) render_held_object_controls(mPos, &mRect);
+    else {
+        // ensure the mouse is actually within range of the player
+        Vector2 disp = currLevel->player->get_pos() - mPos;
+        if (disp.length() <= interactRange) 
         {
-            // do LMB / MMB
-            LMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
-            txt = "/";
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-            MMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
-            txt = "Throw item (";
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-            txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed()));
-            if (!controlsTex->loadFromRenderedText(txt, {255,0,0,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-            txt = ")";
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
-        
-        } 
-        else 
-        {
-            // left click to throw one item
-            txt = "Throw one item (";
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            LMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
-            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-            txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed()));
-            if (!controlsTex->loadFromRenderedText(txt, {255,0,0,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-            txt = ")";
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
-            
-
-            // middle click to throw the stack
-            txt = "Throw all " + std::to_string(hp) + " items (";
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            MMBTex->render(mRect.x, mRect.y, &mRect); mRect.x += mRect.w;
-            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-            txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed() * hp));
-            if (!controlsTex->loadFromRenderedText(txt, {255,0,0,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-            txt = ")";
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
-        }
-
-
-        int heldType = currLevel->held->get_type();
-        bool render_flag = false;
-        switch (heldType)
-        {
-            case Log_Item: 
-                // right click to build log
-                txt = "Build log";
-                render_flag = true;
-                break;
-
-            case Pine_Cone_Item:
-                // right click to plant sapling
-                txt = "Plant sapling";
-                render_flag = true;
-                break;
-
-            case Dam_Item: 
-                // right click to build dam
-                txt = "Build dam";
-                render_flag = true;
-                break;
-
-            case Door_Item: 
-                // right click to build door
-                txt = "Build door";
-                render_flag = true;
-                break;
-
-            case Berry_Item:
-                // right click to heal 1 hp
-                txt = "Heal 1 hp";
-                render_flag = true;
-                break;
-        }
-        if (render_flag) {
-            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                std::cerr << "couldn't render controls text!" << std::endl;
-                return;
-            }
-            RMBTex->render(mRect.x, mRect.y, &mRect);
-            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-        }
-
-
-
-    } else {
-        // see if the mouse is hovering over anything
-        Vector2 mPos = find_mouse_pos();
-        int sideLen = currLevel->cell_sideLen;
-        Vector2Int cell(mPos.x/sideLen, mPos.y/sideLen);
-        int type = currLevel->grid[cell.x][cell.y]&255;
-
-        if (type) {
-            bool render_flag = false;
-            switch (type) 
-            {
-                case 7: // closed door
-                    txt = "Open";
-                    render_flag = true;
-                    break;
-
-                case 8: // open door
-                    txt = "Close";
-                    render_flag = true;
-                    break;
-            }
-            if (render_flag) {
-                if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                    std::cerr << "couldn't render controls text!" << std::endl;
-                    return;
-                }
-                LMBTex->render(mRect.x, mRect.y, &mRect);
-                controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-            }
-
-            if (is_occupied(cell)) {
-                if (!(type&INDESTRUBTIBLE)) {
-                    RMBTex->render(mRect.x, mRect.y, &mRect);
-                    txt = ((type) == 10)? "Pick" : "Destroy";
-                    if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                        std::cerr << "couldn't render controls text!" << std::endl;
-                        return;
-                    }
-                    controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-                }
-            }
-        } else {
-            // not hovering over any cell, check the game objects
-            int n = currLevel->gameObjects.size();
-            for (int i = 0; i < n; i++) 
-            {
-                auto obj = currLevel->gameObjects[i];
-                SDL_Rect hitbox = obj->get_hitbox();
-                if (is_in_region(mPos, hitbox)) {
-                    EntityType type = obj->get_type();
-                    switch (type)
-                    {
-                        case Log_Item: {
-                            LMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Pick up item";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-
-                            RMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Craft 2 ";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
-
-                            SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
-                            plankTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-                            txt = "(1 ";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-                            logTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-                            txt = ")";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
-                            break;
-                        }
-
-                        case Plank_Item: {
-                            LMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Pick up item";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-
-                            if (obj->get_hp() >= 4) 
-                            {
-                                RMBTex->render(mRect.x, mRect.y, &mRect);
-                                txt = "Craft 1 ";
-                                if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                    std::cerr << "couldn't render controls text!" << std::endl;
-                                    return;
-                                }
-                                controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
-
-                                SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
-                                closed_doorTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-                                txt = "(4 ";
-                                if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                    std::cerr << "couldn't render controls text!" << std::endl;
-                                    return;
-                                }
-                                controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-                                plankTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-                                txt = ")";
-                                if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                    std::cerr << "couldn't render controls text!" << std::endl;
-                                    return;
-                                }
-                                controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
-                            }
-                            break;
-                        }
-
-                        case Dam_Item: {
-                            LMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Pick up item";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-
-                            RMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Craft 1 ";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
-
-                            SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
-                            logTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-
-                            txt = ", 4";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-                            
-                            plankTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-
-                            txt = "(1 ";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-                            damTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-                            txt = ")";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
-                            break;
-                        }
-
-                        case Door_Item: {
-                            LMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Pick up item";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-
-                            RMBTex->render(mRect.x, mRect.y, &mRect);
-                            txt = "Craft 4 ";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.x += controlsTex->getWidth() + mRect.w;
-
-                            SDL_Rect itemRect = {mRect.x, mRect.y, 30, 30};
-                            plankTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-                            txt = "(1 ";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x += controlsTex->getWidth();
-
-                            closed_doorTex->render(mRect.x, mRect.y, &itemRect); mRect.x += itemRect.w;
-                            txt = ")";
-                            if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                std::cerr << "couldn't render controls text!" << std::endl;
-                                return;
-                            }
-                            controlsTex->render(mRect.x, mRect.y); mRect.x = 0 + renderOffset.x; mRect.y += 30;
-                            break;
-                        }
-
-                        default:
-                            if (obj->is_item()) {
-                                LMBTex->render(mRect.x, mRect.y, &mRect);
-                                txt = "Pick up item";
-                                if (!controlsTex->loadFromRenderedText(txt, {255,255,255,255})) {
-                                    std::cerr << "couldn't render controls text!" << std::endl;
-                                    return;
-                                }
-                                controlsTex->render(mRect.w + renderOffset.x, mRect.y); mRect.y += 30;
-                            }
-                            break;
-                    }
-                }
+            if (!render_hovering_over_entity_controls(mPos, &mRect)) {
+                render_cell_controls(mPos, &mRect);
             }
         }
     }
 }
 
+void Game::render_held_object_controls( Vector2 mPos, SDL_Rect *mRect )
+{
+    int type = -1;
+
+    // check game objects vector for NPCs
+    int n = currLevel->gameObjects.size();
+    for (int i = 0; i < n; i++) 
+    {
+        auto obj = currLevel->gameObjects[i];
+        if (isInRegion(mPos, obj->get_hitbox()) && obj->is_NPC()) {
+            type = obj->get_type(); break;
+        }
+    }
+
+    // if hovering over an npc, render trades if applicable
+    bool flag = true;
+    render_NPC_trade_controls(type, mRect, &flag);
+
+    // if not hovering over any potential trades, show throw/build commands
+    if (flag) render_BuildThrow_commands(mRect);
+}
+
+void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
+{
+    std::string txt;
+
+    if (type != -1)
+    {
+        // may left click to trade 2 stone for 1 berry
+        if (type == Bear_NPC && currLevel->held->get_type() == Stone_Item)
+        {
+            // render the left mouse icon
+            LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            // render the text
+            txt = "Trade 2 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+            mRect->w = mRect->h = 30;
+            stoneTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = " for 1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+            berryTex->render(mRect->x, mRect->y, mRect);
+            *flag = false;
+            return;
+        }
+    }
+    *flag = true;
+}
+
+void Game::render_BuildThrow_commands( SDL_Rect *mRect )
+{
+    int x = mRect->x;
+    int type = currLevel->held->get_type(), hp = currLevel->held->get_hp();
+    std::string txt;
+
+    // find the amount of damage the item will do when thrown
+    int damage = ceilToInt(currLevel->held->get_moveSpeed() * hp);
 
 
+    // if there is only one item, middle OR left click to throw it
+    if (hp == 1)
+    {
+        LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+        txt = "/";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        MMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+        txt = "Throw item (";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        txt = std::to_string(damage);
+        controlsTex->loadFromRenderedText(txt, {255,0,0,255});
+        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        txt = ")";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+        mRect->x = x; mRect->y += mRect->h;
+    }
+    // if multiple items are held, middle click to throw all, or left click to throw one
+    else
+    {
+        LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+        txt = "Throw one item (";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed()));
+        controlsTex->loadFromRenderedText(txt, {255,0,0,255});
+        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        txt = ")";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+        mRect->x = x; mRect->y += mRect->h;
+
+        MMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+        txt = "Throw all " + std::to_string(hp) + " items (";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        txt = std::to_string(ceilToInt(damage));
+        controlsTex->loadFromRenderedText(txt, {255,0,0,255});
+        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        txt = ")";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+        mRect->x = x; mRect->y += mRect->h;
+    }
+
+    // only render a right click command if the player is holding an item type that may be built with
+    bool renderFlag = false;
+
+    switch (type)
+    {
+        case Log_Item:
+            txt = "Build log";
+            renderFlag = true;
+            break;
+        case Pine_Cone_Item:
+            txt = "Plant sapling";
+            renderFlag = true;
+            break;
+        case Dam_Item:
+            txt = "Build dam";
+            renderFlag = true;
+            break;
+        case Door_Item:
+            txt = "Build door";
+            renderFlag = true;
+            break;
+        case Berry_Item:
+            txt = "Heal 1 hp";
+            renderFlag = true;
+            break;
+    }
+
+    if (renderFlag) 
+    {
+        RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+        mRect->x = x; mRect->y += mRect->h;
+    }
+}
+
+bool Game::render_hovering_over_entity_controls( Vector2 mPos, SDL_Rect *mRect )
+{
+    std::string txt;
+    bool res = false;
+
+    // check to see if the player is hovering over any game objects
+    int type = -1, hp;
+    int n = currLevel->gameObjects.size();
+    for (int i = 0; i < n; i++) {
+        auto obj = currLevel->gameObjects[i];
+        if (isInRegion(mPos, obj->get_hitbox())) {
+            type = obj->get_type(); 
+            hp = obj->get_hp();
+            break;
+        }
+    }
+
+    // hovering over an item
+    if (type > ITEM_MIN && type < ITEM_MAX)
+    {
+        int x = mRect->x;
+        // left click to pick up the item
+        LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+        txt = "Pick up item";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+        mRect->x = x; mRect->y += mRect->h;
+        render_crafting_controls(type, mRect, hp);
+        res = true;
+    }
+    // hovering over an npc
+    else if (type > NPC_MIN && type < NPC_MAX)
+    {
+        // left click to talk
+        LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+        txt = "Talk";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+        res = true;
+    }
+
+    // return whether or not any controls were rendered
+    return false;
+}
+
+void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
+{
+    std::string txt;
+
+    switch (type)
+    {
+        // right click to craft 2 planks from one log
+        case Log_Item:
+        {
+            RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+            int w = mRect->w, h = mRect->h;
+
+            txt = "Craft 2 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+            mRect->w = mRect->h = 30;
+            plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = " (1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+            logTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = " )";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y);
+            mRect->w = w; mRect->h = h;
+            break;
+        }
+
+        // right click to craft 1 door for 4 planks
+        case Plank_Item:
+        {
+            if (hp >= 4)
+            {
+                RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+                int w = mRect->w, h = mRect->h;
+
+                txt = "Craft 1 ";
+                controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+                controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+                mRect->w = mRect->h = 30;
+                closed_doorTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+                txt = " (4 ";
+                controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+                controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+                plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+                txt = " )";
+                controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+                controlsTex->render(mRect->x, mRect->y);
+                mRect->w = w; mRect->h = h;
+            }
+            break;
+        }
+
+        // right click to craft 4 planks for 1 door
+        case Door_Item:
+        {
+            RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+            int w = mRect->w, h = mRect->h;
+
+            txt = "Craft 4 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+            mRect->w = mRect->h = 30;
+            plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = " (1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+            closed_doorTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = " )";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y);
+            mRect->w = w; mRect->h = h;
+            break;
+        }
+
+        // right click to craft 4 planks and 1 log for 1 dam
+        case Dam_Item:
+        {
+            RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+            int w = mRect->w, h = mRect->h;
+
+            txt = "Craft 4 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+            mRect->w = mRect->h = 30;
+            plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = ", 1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+            logTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+            
+
+            txt = " (1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+            damTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = " )";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y);
+            mRect->w = w; mRect->h = h;
+            break;
+        }
+    }
+}
+
+void Game::render_cell_controls( Vector2 mPos, SDL_Rect *mRect )
+{
+    std::string txt;
+
+    Vector2Int cell(mPos.x/currLevel->cell_sideLen, mPos.y/currLevel->cell_sideLen);
+    int type = currLevel->grid[cell.x][cell.y];
+    int x = mRect->x;
+
+    // if the cell is not full hp, left click to repair it
+    int hp = (type&HEALTH)>>8, max_hp = (type&MAX_HEALTH)>>17;
+    if (hp < max_hp)
+    {
+        LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+        txt = "Repair";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+        mRect->x = x; mRect->y += controlsTex->getHeight();
+    }
+    // left click toggle doors
+    else if ((type&CELL_ID) == 7 || (type&CELL_ID) == 8)
+    {
+        if ((type&CELL_ID) == 7) 
+        {
+            LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+            txt = "Open door";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y);
+            mRect->x = x; mRect->y += controlsTex->getHeight();
+        }
+        else
+        {
+            LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+            txt = "Close door";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->render(mRect->x, mRect->y);
+            mRect->x = x; mRect->y += controlsTex->getHeight();
+        }
+    }
+    // if the cell may be destroyed by the player, right click to destroy
+    if ((type&(OCCUPIED|INDESTRUBTIBLE)) == OCCUPIED)
+    {
+        RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+        txt = "Destroy";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->render(mRect->x, mRect->y);
+    }
+}
 
 
 
@@ -389,9 +402,12 @@ void Game::center_camera_on_player()
 
 void Game::render_framerate()
 {
+    // get the framerate
     int newFPS = 1.0f / deltaTime;
-    fps = (newFPS == Clamp(0, 5000, newFPS))? newFPS : fps;
-    std::string txt = std::to_string(fps) + "FPS";
+    fps = (newFPS == Clamp(0, 5000, newFPS))? newFPS : fps; // validation
+    std::string txt = std::to_string(fps) + "FPS"; // get the fps as a string
+
+    // get the string as a texture, and render it
     if (!fpsTex->loadFromRenderedText(txt, {255,255,255,255})) {
         std::cerr << "couldn't render FPS!" << std::endl;
         return;
@@ -401,11 +417,14 @@ void Game::render_framerate()
 
 void Game::render_player_health()
 {
+    // the space each heart will take up
     SDL_Rect heartRect = {0+renderOffset.x, 30+renderOffset.y, 50, 50};
-    int full = currLevel->player->get_hp();
+    int full = currLevel->player->get_hp(); // the number of full hearts there will be
 
     for (int i = 0; i < 5; i++) 
     {
+        // render the number of hitpoints the player has as a full heart
+        // and show the rest of the hearts as empty
         if (i < full) full_heartTex->render(heartRect.x, heartRect.y, &heartRect);
         else empty_heartTex->render(heartRect.x, heartRect.y, &heartRect);
         heartRect.x += heartRect.w;
@@ -423,14 +442,17 @@ void Game::render_overlay() {
 
 void Game::render_darkness() 
 {
+    // only update the darkness cover at the beginning of each day/night
     if (g_time < 10.0f) 
     {
+        // use an interpolator to determine how dark the texture should be
         float t = g_time / 10.0f;
-        if (!isNight) t = 1.0f - t;
+        int alpha = (isNight)? 100.0f * t : 100.0f * (1.0f - t);
 
-        int alpha = 100.0f * t;
+        if (darknessTex != nullptr) darknessTex->free(); // cleanup
         darknessTex = tEditor.createSolidColour(camera.w, camera.h, alpha, window);
     }
+    // render the darkness over the scene
     darknessTex->render(renderOffset.x, renderOffset.y, &camera);
 }
 
@@ -447,47 +469,46 @@ void Game::render_gameobjects() {
 
 void Game::render_clock()
 {
-    float t = g_time / DAY_LENGTH;
-
+    // show how far into the day the player is, as an actual number
+    // get the time as a number of minutes and seconds, and convert to a string
     int minutes = (int)g_time / 60, seconds = (int)g_time % 60;
     std::string txt = (seconds < 10)?
-        std::to_string(minutes) + ":0" + std::to_string(seconds) :
+        std::to_string(minutes) + ":0" + std::to_string(seconds) : // make sure to render the leading zero on seconds
         std::to_string(minutes) + ':' + std::to_string(seconds);
 
-    auto clockTex = std::make_unique<LTexture>(window);
+    // create a texture from the time
     if (!clockTex->loadFromRenderedText(txt, {255,0,0,255}, sevenSegment)) {
         std::cerr << "Failed to create clock" << std::endl;
     }
-    int w = clockTex->getWidth(), x = camera.w-106 + renderOffset.x;
+    // render the clock
+    int x = camera.w-106 + renderOffset.x;
     clockTex->render(x, renderOffset.y + 25);
-    clockTex->free();
 
-    auto bar = tEditor.createSolidColour(75, 5, 0x000000D0, window);
-    bar->render(x+3, renderOffset.y + 10);
-    bar->free();
 
-    if (isNight) 
-    {
-        int wRed = 81.0f * (1.0f-t);
-        if (wRed > 0) {
-            bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
-            bar->render(x+(81-wRed), renderOffset.y + 7);
-            bar->free();
-        }
-    }
-    else
-    {
-        int wRed = t * 81.0f;
-        if (wRed > 0) {
-            bar = tEditor.createSolidColour(wRed, 11, 0xFF0000D0, window);
-            bar->render(x, renderOffset.y + 7);
-            bar->free();
-        }
-    }
+
+    // render a progress bar to visualise how much time is left
+    // use an interpolator to represent how far into the day the player is
+    float t = g_time / DAY_LENGTH;
+
+    // the rect the progress bar will be rendered to
+    SDL_Rect barRect = {x, renderOffset.y + 7, 75, 5};
+
+    clockBackBar->render(barRect.x+3, barRect.y + 3, &barRect);
+    barRect.h = 11;
+
+    // during the day, the bar will be empty and get more full. during the night, the bar will
+    // start full and become empty
+    int wRed = (isNight)? 81.0f * (1.0f-t) : 81.0f * t;
+    barRect.w = wRed;
+    if (isNight) barRect.x += 81 - wRed;
+
+    if (wRed > 0) redBar->render(barRect.x, barRect.y, &barRect);
 }
 
 void Game::render_gameobjects_under_trees()
 {
+    // while rendering each game object, a pointer is added to second renders if the object
+    // is behind a tree. render these objects again but slightly transparent
     while (secondRenders.size())
     {
         auto obj = secondRenders.top();
@@ -498,6 +519,7 @@ void Game::render_gameobjects_under_trees()
 
 void Game::render_dialogue()
 {
+    // when applicable, dialogue items will be added to this stack. render them
     while (dialogueRenders.size())
     {
         auto diag = dialogueRenders.top();

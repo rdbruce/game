@@ -15,6 +15,7 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
     load_animations();
     load_audio();
     load_fonts();
+    create_textures();
 
     // camera dimensions should be the same as window size
     camera = { 0, 0, window->getWidth(), window->getHeight() };
@@ -1050,4 +1051,11 @@ void Game::load_animations()
     }
 
     playerAnimations = std::make_shared<Animations>(front, back, left, right, df, db, dl, dr);
+}
+
+void Game::create_textures()
+{
+    clockBackBar = tEditor.createSolidColour(75, 5, 0x000000D0, window);
+    redBar = tEditor.createSolidColour(81, 11, 0xFF0000D0, window);
+    clockTex = std::make_unique<LTexture>(window);
 }

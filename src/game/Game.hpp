@@ -187,8 +187,6 @@ class Game
         clock_t begin_time = 0; // used for calculating deltaTime
         int fps;
 
-        // textures used for rendering text
-        std::unique_ptr<LTexture> fpsTex, controlsTex;
 
         // tracking the time of day/night
         float g_time = 0.0f;
@@ -260,6 +258,13 @@ class Game
 
 
 
+
+
+
+
+
+
+
         // images/textures
 
         // used for editing textures
@@ -273,12 +278,14 @@ class Game
         void load_audio();
         // loads all the fonts from file
         void load_fonts();
+        // creates some miscellaneous textures
+        void create_textures();
 
         
 
 
         // background texture
-        std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr, darknessTex = nullptr;
+        std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr;
         std::shared_ptr<LTexture> Bert = nullptr;
         std::shared_ptr<LTexture>   logTex, damTex, waterTex, grassTex, treeTex,
                                     stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
@@ -305,6 +312,20 @@ class Game
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;
+
+
+
+
+        // misc pointers used for rendering
+        std::unique_ptr<LTexture>   fpsTex = nullptr, controlsTex = nullptr, clockTex = nullptr;
+
+        std::shared_ptr<LTexture>   clockBackBar = nullptr, redBar = nullptr, whiteBar = nullptr,
+                                    darknessTex = nullptr;
+
+
+
+
+
 
         // functions for editing the grid (defined in Grid.cpp NOT Game.cpp!!!!)
 
@@ -365,6 +386,15 @@ class Game
         void spawnNPCs();
 
         bool is_under_tree( Vector2Int cell );
+
+
+
+        void render_held_object_controls( Vector2 mPos, SDL_Rect *mRect );
+        void render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag );
+        void render_BuildThrow_commands( SDL_Rect *mRect );
+        bool render_hovering_over_entity_controls( Vector2 mPos, SDL_Rect *mRect );
+        void render_crafting_controls( int type, SDL_Rect *mRect, int hp );
+        void render_cell_controls( Vector2 mPos, SDL_Rect *mRect );
 };
 
 #endif

@@ -69,6 +69,8 @@ class GameObject
         GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game *game, int sideLen );
         GameObject();
 
+        ~GameObject();
+
 
         // updates member variables
         void update();
