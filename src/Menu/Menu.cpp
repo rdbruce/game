@@ -23,13 +23,18 @@ void GameMenu::render_background()
 {
     if (isActive) 
     {
-        auto tex = (state == main_menu || state == settings_menu)? BGTexture :
+        bool settingsOrMenu = state == main_menu || state == settings_menu;
+        auto tex = (settingsOrMenu)? BGTexture :
                    tEditor.createSolidColour(wRect.w, wRect.h, 180, window);
         tex->render(wRect.x, wRect.y, &wRect);
 
         if (state == game_over) {
             SDL_Rect rect = {(wRect.w-GAMEOVER_TXT_WIDTH)/2 + wRect.x, 128, GAMEOVER_TXT_WIDTH, GAMEOVER_TEX_HEIGHT};
             gameOverTex->render(rect.x, rect.y, &rect);
+        } 
+        else if (settingsOrMenu && confirmationText == "") {
+            SDL_Rect rect = {64 + wRect.x, 32 + wRect.y, 896, 192};
+            titleTex->render(rect.x, rect.y, &rect);
         }
     }
 }
@@ -40,34 +45,34 @@ void GameMenu::render_settings()
     {
         int x = 64 + wRect.x, y = 256;
 
-        renderText("Audio", x, y, window, {255,255,255,255}, NULL, Left_aligned);
-        y += 35;
+        renderText("Audio", x, y, window, {255,255,255,255}, arcadeClassic36, Left_aligned);
+        y += 40;
 
         auto white = tEditor.createSolidColour(464, 3, 0xFFFFFFFF, window);
         SDL_Rect rect = {x, y, 464, 3};
         white->render(x, y, &rect);
         y += 8;
 
-        renderText("Volume", x, y, window, {255,255,255,255}, NULL, Left_aligned);
+        renderText("Volume", x, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
         y += 90;
 
-        auto grey = tEditor.createSolidColour(432, 3, 0x0F0F0FF0, window);
+        auto grey = tEditor.createSolidColour(432, 3, 0xFFFFFFB0, window);
         rect.w = 432;
         grey->render(x + 16, y, &rect);
 
         y += 96; rect.w = 464;
-        renderText("Graphics", x, y, window, {255,255,255,255}, NULL, Left_aligned);
-        y += 35;
+        renderText("Graphics", x, y, window, {255,255,255,255}, arcadeClassic36, Left_aligned);
+        y += 40;
 
         white->render(x, y, &rect);
-        y += 57;
-        renderText("CRT Filter", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, NULL, Left_aligned);
+        y += 48;
+        renderText("CRT Filter", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
 
         y += CHECKBOX_SIDELENGTH + 16;
-        renderText("Fullscreen", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, NULL, Left_aligned);
+        renderText("Fullscreen", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
         
         y += CHECKBOX_SIDELENGTH + 16;
-        renderText("Show framerate", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, NULL, Left_aligned);
+        renderText("Show framerate", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
 
         white->free();
         grey->free();
@@ -80,28 +85,28 @@ void GameMenu::render_highscores()
     {
         int x = 64 + wRect.x, y = 256;
 
-        renderText("HIGHSCORES", HIGHSCORE_CENTREPOS+wRect.x, y, window, {255,0,0,255}, sevenSegment48);
-        y += 55; x += 128;
+        renderText("HIGHSCORES", HIGHSCORE_CENTREPOS+wRect.x, y, window, {255,0,0,255}, arcadeClassic48);
+        y += 96; x += 148;
 
-        renderText("SCORE", x, y, window, {255,0,0,255}, sevenSegment36); x += 128;
-        renderText("NIGHTS\nSURVIVED", x, y, window, {255,0,0,255}, sevenSegment24); x += 128;
-        renderText("ENEMIES\nKILLED", x, y, window, {255,0,0,255}, sevenSegment24);
+        renderText("SCORE", x, y, window, {255,0,0,255}, arcadeClassic24); x += 136;
+        renderText("NIGHTS\nSURVIVED", x, y, window, {255,0,0,255}, arcadeClassic18); x += 128;
+        renderText("ENEMIES\nKILLED", x, y, window, {255,0,0,255}, arcadeClassic18);
 
-        x = 64 + wRect.x; y += 96;
+        x = 64 + wRect.x; y += 80;
 
         for (int i = 1; i <= num_highscores; i++)
         {
             if (set_score_name == i) 
             {
-                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36, currChar, {255,0,0,255});
-                x += 425;
+                highscores[i].render(x, y, window, {255,255,255,255}, arcadeClassic24, currChar, {255,0,0,255});
+                x += 500;
                 std::string str = "NEW HIGHSCORE!";
-                renderText(str, x, y, window, {255,0,0,255}, sevenSegment36, Left_aligned);
+                renderText(str, x, y, window, {255,0,0,255}, arcadeClassic24, Left_aligned);
                 x -= 425;
             } 
             else 
             {
-                highscores[i].render(x, y, window, {255,255,255,255}, sevenSegment36);
+                highscores[i].render(x, y, window, {255,255,255,255}, arcadeClassic24);
             }
             y += 64;
         }
@@ -634,7 +639,7 @@ void GameMenu::create_settings_buttons()
     float t = (float)settings.volume / MIX_MAX_VOLUME;
     x = (minX * (1.0f - t)) + (maxX * t);
 
-    rect = {x, 356, SLIDER_WIDTH, SLIDER_HEIGHT};
+    rect = {x, 361, SLIDER_WIDTH, SLIDER_HEIGHT};
     texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/Slider.png")) {
         std::cerr << "Failed to load volume slider" <<'\n';
@@ -673,6 +678,30 @@ void GameMenu::load_assets()
     sevenSegment36 = TTF_OpenFont("../../assets/Fonts/Seven_Segment.ttf", 36);
     if (sevenSegment36 == NULL) {
         std::cerr << "Failed to load seven segment font!" << std::endl;
+    }
+    
+    arcadeClassic48 = TTF_OpenFont("../../assets/Fonts/ARCADECLASSIC.TTF", 48);
+    if (arcadeClassic48 == NULL) {
+        std::cerr << "Failed to load arcade classic font!" << std::endl;
+    }
+
+    arcadeClassic24 = TTF_OpenFont("../../assets/Fonts/ARCADECLASSIC.TTF", 24);
+    if (arcadeClassic24 == NULL) {
+        std::cerr << "Failed to load arcade classic font!" << std::endl;
+    }
+    
+    arcadeClassic36 = TTF_OpenFont("../../assets/Fonts/ARCADECLASSIC.TTF", 36);
+    if (arcadeClassic36 == NULL) {
+        std::cerr << "Failed to load arcade classic font!" << std::endl;
+    }
+    arcadeClassic18 = TTF_OpenFont("../../assets/Fonts/ARCADECLASSIC.TTF", 18);
+    if (arcadeClassic18 == NULL) {
+        std::cerr << "Failed to load arcade classic font!" << std::endl;
+    }
+
+    titleTex = std::make_shared<LTexture>(window);
+    if (!titleTex->loadFromFile("../../assets/Menu/Title.png")) {
+        std::cerr << "Failed to load title text!" << std::endl;
     }
 
 

@@ -209,7 +209,7 @@ void renderText( std::string txt, int x, int y, std::shared_ptr<LWindow> window,
     }
     int X = (orientation == Centred)? x - (rend->getWidth()/2) : x;
     rend->render(X, y);
-    y += rend->getHeight();
+    y += rend->getHeight()+3;
     rend->free();
   }
 }

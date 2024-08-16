@@ -62,14 +62,14 @@ void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
 
             // render the text
             txt = "Trade 2 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
 
             mRect->w = mRect->h = 30;
             stoneTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
 
             txt = " for 1 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
 
             berryTex->render(mRect->x, mRect->y, mRect);
@@ -93,21 +93,15 @@ void Game::render_BuildThrow_commands( SDL_Rect *mRect )
     // if there is only one item, middle OR left click to throw it
     if (hp == 1)
     {
-        LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
-        txt = "/";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-        controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+        LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w+5;
         MMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
 
-        txt = "Throw item (";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        txt = "Throw item   ";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
         txt = std::to_string(damage);
-        controlsTex->loadFromRenderedText(txt, {255,0,0,255});
+        controlsTex->loadFromRenderedText(txt, {255,0,0,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
-        txt = ")";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-        controlsTex->render(mRect->x, mRect->y);
         mRect->x = x; mRect->y += mRect->h;
     }
     // if multiple items are held, middle click to throw all, or left click to throw one
@@ -115,27 +109,21 @@ void Game::render_BuildThrow_commands( SDL_Rect *mRect )
     {
         LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
 
-        txt = "Throw one item (";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        txt = "Throw one item   ";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
         txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed()));
-        controlsTex->loadFromRenderedText(txt, {255,0,0,255});
+        controlsTex->loadFromRenderedText(txt, {255,0,0,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
-        txt = ")";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-        controlsTex->render(mRect->x, mRect->y);
         mRect->x = x; mRect->y += mRect->h;
 
         MMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
-        txt = "Throw all " + std::to_string(hp) + " items (";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        txt = "Throw all " + std::to_string(hp) + " items   ";
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
         txt = std::to_string(ceilToInt(damage));
-        controlsTex->loadFromRenderedText(txt, {255,0,0,255});
+        controlsTex->loadFromRenderedText(txt, {255,0,0,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
-        txt = ")";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-        controlsTex->render(mRect->x, mRect->y);
         mRect->x = x; mRect->y += mRect->h;
     }
 
@@ -169,7 +157,7 @@ void Game::render_BuildThrow_commands( SDL_Rect *mRect )
     if (renderFlag) 
     {
         RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y);
         mRect->x = x; mRect->y += mRect->h;
     }
@@ -199,7 +187,7 @@ bool Game::render_hovering_over_entity_controls( Vector2 mPos, SDL_Rect *mRect )
         // left click to pick up the item
         LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
         txt = "Pick up item";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y);
         mRect->x = x; mRect->y += mRect->h;
         render_crafting_controls(type, mRect, hp);
@@ -211,7 +199,7 @@ bool Game::render_hovering_over_entity_controls( Vector2 mPos, SDL_Rect *mRect )
         // left click to talk
         LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
         txt = "Talk";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y);
         res = true;
     }
@@ -233,21 +221,16 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
             int w = mRect->w, h = mRect->h;
 
             txt = "Craft 2 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
 
             mRect->w = mRect->h = 30;
             plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
 
-            txt = " (1 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            txt = " for 1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
             logTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
-
-            txt = " )";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-            controlsTex->render(mRect->x, mRect->y);
-            mRect->w = w; mRect->h = h;
             break;
         }
 
@@ -260,21 +243,16 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
                 int w = mRect->w, h = mRect->h;
 
                 txt = "Craft 1 ";
-                controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+                controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
                 controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
 
                 mRect->w = mRect->h = 30;
                 closed_doorTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
 
-                txt = " (4 ";
-                controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+                txt = " for 4 ";
+                controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
                 controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
                 plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
-
-                txt = " )";
-                controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-                controlsTex->render(mRect->x, mRect->y);
-                mRect->w = w; mRect->h = h;
             }
             break;
         }
@@ -286,21 +264,16 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
             int w = mRect->w, h = mRect->h;
 
             txt = "Craft 4 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
 
             mRect->w = mRect->h = 30;
             plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
 
-            txt = " (1 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            txt = " for 1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
             closed_doorTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
-
-            txt = " )";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-            controlsTex->render(mRect->x, mRect->y);
-            mRect->w = w; mRect->h = h;
             break;
         }
 
@@ -311,27 +284,22 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
             int w = mRect->w, h = mRect->h;
 
             txt = "Craft 4 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
 
             mRect->w = mRect->h = 30;
             plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
 
-            txt = ", 1 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            txt = " and 1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
             logTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
             
 
-            txt = " (1 ";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            txt = " for 1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
             damTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
-
-            txt = " )";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
-            controlsTex->render(mRect->x, mRect->y);
-            mRect->w = w; mRect->h = h;
             break;
         }
     }
@@ -351,7 +319,7 @@ void Game::render_cell_controls( Vector2 mPos, SDL_Rect *mRect )
     {
         LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
         txt = "Repair";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y);
         mRect->x = x; mRect->y += controlsTex->getHeight();
     }
@@ -362,7 +330,7 @@ void Game::render_cell_controls( Vector2 mPos, SDL_Rect *mRect )
         {
             LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
             txt = "Open door";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y);
             mRect->x = x; mRect->y += controlsTex->getHeight();
         }
@@ -370,7 +338,7 @@ void Game::render_cell_controls( Vector2 mPos, SDL_Rect *mRect )
         {
             LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
             txt = "Close door";
-            controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y);
             mRect->x = x; mRect->y += controlsTex->getHeight();
         }
@@ -380,7 +348,7 @@ void Game::render_cell_controls( Vector2 mPos, SDL_Rect *mRect )
     {
         RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
         txt = "Destroy";
-        controlsTex->loadFromRenderedText(txt, {255,255,255,255});
+        controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y);
     }
 }
@@ -408,7 +376,7 @@ void Game::render_framerate()
     std::string txt = std::to_string(fps) + "FPS"; // get the fps as a string
 
     // get the string as a texture, and render it
-    if (!fpsTex->loadFromRenderedText(txt, {255,255,255,255})) {
+    if (!fpsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24)) {
         std::cerr << "couldn't render FPS!" << std::endl;
         return;
     }

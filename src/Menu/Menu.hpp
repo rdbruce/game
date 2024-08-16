@@ -89,20 +89,22 @@ class GameMenu
         int SLIDER_HEIGHT = 66, SLIDER_WIDTH = 20;
         int CHECKBOX_SIDELENGTH = 64;
         int GAMEOVER_TXT_WIDTH = 384, GAMEOVER_TEX_HEIGHT = 213;
-        int HIGHSCORE_CENTREPOS = 256;
+        int HIGHSCORE_CENTREPOS = 300;
 
 
         std::shared_ptr<LWindow> window;
         SDL_Rect wRect;
 
         std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex, 
-                                  CRT_Tex, CRT_Base, aspectRatio = nullptr;
+                                  CRT_Tex, CRT_Base, aspectRatio = nullptr,
+                                  titleTex;
 
         // the sound made when you click a button
         std::shared_ptr<LAudio> buttonSound = nullptr;
 
         // fonts
-        TTF_Font *sevenSegment48, *sevenSegment24, *sevenSegment36;
+        TTF_Font *sevenSegment48, *sevenSegment24, *sevenSegment36,
+                 *arcadeClassic48, *arcadeClassic24, *arcadeClassic36, *arcadeClassic18;
 
 
         std::string confirmationText = "";

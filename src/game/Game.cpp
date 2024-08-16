@@ -1005,6 +1005,15 @@ void Game::load_fonts()
     if (sevenSegment == NULL) {
         std::cerr << "Failed to load seven segment font!" << std::endl;
     }
+
+    arcadeClassic24 = TTF_OpenFont("../../assets/Fonts/ARCADECLASSIC.TTF", 24);
+    if (arcadeClassic24 == NULL) {
+        std::cerr << "Failed to load arcade classic font!" << std::endl;
+    }
+    arcadeClassic36 = TTF_OpenFont("../../assets/Fonts/ARCADECLASSIC.TTF", 36);
+    if (arcadeClassic36 == NULL) {
+        std::cerr << "Failed to load arcade classic font!" << std::endl;
+    }
 }
 
 void Game::load_animations()

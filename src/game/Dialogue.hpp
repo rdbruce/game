@@ -3,6 +3,8 @@
 #include "../engine/LTexture.hpp"
 #include "../engine/LWindow.hpp"
 
+#include <SDL_ttf.h>
+
 #include <string>
 #include <vector>
 
@@ -66,12 +68,16 @@ class DialogueRender
 
         std::shared_ptr<LTexture> texture0, texture1;
 
+        TTF_Font *font = NULL;
+
         void (DialogueRender::*renderFunc)();
 
     public: 
 
         DialogueRender(std::string txt, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred, void (DialogueRender::*func)() = &DialogueRender::defaultTextRender, std::shared_ptr<LTexture> tex0 = nullptr, std::shared_ptr<LTexture> tex1 = nullptr);
         DialogueRender(std::vector<std::string> strings, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred, void (DialogueRender::*func)() = &DialogueRender::defaultTextRender, std::shared_ptr<LTexture> tex0 = nullptr, std::shared_ptr<LTexture> tex1 = nullptr);
+
+        void set_font(TTF_Font *Font = NULL);
 
         void render();
 

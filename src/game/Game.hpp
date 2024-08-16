@@ -308,7 +308,7 @@ class Game
         std::shared_ptr<LAudio> nightMusic;
 
         // fonts
-        TTF_Font *sevenSegment;
+        TTF_Font *sevenSegment, *arcadeClassic24, *arcadeClassic36;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;

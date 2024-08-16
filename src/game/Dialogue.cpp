@@ -52,7 +52,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -76,7 +76,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-90), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -95,7 +95,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -124,7 +124,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-90), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -143,7 +143,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -167,7 +167,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                         Centred, &DialogueRender::fox_base_case11, 
                         game->logTex, game->plankTex
                     );
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                     break;
                 }
@@ -191,7 +191,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -227,7 +227,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -246,7 +246,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -263,7 +263,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-90), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -285,7 +285,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -306,7 +306,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -332,7 +332,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-60), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -351,7 +351,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -373,7 +373,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -390,7 +390,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-30), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -412,7 +412,7 @@ void GameObject::foxRenderFunc( int camX, int camY, Uint8 alpha )
                     }
 
                     auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x-camX, p.y-60), game->window);
-                    game->dialogueRenders.push(diag);
+                    diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     break;
                 }
 
@@ -466,7 +466,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -492,7 +492,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -518,7 +518,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -544,7 +544,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -563,7 +563,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -585,7 +585,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -609,7 +609,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
                 Centred, &DialogueRender::bear_town_case14,
                 game->stoneTex, game->berryTex
             );
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
             break;
         }
@@ -629,7 +629,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -651,7 +651,7 @@ void GameObject::bearRenderFunc( int camX, int camY, Uint8 alpha )
             }
 
             auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(pos.x - camX, p.y), game->window);
-            game->dialogueRenders.push(diag);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
@@ -701,7 +701,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 60),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break;
             }
@@ -717,7 +717,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -734,7 +734,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -757,7 +757,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 60),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break;
             }
@@ -773,7 +773,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 60),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -796,7 +796,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 60),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break;
             }
@@ -812,7 +812,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -829,7 +829,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -852,7 +852,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 90),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break;
             }
@@ -868,7 +868,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -885,7 +885,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -902,7 +902,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -925,7 +925,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 90),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break;
             }
@@ -941,7 +941,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -958,7 +958,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -975,7 +975,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -998,7 +998,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 60),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break; 
             }
@@ -1014,7 +1014,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1031,7 +1031,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1054,7 +1054,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 60),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break; 
             }
@@ -1070,7 +1070,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1087,7 +1087,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1110,7 +1110,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 120),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break; 
             }
@@ -1126,7 +1126,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 60),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1143,7 +1143,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 60),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1166,7 +1166,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     rend, Vector2Int(pos.x - camX, p.y - 60),
                     game->window
                 );
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
 
                 break; 
             }
@@ -1182,7 +1182,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1199,7 +1199,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1227,7 +1227,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                     game->stoneTex
                 );
 
-                game->dialogueRenders.push(diag);
+                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                 break; 
             }
 
@@ -1242,7 +1242,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             txt, Vector2Int(pos.x - camX, p.y - 30),
                             game->window
                         );
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1263,7 +1263,7 @@ void GameObject::playerRenderFunc( int camX, int camY, Uint8 alpha )
                             game->stoneTex
                         );
 
-                        game->dialogueRenders.push(diag);
+                        diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
                     }
                 }
                 break;
@@ -1469,6 +1469,7 @@ DialogueRender::DialogueRender(std::string txt, Vector2Int pos, std::shared_ptr<
 DialogueRender::DialogueRender(std::vector<std::string> strings, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour, TextOrientation orientation, void (DialogueRender::*func)(), std::shared_ptr<LTexture> tex0, std::shared_ptr<LTexture> tex1)
 : strings(strings), pos(pos), window(window), colour(colour), orientation(orientation), renderFunc(func), texture0(tex0), texture1(tex1) {}
 
+void DialogueRender::set_font( TTF_Font * Font ) { font = Font; };
 
 void DialogueRender::render()
 {
@@ -1477,21 +1478,21 @@ void DialogueRender::render()
 
 void DialogueRender::defaultTextRender()
 {
-    renderText(strings[0], pos.x, pos.y, window);
+    renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
 }
 
 void DialogueRender::bear_town_5_diag()
 {
     if (strings.size() != 3) return;
 
-    renderText(strings[0], pos.x, pos.y, window);
+    renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
 
     std::string txt0 = strings[1], txt1 = strings[2];
     auto tex0 = std::make_unique<LTexture>(window),
          tex1 = std::make_unique<LTexture>(window); 
     
-    tex0->loadFromRenderedText(txt0, colour);
-    tex1->loadFromRenderedText(txt1, colour);
+    tex0->loadFromRenderedText(txt0, colour, font);
+    tex1->loadFromRenderedText(txt1, colour, font);
 
     int w = tex0->getWidth()+tex1->getWidth()+30,
         x = pos.x - (w/2), y = pos.y+30;
@@ -1512,8 +1513,8 @@ void DialogueRender::bear_town_5_2_diag()
     auto tex0 = std::make_unique<LTexture>(window),
          tex1 = std::make_unique<LTexture>(window); 
     
-    tex0->loadFromRenderedText(txt0, colour);
-    tex1->loadFromRenderedText(txt1, colour);
+    tex0->loadFromRenderedText(txt0, colour, font);
+    tex1->loadFromRenderedText(txt1, colour, font);
 
     int w = tex0->getWidth()+tex1->getWidth()+30,
         x = pos.x - (w/2), y = pos.y;
@@ -1535,8 +1536,8 @@ void DialogueRender::bear_town_case14()
     auto tex0 = std::make_unique<LTexture>(window),
          tex1 = std::make_unique<LTexture>(window); 
     
-    tex0->loadFromRenderedText(txt0, colour);
-    tex1->loadFromRenderedText(txt1, colour);
+    tex0->loadFromRenderedText(txt0, colour, font);
+    tex1->loadFromRenderedText(txt1, colour, font);
 
     int w = tex0->getWidth()+tex1->getWidth() + 60,
         x = pos.x - (w/2), y = pos.y;
@@ -1554,16 +1555,16 @@ void DialogueRender::fox_base_case11()
 {
     if (strings.size() != 4) return;
 
-    renderText(strings[0], pos.x, pos.y, window);
+    renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
 
     std::string txt0 = strings[1], txt1 = strings[2], txt2 = strings[3];
     auto tex0 = std::make_unique<LTexture>(window),
          tex1 = std::make_unique<LTexture>(window),
          tex2 = std::make_unique<LTexture>(window);
 
-    tex0->loadFromRenderedText(txt0, colour);
-    tex1->loadFromRenderedText(txt1, colour);
-    tex2->loadFromRenderedText(txt2, colour);
+    tex0->loadFromRenderedText(txt0, colour, font);
+    tex1->loadFromRenderedText(txt1, colour, font);
+    tex2->loadFromRenderedText(txt2, colour, font);
 
     int w = tex0->getWidth()+tex1->getWidth()+tex2->getWidth()+60,
         x = pos.x - (w/2), y = pos.y + 30;
