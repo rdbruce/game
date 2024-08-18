@@ -30,7 +30,7 @@ class Animations
         void setVector( FacingDirection dir = Default, float newIdx = -1.0f );
 
         // gets the current texture from the specified texture
-        std::shared_ptr<LTexture> getTexture( float deltaTime, FacingDirection vec = Default, float newIdx = -1.0f );
+        std::shared_ptr<LTexture> getTexture( float deltaTime, FacingDirection vec = Default, float newIdx = -1.0f, bool updateIdx = true );
 
 
     private:

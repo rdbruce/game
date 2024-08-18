@@ -1,8 +1,8 @@
 #include "Button.hpp"
 #include "Menu.hpp"
 
-Button::Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)(), std::shared_ptr<LTexture> AltTex )
-: menu(Menu), rect(Rect), tex(Tex), func(Func), altTex(AltTex) {}
+Button::Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)(), std::shared_ptr<LAudio> PressSound, std::shared_ptr<LTexture> AltTex )
+: menu(Menu), rect(Rect), tex(Tex), func(Func), altTex(AltTex), pressSound(PressSound) {}
 
 bool Button::isPressed( int x, int y )
 {
@@ -25,6 +25,10 @@ void Button::set_pos( int x, int y ) {
 
 void Button::execute_function() {
     (this->*func)();
+}
+
+void Button::play_sound() {
+    if (pressSound != nullptr) pressSound->play();
 }
 
 bool Button::is_toggled() { return isToggled; }

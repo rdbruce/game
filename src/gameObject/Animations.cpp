@@ -62,7 +62,7 @@ void Animations::setVector( FacingDirection dir, float newIdx )
     if (newIdx >= 0.0f) currIdx = Math::clampf(0.0f, (float)*currSize, newIdx);
 }
 
-std::shared_ptr<LTexture> Animations::getTexture( float deltaTime, FacingDirection vec, float newIdx )
+std::shared_ptr<LTexture> Animations::getTexture( float deltaTime, FacingDirection vec, float newIdx, bool updateIdx )
 {
     setVector(vec, newIdx);
 
@@ -70,9 +70,11 @@ std::shared_ptr<LTexture> Animations::getTexture( float deltaTime, FacingDirecti
     auto res = (*currVec)[(int)currIdx];
 
     // increment the timer
-    deltaTime /= *currInter;
-    currIdx += deltaTime;
-    if ((int)currIdx >= *currSize) currIdx = 0.0f;
+    if (updateIdx) {
+        deltaTime /= *currInter;
+        currIdx += deltaTime;
+        if ((int)currIdx >= *currSize) currIdx = 0.0f;
+    }
 
     return res;
 }

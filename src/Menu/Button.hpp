@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../engine/LTexture.hpp"
+#include "../engine/LAudio.hpp"
 #include <SDL.h>
 
 // forward declaration
@@ -21,6 +22,9 @@ class Button
         // reference to the menu it's a part of
         GameMenu *menu = nullptr;
 
+        // the sound that gets played when the button is pressed
+        std::shared_ptr<LAudio> pressSound = nullptr;
+
         // what happens when the button is pressed
         void (Button::*func)();
 
@@ -29,7 +33,7 @@ class Button
         
     public:
 
-        Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)() = &Button::doNothing, std::shared_ptr<LTexture> AltTex = nullptr );
+        Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)() = &Button::doNothing, std::shared_ptr<LAudio> PressSound = nullptr, std::shared_ptr<LTexture> AltTex = nullptr );
 
         // updates execute func
         void set_func( void (Button::*newFunc)() );
@@ -45,6 +49,9 @@ class Button
 
         // does something when the button is pressed
         void execute_function();
+
+        // plays pressSound
+        void play_sound();
 
         // renders the button
         void render( int dx, int dy );

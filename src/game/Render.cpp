@@ -76,6 +76,28 @@ void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
             *flag = false;
             return;
         }
+
+        else if (type == Rabbit_NPC && currLevel->held->get_type() == Berry_Item)
+        {
+            // render the left mouse icon
+            LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            // render the text
+            txt = "Trade 1 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+            mRect->w = mRect->h = 30;
+            berryTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
+
+            txt = " for 2 ";
+            controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
+            controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
+
+            logTex->render(mRect->x, mRect->y, mRect);
+            *flag = false;
+            return;
+        }
     }
     *flag = true;
 }
@@ -445,7 +467,7 @@ void Game::render_clock()
         std::to_string(minutes) + ':' + std::to_string(seconds);
 
     // create a texture from the time
-    if (!clockTex->loadFromRenderedText(txt, {255,0,0,255}, sevenSegment)) {
+    if (!clockTex->loadFromRenderedText(txt, {255,0,0,255}, arcadeClassic24)) {
         std::cerr << "Failed to create clock" << std::endl;
     }
     // render the clock

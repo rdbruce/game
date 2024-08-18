@@ -53,6 +53,12 @@ enum Dialogue
     bear_town_5_1,
     bear_town_5_2,
     BEAR_DIAG_MAX,
+
+    RABBIT_DIAG_MIN,
+    rabbit_town_1,
+    rabbit_town_1_1,
+    rabbit_town_1_2,
+    RABBIT_DIAG_MAX
 };
 
 
@@ -87,4 +93,6 @@ class DialogueRender
         void bear_town_5_2_diag();
         void bear_town_case14();
         void fox_base_case11();
+        void rabbit_town_case5();
+        void rabbit_town_case8();
 };

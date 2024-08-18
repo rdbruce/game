@@ -32,6 +32,10 @@ void Game::new_game() {
 
 void Game::clear_input() { inputKeys = 0; }
 
+void Game::set_max_framerate( int maxFPS ) {
+    MIN_DELTATIME = (maxFPS <= 0)? -1.0f : 1.0f / (float)maxFPS;
+}
+
 // handle events like player input
 void Game::handle_events( SDL_Event& e )
 {
@@ -573,28 +577,59 @@ void Game::leftClickFunc()
 
             // if an item IS held, throw it :)
             } else if (currLevel->held != nullptr) {
-                if (currLevel->held->get_type() == Stone_Item && currLevel->held->get_hp() >= 2) 
+                if (!tradeItem(currLevel->held->get_type(), currLevel->held->get_hp(), mPos)) 
                 {
-                    int n = currLevel->gameObjects.size();
-                    for (int i = 0; i < n; i++) {
-                        auto obj = currLevel->gameObjects[i];
-
-                        if (obj->get_type() == Bear_NPC) {
-                            if (isInRegion(mPos, obj->get_hitbox())) {
-                                currLevel->held->set_HP(currLevel->held->get_hp()-2);
-                                spawnItemStack(Berry_Item, obj->get_pos(), 1);
-                                return;
-                            }
-                        }
-                    }
+                    throwSingleItem();
                 }
-                throwSingleItem();
             }
             break;
 
     }
 }
 
+bool Game::tradeItem(int heldType, int heldHP, Vector2 mPos)
+{
+    int targetType, requiredHP, spawnedType, spawnedHP;
+
+    switch (heldType)
+    {
+        case Stone_Item:
+            targetType = Bear_NPC;
+            requiredHP = 2;
+            spawnedType = Berry_Item;
+            spawnedHP = 1;
+            break;
+        case Berry_Item:
+            targetType = Rabbit_NPC;
+            requiredHP = 1;
+            spawnedType = Log_Item;
+            spawnedHP = 2;
+            break;
+
+        default: return false; // not holding a tradable item
+    }
+
+    if (heldHP < requiredHP) return false; // don't have enough of the item
+
+    int n = currLevel->gameObjects.size();
+    for (int i = 0; i < n; i++)
+    {
+        auto obj = currLevel->gameObjects[i];
+
+        if (obj->get_type() == targetType) {
+            if (isInRegion(mPos, obj->get_hitbox())) {
+                // clicked on the correct entity for trading
+                // remove the items from the players inventory
+                currLevel->held->set_HP(currLevel->held->get_hp()-requiredHP);
+                // spawn the item that was traded for
+                spawnItemStack(spawnedType, obj->get_pos(), spawnedHP);
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 
 void Game::rightClickFunc()
 {
@@ -706,20 +741,32 @@ void Game::throwSingleItem()
 
 void Game::spawnNPCs() 
 {
+    Uint8 flags = 0b00000000; // ...... fox, rabbit
     // spawn NPCs in the town level
-    int n = Town.gameObjects.size(), i;
-    for (i = 0; i < n; i++) {
-        if (Town.gameObjects[i]->get_type() == Fox_NPC) break;
+
+    int n = Town.gameObjects.size();
+    for (int i = 0; i < n && flags != 3; i++) 
+    {
+        int type = Town.gameObjects[i]->get_type();
+        if (type == Fox_NPC) flags |= 2;
+        else if (type == Rabbit_NPC) flags |= 1;
     }
-    if (i == n) {
+
+    if (!(flags & 2)) { // no fox, spawn fox
         Vector2 pos(913.0f, -50.0f);
         Instantiate(pos, Fox_NPC, 1, &Town);
     }
+    if (!(flags & 1)) { // no rabbit, spawn rabbit
+        Vector2 pos(-50.0f, 850.0f);
+        Instantiate(pos, Rabbit_NPC, 1, &Town);
+    }
+
 
     // spawn NPCS in the base level
     if (scores.mostNightsSurvived == 0) 
     {
         n = Base.gameObjects.size();
+        int i;
         for (i = 0; i < n; i++) {
             if (Base.gameObjects[i]->get_type() == Fox_NPC) break;
         }
@@ -954,6 +1001,10 @@ void Game::load_textures()
     dashed_circleTex = std::make_shared<LTexture>(window);
     if (!dashed_circleTex->loadFromFile("../../assets/DashedCircle.png")) {
         std::cerr << "Failed to load texture for explosion indicator!" << std::endl;
+    }
+    rabbitTex = std::make_shared<LTexture>(window);
+    if (!rabbitTex->loadFromFile("../../assets/Entities/Rabbit.png")) {
+        std::cerr << "Failed to load texture for rabbit!" << std::endl;
     }
 }
 

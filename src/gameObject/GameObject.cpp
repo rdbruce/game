@@ -389,6 +389,30 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             hasCollision = false;
             break;
         }
+
+        case Rabbit_NPC: {
+            // assign the texture
+            tex = game->rabbitTex;
+            renderingFunc = &GameObject::rabbitRenderFunc;
+
+            // set up the hitbox
+            Vector2Int size(sideLen-2, sideLen-2);
+            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+            hitbox = { p.x, p.y, size.x, size.y };
+            radius = Max(size.x/2, size.y/2);
+
+            // assign behaviour functions
+            velocityFunc = &GameObject::foxVelocityFunc;
+            positionFunc = &GameObject::rabbitPositionFunc;
+            collisionFunc = &GameObject::defaultCollisionFunction;
+
+            // other attributes
+            moveSpeed = 2.66666667f * sideLen;
+            max_hp = 255;
+            hp = Health;
+            hasCollision = false;
+            break;
+        }
     }
 }
 GameObject::GameObject() : type(Log_Item), idx(-1) {}

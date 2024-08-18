@@ -119,7 +119,7 @@ void GameMenu::render_confirmation() {
         std::string txt = "Are you sure?\n" + confirmationText;
         int x = (wRect.w/2) + wRect.x, y = 65 + wRect.y;
         
-        renderText(txt, x, y, window);
+        renderText(txt, x, y, window, {255,255,255,255}, arcadeClassic24);
     }
 }
 
@@ -303,7 +303,7 @@ void GameMenu::leftClickFunc()
             if (b->isPressed( x, y )) {
                 // when pressed, execute the button's function
                 b->execute_function();
-                buttonSound->play();
+                b->play_sound();
             }
         }
     }
@@ -399,6 +399,7 @@ void GameMenu::load_data()
         iss >> mayContinue;
         file.close();
     }
+
     // commit loaded settings
     Mix_Volume(-1, settings.volume);
 
@@ -406,6 +407,8 @@ void GameMenu::load_data()
         fullscreen = window->toggleFullscreen();
         sizeChange++;
     }
+
+    game->set_max_framerate(settings.max_framrate);
 }
 
 void GameMenu::save_highscores()
@@ -488,7 +491,7 @@ void GameMenu::create_mainMenu_buttons()
     
     int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
-    auto button = std::make_shared<Button>(this, rect, greyContinue, &Button::continue_game, texture);
+    auto button = std::make_shared<Button>(this, rect, greyContinue, &Button::continue_game, buttonSound, texture);
     menuButtons.push_back(button);
     
 
@@ -497,7 +500,7 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load new game button texture!" << std::endl;
     }
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation);
+    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation, buttonSound);
     menuButtons.push_back(button);
 
     texture = std::make_shared<LTexture>(window);
@@ -505,7 +508,7 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load settings button texture!" << std::endl;
     }
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_settings);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_settings, buttonSound);
     menuButtons.push_back(button);
 
     texture = std::make_shared<LTexture>(window);
@@ -513,7 +516,7 @@ void GameMenu::create_mainMenu_buttons()
         std::cerr << "Failed to load texture for exit button" << std::endl;
     }
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop);
+    button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop, buttonSound);
     menuButtons.push_back(button);
 
 
@@ -522,11 +525,11 @@ void GameMenu::create_mainMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
         std::cerr << "failed to load reset button texture!" << std::endl;
     }
-    button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation);
+    button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation, buttonSound);
     menuButtons.push_back(button);
 
     rect = {(wRect.w-BUTTON_WIDTH)/2, wRect.h/2, BUTTON_WIDTH, BUTTON_HEIGHT};
-    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game);
+    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game, buttonSound);
     gameOverButtons.push_back(button);
 }
 
@@ -539,7 +542,7 @@ void GameMenu::create_pauseMenu_buttons()
         std::cerr << "Failed to load resume button texture!" << std::endl;
     }
 
-    auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu);
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu, buttonSound);
     pauseButtons.push_back(button);
 
     auto MenuTexture = std::make_shared<LTexture>(window);
@@ -547,7 +550,7 @@ void GameMenu::create_pauseMenu_buttons()
         std::cerr << "failed to load main menu button texture!" << std::endl;
     }
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation);
+    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation, buttonSound);
     pauseButtons.push_back(button);
 
 
@@ -556,7 +559,7 @@ void GameMenu::create_pauseMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/YesButton.png")) {
         std::cerr << "Failed to load texture for yes button!" << std::endl;
     }
-    button = std::make_shared<Button>(this, rect, texture);
+    button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, buttonSound);
     confirmationButtons.push_back(button);
 
     rect.y += 175;
@@ -564,11 +567,11 @@ void GameMenu::create_pauseMenu_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/NoButton.png")) {
         std::cerr << "Failed to load texture for no button!" << std::endl;
     }
-    button = std::make_shared<Button>(this, rect, texture);
+    button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, buttonSound);
     confirmationButtons.push_back(button);
 
     rect = {(wRect.w-BUTTON_WIDTH)/2, (wRect.h/2)+175, BUTTON_WIDTH, BUTTON_HEIGHT};
-    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover);
+    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover, buttonSound);
     gameOverButtons.push_back(button);
 }
 
@@ -578,18 +581,10 @@ void GameMenu::create_settings_buttons()
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
 
     auto texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ControlsButton.png")) {
-        std::cerr << "Failed to load controls button" <<'\n';
-    }
-    auto button = std::make_shared<Button>(this, rect, texture);
-    settingsButtons.push_back(button);
-    rect.y += 175;
-
-    texture = std::make_shared<LTexture>(window);
     if (!texture->loadFromFile("../../assets/Menu/Buttons/RevertButton.png")) {
         std::cerr << "Failed to load revert settings button" <<'\n';
     }
-    button = std::make_shared<Button>(this, rect, texture, &Button::revert_settings);
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::revert_settings, buttonSound);
     settingsButtons.push_back(button);
     rect.y += 175;
 
@@ -597,7 +592,7 @@ void GameMenu::create_settings_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
         std::cerr << "Failed to load reset settings button" <<'\n';
     }
-    button = std::make_shared<Button>(this, rect, texture, &Button::reset_settings);
+    button = std::make_shared<Button>(this, rect, texture, &Button::reset_settings, buttonSound);
     settingsButtons.push_back(button);
     rect.y += 175;
 
@@ -605,7 +600,7 @@ void GameMenu::create_settings_buttons()
     if (!texture->loadFromFile("../../assets/Menu/Buttons/ReturnButton.png")) {
         std::cerr << "Failed to load return button" <<'\n';
     }
-    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu, buttonSound);
     settingsButtons.push_back(button);
 
 
@@ -620,17 +615,17 @@ void GameMenu::create_settings_buttons()
     if (!selected->loadFromFile("../../assets/Menu/Buttons/SelectedCheckbox.png")) {
         std::cerr << "Failed to load selected checkbox!" << std::endl;
     }
-    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_CRT, selected);
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_CRT, buttonSound, selected);
     settingsButtons.push_back(button);
     if (settings.flags&CRT_FILTER) button->swap_textures();
 
     rect.y += CHECKBOX_SIDELENGTH + 16;
-    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_fullscreen, selected);
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_fullscreen, buttonSound, selected);
     settingsButtons.push_back(button);
     if (settings.flags&FULLSCREEN) button->swap_textures();
     
     rect.y += CHECKBOX_SIDELENGTH + 16;
-    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_FPS, selected);
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_FPS, buttonSound, selected);
     settingsButtons.push_back(button);
     if (settings.flags&SHOW_FPS) button->swap_textures();
     

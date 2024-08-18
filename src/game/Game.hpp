@@ -45,7 +45,9 @@ class Game
         // handle events like player input
         void handle_events( SDL_Event& e );
 
+        // sets the inputKeys member to zero
         void clear_input();
+        void set_max_framerate( int maxFPS );
 
         // updates all the game objects
         void update_gameobjects();
@@ -102,6 +104,8 @@ class Game
         std::shared_ptr<GameObject> craftTwoItems( std::shared_ptr<GameObject> item1, std::shared_ptr<GameObject> item2 );
         // when right clicking an item stack, it may be crafted into another type of item
         std::shared_ptr<GameObject> craftItem( std::shared_ptr<GameObject> item );
+        // if the player is holding a tradable item, see if they clicked on an entity that trades for it
+        bool tradeItem( int heldType, int heldHP, Vector2 mPos );
 
 
         // moves the player into the specified level, and makes said level the active scene
@@ -294,7 +298,7 @@ class Game
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
                                     berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
                                     stoneTex, LMBTex, MMBTex, RMBTex, BearTex, BirdTex, BombTex,
-                                    TargetTex, dashed_circleTex;
+                                    TargetTex, dashed_circleTex, rabbitTex;
 
         // animation containers
         std::shared_ptr<Animations> playerAnimations;

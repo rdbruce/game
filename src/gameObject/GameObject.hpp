@@ -56,6 +56,7 @@ enum EntityType
     NPC_MIN,
     Fox_NPC,
     Bear_NPC,
+    Rabbit_NPC,
     NPC_MAX
 };
 
@@ -238,6 +239,7 @@ class GameObject
 
         // attempt to move back to a specified point
         void foxPositionFunc();
+        void rabbitPositionFunc();
 
         // adds velocity to current position
         void defaultPositionFunc();
@@ -331,10 +333,11 @@ class GameObject
 
         void foxRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void bearRenderFunc( int camX, int camY, Uint8 alpha = 255 );
+        void rabbitRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void playerRenderFunc( int camx, int camY, Uint8 alpha = 255 );
 
         // animation
-        std::shared_ptr<LTexture> animatePlayer();
+        std::shared_ptr<LTexture> animatePlayer(bool updateIdx);
 };
 
 #endif

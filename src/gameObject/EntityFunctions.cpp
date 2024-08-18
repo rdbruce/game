@@ -545,6 +545,23 @@ void GameObject::beginRetreat()
     positionFunc = &GameObject::defaultPositionFunc;
 }
 
+void GameObject::rabbitPositionFunc()
+{
+    // attempt to move back to a point
+    Vector2 target = Vector2(540.0f, 840.0f);
+    Vector2 dist = target - pos;
+    Vector2 vel = Vector2_Zero;
+
+    if (dist.length() > 1.0f * game->currLevel->cell_sideLen) {
+        dist.normalise();
+        vel = dist * moveSpeed;
+    }
+    float dt = get_deltaTime();
+
+    Vector2 p = pos + (velocity+vel) * dt;
+    set_pos(p);
+}
+
 
 void GameObject::defaultRenderFunc( int camX, int camY, Uint8 alpha )
 {
@@ -643,7 +660,7 @@ void GameObject::itemRenderFunc( int camX, int camY, Uint8 alpha )
     }
 }
 
-std::shared_ptr<LTexture> GameObject::animatePlayer()
+std::shared_ptr<LTexture> GameObject::animatePlayer(bool updateIdx)
 {
 
     float s = moveSpeed;
@@ -679,5 +696,5 @@ std::shared_ptr<LTexture> GameObject::animatePlayer()
         else look = Right;
     }
 
-    return game->playerAnimations->getTexture(get_deltaTime(), look, idx);
+    return game->playerAnimations->getTexture(get_deltaTime(), look, idx, updateIdx);
 }
