@@ -50,6 +50,8 @@ class GameMenu
         void render_settings();
         // calls the games render framerate function
         void render_FPS();
+        // renders a thanks to dylan for making music :3
+        void render_credits();
 
 
         // handle user input, returns true when quit is requested
@@ -121,8 +123,8 @@ class GameMenu
         bool fullscreen = false;
         bool mayContinue = false;
 
-        // whether or not left click is currently being held down
-        bool isOnVolumeSlider = false;
+        // which volume slider is currently being interacted with
+        std::shared_ptr<Button> activeSlider = nullptr;
 
 
         State state = main_menu;

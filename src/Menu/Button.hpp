@@ -102,6 +102,8 @@ class Button
 
         // follow the mouse, adjust volume
         void volume_slider();
+        // follow the mouse, adjust music volume
+        void music_volume_slider();
 
         // swaps texture with alttex
         void swap_textures();

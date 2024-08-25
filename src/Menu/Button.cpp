@@ -51,6 +51,25 @@ void Button::volume_slider()
     int newVolume = MIX_MAX_VOLUME * t;
     menu->settings.volume = newVolume;
     Mix_Volume(-1, newVolume);
+    Mix_Volume(0, menu->settings.musicVolume * ((float)newVolume / MIX_MAX_VOLUME));
+}
+
+void Button::music_volume_slider()
+{
+    int x, y;
+    menu->get_mousePos(&x, &y);
+    x -= rect.w/2;
+
+    int minX = 72, maxX = 504;
+
+    x = Clamp(minX, maxX, x);
+    rect.x = x;
+
+    // find and set the new global volume
+    float t = float(x - minX) / (maxX - minX);
+    int newVolume = MIX_MAX_VOLUME * t;
+    menu->settings.musicVolume = newVolume;
+    Mix_Volume(0, newVolume * ((float)menu->settings.volume / MIX_MAX_VOLUME));
 }
 
 void Button::enter_game()
@@ -135,12 +154,14 @@ void Button::exit_decline()
 
 void Button::go_to_mainMenu()
 {
+    if (!(menu->state == main_menu || menu->state == settings_menu)) {
+        menu->game->play_current(true);
+    }
     menu->state = main_menu;
     menu->isActive = true;
     menu->currButtons = &menu->menuButtons;
     menu->confirmationText = "";
     menu->highscores[0] = menu->game->scores;
-    menu->game->stop_music();
 }
 
 void Button::go_to_main_menu_from_gameover()
@@ -204,15 +225,25 @@ void Button::reset_settings()
 void Button::apply_settings()
 {
     Mix_Volume(-1, menu->settings.volume);
+    Mix_Volume(0, menu->settings.musicVolume * ((float)menu->settings.volume / MIX_MAX_VOLUME));
 
     int idx = menu->settingsButtons.size() - 1;
     auto slider = menu->settingsButtons[idx];
 
     int minX = 72, maxX = 504;
-    float t = (float)menu->settings.volume / MIX_MAX_VOLUME;
+    float t = (float)menu->settings.musicVolume / MIX_MAX_VOLUME;
     int x = (minX * (1.0f - t)) + (maxX * t);
-
     int X, Y;
+
+    slider->get_pos(&X, &Y);
+    slider->set_pos(x, Y);
+
+    idx -= 1;
+    slider = menu->settingsButtons[idx];
+
+    t = (float)menu->settings.volume / MIX_MAX_VOLUME;
+    x = (minX * (1.0f - t)) + (maxX * t);
+
     slider->get_pos(&X, &Y);
     slider->set_pos(x, Y);
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-    project(game_project)
+    project(ADamGoodGame)
 
     find_package(SDL2 REQUIRED CONFIG)
     find_package(SDL2_image REQUIRED CONFIG)

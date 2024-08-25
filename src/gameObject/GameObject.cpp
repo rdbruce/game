@@ -443,9 +443,14 @@ void GameObject::update()
     // destroy itself if hp reaches 0
     if (hp <= 0) {
         // game over when the player dies, otherwise remove the entity
-        if (type == Player) {
+        if (type == Player) 
+        {
+            game->currSong = game->deathMusic;
+            game->play_current();
             game->gameOver = true;
-        } else {
+        } 
+        else 
+        {
             if (is_enemy() && type != Bird) {
                 game->scores.mostEnemiesKilled++;
                 game->scores.calculate_score();

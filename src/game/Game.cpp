@@ -19,6 +19,9 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 
     // camera dimensions should be the same as window size
     camera = { 0, 0, window->getWidth(), window->getHeight() };
+
+    currSong = menuMusic;
+    play_current();
 }
 
 float Game::get_time() { return g_time; }
@@ -475,16 +478,24 @@ void Game::dayNightCycle()
             mayGatherStone = true;
             // spawn npcs
             spawnNPCs();
+
+            currSong = dayMusic;
         }
         else
         {
             currSong = nightMusic;
-            nightMusic->play(0);
         }
+        play_current();
     }
 
     // update time
     g_time += deltaTime;
+}
+
+void Game::play_current( bool enteringMenu )
+{
+    if (enteringMenu) currSong = menuMusic;
+    currSong->play(0, -1);
 }
 
 void Game::stop_music()
@@ -1045,8 +1056,20 @@ void Game::load_audio()
     }
 
     nightMusic = std::make_shared<LAudio>();
-    if (!nightMusic->loadFromFile("../../assets/Audio/Music/NightMusic.wav")) {
-        std::cerr << "failed to load NightMusic.wav!" << std::endl;
+    if (!nightMusic->loadFromFile("../../assets/Audio/Music/digiworld demigirl.wav")) {
+        std::cerr << "failed to load digiworld demigirl.wav!" << std::endl;
+    }
+    dayMusic = std::make_shared<LAudio>();
+    if (!dayMusic->loadFromFile("../../assets/Audio/Music/Arp 9.wav")) {
+        std::cerr << "Failed to load Arp 9.wav!" << std::endl;
+    }
+    menuMusic = std::make_shared<LAudio>();
+    if (!menuMusic->loadFromFile("../../assets/Audio/Music/acidruinedyourlifecore.wav")) {
+        std::cerr << "Failed to load acidruinedyourlifecore.wav!" << std::endl;
+    }
+    deathMusic = std::make_shared<LAudio>();
+    if (!deathMusic->loadFromFile("../../assets/Audio/Music/internetboy.wav")) {
+        std::cerr << "Failed to load internetboy.wav!" << std::endl;
     }
 }
 

@@ -27,7 +27,7 @@
         {
             "label": "Open game",
             "type": "shell",
-            "command": "./game_project.exe",
+            "command": "./ADamGoodGame.exe",
             "options": {
                 "cwd": "${workspaceFolder}/build/Release"
             },

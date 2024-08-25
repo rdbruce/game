@@ -112,7 +112,7 @@ bool Settings::loadFromFile( std::string filename )
         std::string line;
         std::getline(file, line);
         std::istringstream iss(line);
-        iss >>std::dec>> volume >> flags >> max_framrate;
+        iss >>std::dec>> volume >> flags >> max_framrate >> musicVolume;
         file.close();
         return true;
     }
@@ -123,7 +123,7 @@ void Settings::loadFromFile( std::ifstream *file )
     std::string line;
     std::getline(*file, line);
     std::istringstream iss(line);
-    iss >>std::dec>> volume >> flags >> max_framrate;
+    iss >>std::dec>> volume >> flags >> max_framrate >> musicVolume;
 }
 
 void Settings::Save( std::string filename )
@@ -136,19 +136,19 @@ void Settings::Save( std::string filename )
     }
     else 
     {
-        file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate <<'\n';
+        file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate <<'\t'<< musicVolume <<'\n';
         file.close();
     }
 }
 
 void Settings::Save( std::fstream *file )
 {
-    *file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate <<'\n';
+    *file <<std::dec<< volume <<'\t'<< flags <<'\t'<< max_framrate <<'\t'<< musicVolume <<'\n';
 } 
 
 void Settings::reset()
 {
-    volume = MIX_MAX_VOLUME;
+    musicVolume = volume = MIX_MAX_VOLUME;
     // leave fullscreen unaltered
     flags = 10|(flags&FULLSCREEN);
     max_framrate = -1;

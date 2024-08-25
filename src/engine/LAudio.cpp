@@ -40,7 +40,7 @@ bool LAudio::loadFromFile(std::string path)
     return chunk != NULL;
 }
 
-void LAudio::play( int Channel )
+void LAudio::play( int Channel, int loops )
 {
     if (Channel == -1) 
     {
@@ -57,7 +57,7 @@ void LAudio::play( int Channel )
         channel = Channel;
     }
 
-    Mix_PlayChannel(channel, chunk, 0);
+    Mix_PlayChannel(channel, chunk, loops);
 }
 
 void LAudio::stop()

@@ -35,7 +35,7 @@ int main(
 )
 {
   // Initialize SDL
-  auto gHolder = std::make_shared<LWindow>();
+  auto gHolder = std::make_shared<LWindow>(1024, 1024, "A Dam Good Game");
 
   Game game(gHolder);
   GameMenu menu(gHolder, &game);
@@ -108,6 +108,7 @@ int main(
         menu.render_settings();
         menu.render_buttons();
         menu.render_confirmation();
+        menu.render_credits();
       }
       menu.render_FPS();
       menu.render_CRT();

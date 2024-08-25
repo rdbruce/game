@@ -153,6 +153,8 @@ class Game
 
         // stops music from playing
         void stop_music();
+        // plays the current song
+        void play_current( bool enteringMenu = false );
 
 
         // tracks the player's score
@@ -308,8 +310,8 @@ class Game
                                 birdSpawn;
 
         // music
+        std::shared_ptr<LAudio> nightMusic, dayMusic, deathMusic, menuMusic;
         std::shared_ptr<LAudio> currSong = nullptr;
-        std::shared_ptr<LAudio> nightMusic;
 
         // fonts
         TTF_Font *sevenSegment, *arcadeClassic24, *arcadeClassic36;

@@ -23,7 +23,7 @@ class LAudio
         void free();
 
         // plays the audio
-        void play( int Channel = -1 );
+        void play( int Channel = -1, int loops = 0 );
 
         // halts the audio
         void stop();

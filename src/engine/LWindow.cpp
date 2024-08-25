@@ -8,7 +8,7 @@
 
 #include "LWindow.hpp"
 
-LWindow::LWindow()
+LWindow::LWindow(int width, int height, std::string name)
 {
   // Initialize non-existant window
   gWindow = NULL;
@@ -16,8 +16,9 @@ LWindow::LWindow()
   wKeyboardFocus = false;
   wFullScreen = false;
   wMinimized = false;
-  wWidth = 1024;
-  wHeight = 1024;
+  wWidth = width;
+  wHeight = height;
+  windowName = name;
 
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0)
@@ -40,7 +41,7 @@ LWindow::LWindow()
   }
 
   // Create window
-  gWindow = SDL_CreateWindow("final_pendulum", SDL_WINDOWPOS_UNDEFINED,
+  gWindow = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED, wWidth, wHeight,
                              SDL_WINDOW_SHOWN);
   if (gWindow == NULL)
@@ -81,7 +82,7 @@ LWindow::LWindow()
     exit(0);
   }
 
-  // Open the font
+  // Open the default font
   gFont = TTF_OpenFont("../../assets/Fonts/lazy.ttf", 36);
   if (gFont == NULL)
   {
@@ -95,9 +96,6 @@ void LWindow::handleEvent(SDL_Event &e)
   // Window event occured
   if (e.type == SDL_WINDOWEVENT)
   {
-    // Caption update flag
-    bool updateCaption = false;
-
     switch (e.window.event)
     {
     // Get new dimensions and repaint on window size change
@@ -121,25 +119,21 @@ void LWindow::handleEvent(SDL_Event &e)
     // Mouse entered window
     case SDL_WINDOWEVENT_ENTER:
       wMouseFocus = true;
-      updateCaption = true;
       break;
 
     // Mouse left window
     case SDL_WINDOWEVENT_LEAVE:
       wMouseFocus = false;
-      updateCaption = true;
       break;
 
     // Window has keyboard focus
     case SDL_WINDOWEVENT_FOCUS_GAINED:
       wKeyboardFocus = true;
-      updateCaption = true;
       break;
 
     // Window lost keyboard focus
     case SDL_WINDOWEVENT_FOCUS_LOST:
       wKeyboardFocus = false;
-      updateCaption = true;
       break;
 
     // Window minimized
@@ -156,14 +150,6 @@ void LWindow::handleEvent(SDL_Event &e)
     case SDL_WINDOWEVENT_RESTORED:
       wMinimized = false;
       break;
-    }
-
-    // Update window caption with new data
-    if (updateCaption)
-    {
-      std::stringstream caption;
-      caption << "SDL Tutorial - MouseFocus:" << ((wMouseFocus) ? "On" : "Off") << " KeyboardFocus:" << ((wKeyboardFocus) ? "On" : "Off");
-      SDL_SetWindowTitle(gWindow, caption.str().c_str());
     }
   }
 }

@@ -49,6 +49,7 @@ struct Settings
     void reset();
 
     int volume = MIX_MAX_VOLUME;
+    int musicVolume = MIX_MAX_VOLUME;
     /* 0 - 0 - 0 - 0 - music - mute while unfocused - CRT filter - display FPS */
     int flags = 10;
 

@@ -60,6 +60,11 @@ void GameMenu::render_settings()
         rect.w = 432;
         grey->render(x + 16, y, &rect);
 
+        y += 48;
+        renderText("Music volume", x, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
+        y += 90;
+        grey->render(x + 16, y, &rect);
+
         y += 96; rect.w = 464;
         renderText("Graphics", x, y, window, {255,255,255,255}, arcadeClassic36, Left_aligned);
         y += 40;
@@ -76,6 +81,17 @@ void GameMenu::render_settings()
 
         white->free();
         grey->free();
+    }
+}
+
+void GameMenu::render_credits()
+{
+    if (state == main_menu && confirmationText == "")
+    {
+        std::string txt = "With music by wiredbeyondbelief!";
+        int x = wRect.w/2 + wRect.x, y = wRect.h - 64;
+
+        renderText(txt, x, y, window, {255,255,255,255}, arcadeClassic24);
     }
 }
 
@@ -199,7 +215,7 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
                     settings.flags &= ~FULLSCREEN;
                     settings.flags |= fullscreen << 4;
 
-                    int idx = settingsButtons.size() - 3;
+                    int idx = settingsButtons.size() - 4;
                     auto checkbox = settingsButtons[idx];
                     if (fullscreen != checkbox->is_toggled()) checkbox->swap_textures();
 
@@ -212,16 +228,15 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
             break;
 
         case SDL_MOUSEBUTTONUP:
-            if (e.button.button == SDL_BUTTON_LEFT) isOnVolumeSlider = false;
+            if (e.button.button == SDL_BUTTON_LEFT) activeSlider = nullptr;
             break;
         
         case SDL_MOUSEBUTTONDOWN:
             if (e.button.button == SDL_BUTTON_LEFT) leftClickFunc();
         
         default:
-            if (isOnVolumeSlider && state == settings_menu) {
-                int idx = settingsButtons.size()-1;
-                settingsButtons[idx]->execute_function();
+            if (activeSlider != nullptr && state == settings_menu) {
+                activeSlider->execute_function();
             }
             break;
     }
@@ -294,7 +309,8 @@ void GameMenu::leftClickFunc()
         if (state == settings_menu)
         {
             int idx = settingsButtons.size()-1;
-            if (settingsButtons[idx]->isPressed(x, y)) isOnVolumeSlider = true;
+            if (settingsButtons[idx]->isPressed(x, y)) activeSlider = settingsButtons[idx];
+            else if (settingsButtons[idx-1]->isPressed(x, y)) activeSlider = settingsButtons[idx-1];
         }
 
         // check all the buttons to see if they were clicked
@@ -605,7 +621,7 @@ void GameMenu::create_settings_buttons()
 
 
 
-    rect = {64, 560, CHECKBOX_SIDELENGTH, CHECKBOX_SIDELENGTH};
+    rect = {64, 700, CHECKBOX_SIDELENGTH, CHECKBOX_SIDELENGTH};
     
     auto unselected = std::make_shared<LTexture>(window),
          selected   = std::make_shared<LTexture>(window);
@@ -640,6 +656,13 @@ void GameMenu::create_settings_buttons()
         std::cerr << "Failed to load volume slider" <<'\n';
     }
     button = std::make_shared<Button>(this, rect, texture, &Button::volume_slider);
+    settingsButtons.push_back(button);
+
+    t = (float)settings.musicVolume / MIX_MAX_VOLUME;
+    rect.x = (minX * (1.0f - t)) + (maxX * t);
+
+    rect.y = 532 - SLIDER_HEIGHT/2;
+    button = std::make_shared<Button>(this, rect, texture, &Button::music_volume_slider);
     settingsButtons.push_back(button);
 }
 

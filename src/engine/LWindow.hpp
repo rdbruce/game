@@ -35,7 +35,7 @@ public:
   bool toggleFullscreen();
 
   // Initializes variables
-  LWindow();
+  LWindow(int width = 1280, int height = 720, std::string name = "Window");
 
   // Deallocates memory
   ~LWindow();
@@ -57,4 +57,6 @@ private:
   bool wKeyboardFocus;
   bool wFullScreen;
   bool wMinimized;
+
+  std::string windowName= "";
 };
