@@ -173,6 +173,10 @@ void Button::go_to_main_menu_from_gameover()
     {
         PlayerData newHighscore = menu->highscores[0];
         newHighscore.name = "___";
+        // move down all lesser highscores by 1
+        for (int i = menu->num_highscores; i > idx; i--) {
+            menu->highscores[i] = menu->highscores[i-1];
+        }
         menu->highscores[idx] = newHighscore;
         menu->set_score_name = idx;
         menu->confirmationText = "";
