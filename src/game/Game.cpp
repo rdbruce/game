@@ -228,14 +228,25 @@ std::shared_ptr<GameObject> Game::spawnWolf()
         }
     }
     // spawn a wolf at the chosen location
-    if (validLocation) return Instantiate(Vector2(x,y), Wolf, -1);
+    if (validLocation) {
+        int idx = rand() % 3;
+        wolfSpawnSounds[idx]->play();
+        return Instantiate(Vector2(x,y), Wolf, -1);
+    }
     return nullptr;
 }
 
 std::shared_ptr<GameObject> Game::spawnBird()
 {
     Vector2 playerPos = currLevel->player->get_pos();
-    Instantiate(playerPos, Target, 1);
+
+    // spawn a target that indicates where a bomb will be dropped, that will last until the bomb is dropped
+    auto target = Instantiate(playerPos, Target, 1);
+    float t = playerPos.x / map.w;
+    t = BIRD_FLIGHT_DURATION * (1.0f - t);
+    target->set_timer(t);
+
+    // play a sound to indicate the bird spawning
     birdSpawn->play();
     return Instantiate(playerPos, Bird, 1);
 }
@@ -1054,6 +1065,18 @@ void Game::load_audio()
     if (!birdSpawn->loadFromFile("../../assets/Audio/EntitySounds/BirdSpawn.wav")) {
         std::cerr << "Failed to load bird spawn sound!" << std::endl;
     }
+
+    for (int i = 0; i < 3; i++) {
+        std::string filename = "../../assets/Audio/EntitySounds/WolfSpawn"+std::to_string(i+1)+".wav";
+        auto sound = std::make_shared<LAudio>();
+        if (sound->loadFromFile(filename)) {
+            wolfSpawnSounds[i] = sound;
+        } else {
+            std::cerr << "Failed to open " << filename << std::endl;
+        }
+    }
+
+
 
     nightMusic = std::make_shared<LAudio>();
     if (!nightMusic->loadFromFile("../../assets/Audio/Music/digiworld demigirl.wav")) {

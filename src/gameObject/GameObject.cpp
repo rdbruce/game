@@ -363,7 +363,6 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
             collisionFunc = &GameObject::defaultCollisionFunction;
 
             max_hp = hp = 1;
-            timer = game->BIRD_FLIGHT_DURATION / 2.0f;
             hasCollision = false;
             break;
         }

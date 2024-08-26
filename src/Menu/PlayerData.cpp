@@ -148,7 +148,8 @@ void Settings::Save( std::fstream *file )
 
 void Settings::reset()
 {
-    musicVolume = volume = MIX_MAX_VOLUME;
+    volume = MIX_MAX_VOLUME;
+    musicVolume = 32;
     // leave fullscreen unaltered
     flags = 10|(flags&FULLSCREEN);
     max_framrate = -1;

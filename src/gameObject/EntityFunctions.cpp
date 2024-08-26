@@ -209,7 +209,8 @@ void GameObject::birdPositionFunc()
           prev_t = (timer + dt) / duration,
           target_t = velocity.x / dimensions.x;
     
-    if (t <= target_t && prev_t > target_t) {
+    if (t <= target_t && attackTimer == 0.0f) {
+        attackTimer = 1.0f;
         game->Instantiate(pos, Bomb, 1);
         game->Instantiate(Vector2(pos.x, pos.y + sideLen), Bomb_Explosion_Indicator, 1);
     } else if (t <= 0) {
@@ -652,7 +653,7 @@ void GameObject::itemRenderFunc( int camX, int camY, Uint8 alpha )
     } else {
         std::string txt = std::to_string(hp);
         auto itemCountTex = std::make_unique<LTexture>(game->window);
-        if (!itemCountTex->loadFromRenderedText(txt, {255,255,255,255})) {
+        if (!itemCountTex->loadFromRenderedText(txt, {255,255,255,255}, game->arcadeClassic24)) {
             std::cerr << "failed to load health display!" << std::endl;
         }
         itemCountTex->render(p.x+hitbox.w-(itemCountTex->getWidth()/2), p.y+hitbox.h-(itemCountTex->getHeight()/2));

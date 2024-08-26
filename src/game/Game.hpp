@@ -309,6 +309,8 @@ class Game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
                                 birdSpawn;
 
+        std::shared_ptr<LAudio> wolfSpawnSounds[3];
+
         // music
         std::shared_ptr<LAudio> nightMusic, dayMusic, deathMusic, menuMusic;
         std::shared_ptr<LAudio> currSong = nullptr;
