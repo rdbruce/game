@@ -118,7 +118,7 @@ void GameMenu::render_highscores()
                 x += 500;
                 std::string str = "NEW HIGHSCORE!";
                 renderText(str, x, y, window, {255,0,0,255}, arcadeClassic24, Left_aligned);
-                x -= 425;
+                x -= 500;
             } 
             else 
             {

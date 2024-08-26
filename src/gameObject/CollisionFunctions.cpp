@@ -196,16 +196,20 @@ void GameObject::itemsHandleCollisionsWithGameObjects()
             if (other->is_enemy()) 
             {
                 // make sure that it is moving fast enough
-                if (velocity.length() > game->ITEM_MINIMUM_DAMAGE_VELOCITY * sideLen && timer <= 0.0f) 
+                if (velocity.length() > game->ITEM_MINIMUM_DAMAGE_VELOCITY * sideLen) 
                 {
-                    // calculate the damage by multiplying the speed by the number of items in the stack
-                    int dam = ceilToInt(hp * moveSpeed);
-                    // damage the enemy
-                    other->set_HP(other->get_hp() - dam);
-                    game->bonk->play();
-                    newVel *= (float)dam;
+                    // make sure that the two entities are moving in opposite directions
+                    if (velocity * other->get_velocity() <= 0.0f) 
+                    {
+                        // calculate the damage by multiplying the speed by the number of items in the stack
+                        int dam = ceilToInt(hp * moveSpeed);
+                        // damage the enemy
+                        other->set_HP(other->get_hp() - dam);
+                        game->bonk->play();
+                        newVel *= (float)dam;
+                        timer = 0.5f;
+                    }
                 }
-                timer = 0.75f;
             }
             // knock objects apart
 
