@@ -1,6 +1,7 @@
 #include "GameObject.hpp"
 #include "../game/Game.hpp"
 #include "AStarPathfinding.hpp"
+#include "Animations.hpp"
 
 
 void GameObject::wolfVelocityFunc()
@@ -661,6 +662,42 @@ void GameObject::itemRenderFunc( int camX, int camY, Uint8 alpha )
     }
 }
 
+void GameObject::wolfRenderFunc( int camX, int camY, Uint8 alpha )
+{
+    Vector2Int p( hitbox.x-camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+        return;
+    }
+    Vector2Int cell = get_cell();
+    bool underTree = game->is_under_tree(cell), alpha255 = alpha == 255;
+
+    tex = animateWolfWalking(!alpha255 || (alpha255 && !underTree));
+
+    tex->setAlpha(alpha);
+    tex->render(p.x, p.y, &hitbox);
+    tex->setAlpha(255); 
+
+    if (underTree && alpha255) {
+        game->secondRenders.push(this);
+    } 
+    // show hp
+    else if (hp < max_hp && hp > 0) {
+        float t = (float)hp / (float)max_hp;
+        int wWhite = hitbox.w*t, wRed = hitbox.w * (1.0f-t);
+
+        auto white = game->tEditor.createSolidColour(wWhite, 20, 0xFFFFFFFF, game->window);
+        auto red   = game->tEditor.createSolidColour(wRed, 20, 0xFF0000FF, game->window);
+
+        SDL_Rect wRect = {p.x, p.y, wWhite, 20}, rRect = {p.x+wWhite, p.y, wRed, 20};
+
+        white->render(wRect.x, wRect.y, &wRect);
+        red->render(rRect.x, rRect.y, &rRect);
+
+        white->free(); red->free();
+    }
+}
+
 std::shared_ptr<LTexture> GameObject::animatePlayer(bool updateIdx)
 {
 
@@ -697,5 +734,33 @@ std::shared_ptr<LTexture> GameObject::animatePlayer(bool updateIdx)
         else look = Right;
     }
 
-    return game->playerAnimations->getTexture(get_deltaTime(), look, idx, updateIdx);
+    return animations->getTexture(get_deltaTime(), look, idx, updateIdx);
+}
+
+std::shared_ptr<LTexture> GameObject::animateWolfWalking(bool updateIdx)
+{
+    FacingDirection look = Default; float idx = -1.0f;
+
+    if (velocity == Vector2_Zero)
+    {
+        Vector2 dir = getUnitVector(pos, get_player_pos());
+
+        if (dir.y >= SIN45) look = Forwards;
+        else if (dir.y <= -SIN45) look = Backwards;
+        else if (dir.x <= 0.0f) look = Left;
+        else look = Right;
+
+        idx = 0.0f;
+    }
+    else
+    {
+        Vector2 dir = velocity.normalised();
+
+        if (dir.y >= SIN45) look = Forwards;
+        else if (dir.y <= -SIN45) look = Backwards;
+        else if (dir.x <= 0.0f) look = Left;
+        else look = Right;
+    }
+
+    return animations->getTexture(get_deltaTime(), look, idx, updateIdx);
 }

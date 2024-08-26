@@ -303,7 +303,7 @@ class Game
                                     TargetTex, dashed_circleTex, rabbitTex;
 
         // animation containers
-        std::shared_ptr<Animations> playerAnimations;
+        std::shared_ptr<Animations> playerAnimations, wolfWalkingAnimation;
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,

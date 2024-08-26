@@ -1,6 +1,7 @@
 #include "GameObject.hpp"
 #include "../game/Game.hpp"
 #include "AStarPathfinding.hpp"
+#include "Animations.hpp"
 
 // constructor
 GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game *game, int sideLen ) 
@@ -10,7 +11,7 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
     {
         case Player: {
             // assign the texture
-            tex = game->playerTex;
+            animations = game->playerAnimations;
             altTex = std::make_shared<LTexture>(game->window);
             renderingFunc = &GameObject::playerRenderFunc;
 
@@ -36,8 +37,8 @@ GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game 
         
         case Wolf: {
             // assign the texture
-            tex = game->wolfTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
+            animations = game->wolfWalkingAnimation;
+            renderingFunc = &GameObject::wolfRenderFunc;
 
             // set up the hitbox
             Vector2Int size(sideLen-2, sideLen-2);
@@ -444,9 +445,9 @@ void GameObject::update()
         // game over when the player dies, otherwise remove the entity
         if (type == Player) 
         {
-            game->currSong = game->deathMusic;
-            game->play_current();
-            game->gameOver = true;
+            // game->currSong = game->deathMusic;
+            // game->play_current();
+            // game->gameOver = true;
         } 
         else 
         {

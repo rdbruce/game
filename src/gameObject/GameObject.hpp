@@ -6,6 +6,8 @@
 #include "../engine/LWindow.hpp"
 #include "../engine/LAudio.hpp"
 
+#include "Animations.hpp"
+
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -172,6 +174,8 @@ class GameObject
 
         // the image to be drawn
         std::shared_ptr<LTexture> tex, altTex;
+        // containers holding images for animation
+        std::shared_ptr<Animations> animations;
 
         // sounds 
         std::shared_ptr<LAudio> deathSound = nullptr;
@@ -330,6 +334,7 @@ class GameObject
         void fallingTreeRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void itemRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void targetRenderFunc( int camX, int camY, Uint8 alpha = 255 );
+        void wolfRenderFunc( int camX, int camY, Uint8 alpha = 255 );
 
         void foxRenderFunc( int camX, int camY, Uint8 alpha = 255 );
         void bearRenderFunc( int camX, int camY, Uint8 alpha = 255 );
@@ -338,6 +343,7 @@ class GameObject
 
         // animation
         std::shared_ptr<LTexture> animatePlayer(bool updateIdx);
+        std::shared_ptr<LTexture> animateWolfWalking(bool updateIdx);
 };
 
 #endif

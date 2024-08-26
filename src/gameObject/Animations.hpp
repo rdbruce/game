@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../engine/LTexture.hpp"
 
 enum FacingDirection

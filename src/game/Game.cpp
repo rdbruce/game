@@ -483,6 +483,7 @@ void Game::dayNightCycle()
             if (!firstDay) {
                 scores.mostNightsSurvived++;
                 scores.calculate_score();
+                std::cout << scores.mostNightsSurvived <<'\n';
             }
             else firstDay = false;
             // reset daily booleans
@@ -495,6 +496,7 @@ void Game::dayNightCycle()
         else
         {
             currSong = nightMusic;
+            firstDay = false;
         }
         play_current();
     }
@@ -1157,6 +1159,50 @@ void Game::load_animations()
     }
 
     playerAnimations = std::make_shared<Animations>(front, back, left, right, df, db, dl, dr);
+
+
+    // wolf walking animations
+    front.clear(); back.clear(); left.clear(); right.clear();
+    df = 1.0f, db = 1.0f, dl = 1.0f, dr = 1.0f;
+    path = "../../assets/Entities/Wolf/Walking/";
+    
+    path1 = path + "forwards/";
+    for (int i = 0; i < 4; i++)
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        front.push_back(newTex);
+    }
+    
+    path1 = path + "backwards/";
+    for (int i = 0; i < 4; i++)
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        back.push_back(newTex);
+    }
+    
+    path1 = path + "left/";
+    for (int i = 0; i < 4; i++)
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        left.push_back(newTex);
+    }
+    
+    path1 = path + "right/";
+    for (int i = 0; i < 4; i++)
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path1 + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        right.push_back(newTex);
+    }
+
+    wolfWalkingAnimation = std::make_shared<Animations>(front, back, left, right, df, db, dl, dr);
 }
 
 void Game::create_textures()
