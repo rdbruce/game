@@ -156,6 +156,20 @@ std::shared_ptr<LTexture> TextureManipulator::createSolidColour( int width, int 
     return res;
 }
 
+std::shared_ptr<LTexture> TextureManipulator::createSolidColour( int width, int height, SDL_Color colour, std::shared_ptr<LWindow> gHolder )
+{
+    SDL_Renderer *renderer = gHolder->gRenderer;
+
+    auto res = createEmptyTexture(width, height, gHolder);
+
+    SDL_SetRenderTarget(renderer, res->mTexture);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
+    SDL_RenderClear(renderer);
+    SDL_SetRenderTarget(renderer, NULL);
+    return res;
+}
+
 std::shared_ptr<LTexture> TextureManipulator::greyscaleTexture( std::string filename, std::shared_ptr<LWindow> window )
 {
     SDL_Surface *loadedSurface = IMG_Load(filename.c_str());
@@ -209,5 +223,30 @@ std::shared_ptr<LTexture> TextureManipulator::greyscaleTexture( std::string file
     }
 
     res->mTexture = newTexture;
+    return res;
+}
+
+std::shared_ptr<LTexture> TextureManipulator::createMenuButton(std::string txt, int width, int height, std::shared_ptr<LWindow> window, TTF_Font *font, SDL_Color colour)
+{
+    auto res = createEmptyTexture(width, height, window);
+
+    auto tex = std::make_unique<LTexture>(window);
+    if (!tex->loadFromRenderedText(txt, colour, font)) {
+        std::cerr << "Failed to create " << txt <<" button!" << std::endl;
+    }
+
+    SDL_Renderer *renderer = window->gRenderer;
+    SDL_SetRenderTarget(renderer, res->mTexture);
+
+    int x = (width-tex->getWidth())/2, y = (height-tex->getHeight())/2;
+    tex->render(x, y);
+
+    SDL_SetRenderTarget(renderer, NULL);
+    return res;
+}
+
+std::shared_ptr<LTexture> TextureManipulator::createSliderTexture(int width, int height, std::shared_ptr<LWindow> window, SDL_Color colour)
+{
+    auto res = createSolidColour(width, height, colour, window);
     return res;
 }

@@ -44,6 +44,9 @@ class Button
         // gets x and y coords
         void get_pos( int *x, int *y );
 
+        int get_width();
+        int get_height();
+
         // returns true if the button is pressed
         bool isPressed( int x, int y );
 

@@ -11,12 +11,29 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
     load_data();
 
     // create buttons
+    create_buttons();
+
+    auto continueButton = menuButtons[0];
+    if (mayContinue == continueButton->is_toggled()) continueButton->swap_textures();
+
+    continueButton->apply_settings();
+}
+
+void GameMenu::create_buttons()
+{
+    confirmationText = "";
+    if (currButtons == &confirmationButtons) {
+        if (state == in_game) currButtons = &pauseButtons;
+        else currButtons = &menuButtons;
+    }
+
+    pauseButtons.clear(); menuButtons.clear();
+    gameOverButtons.clear(); settingsButtons.clear();
+    confirmationButtons.clear();
+
     create_mainMenu_buttons();
     create_pauseMenu_buttons();
     create_settings_buttons();
-
-    auto continueButton = menuButtons[0];
-    if (mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
 }
 
 void GameMenu::render_background()
@@ -141,13 +158,47 @@ void GameMenu::render_confirmation() {
 
 void GameMenu::render_buttons()
 {
+    // find the coordinates of the mouse
+    int x, y;
+    get_mousePos(&x, &y);
+
     if (isActive && !set_score_name) 
     {
         int n = currButtons->size();
         for (int i = 0; i < n; i++) {
-            (*currButtons)[i]->render( wRect.x, wRect.y );
+            //render the button
+            auto button = (*currButtons)[i]; 
+            button->render( wRect.x, wRect.y );
+
+            // indicade which button (if any) is being hovered over
+            if (button->isPressed(x, y)) 
+            {
+                int w = button->get_width(), h = button->get_height();
+                if (w == BUTTON_WIDTH && h == BUTTON_HEIGHT && !button->is_toggled())
+                {
+                    std::string txt = ">";
+                    auto tex = std::make_unique<LTexture>(window);
+                    tex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic48);
+                    int X, Y;
+                    button->get_pos(&X, &Y);
+                    
+                    int rendx = X - tex->getWidth(), rendy = Y + (h-tex->getHeight())/2;
+                    tex->render(rendx + wRect.x, rendy + wRect.y);
+
+                    txt = "<";
+                    tex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic48);
+                    rendx = X + w;
+                    tex->render(rendx + wRect.x, rendy + wRect.y);
+
+                    tex->free();
+                }
+            }
         }
     }
+
+
+
+
 }
 
 void GameMenu::render_FPS()
@@ -164,7 +215,7 @@ void GameMenu::enter_game_over()
 {
     mayContinue = false;
     auto continueButton = menuButtons[0];
-    if (mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
+    if (mayContinue == continueButton->is_toggled()) continueButton->swap_textures();
     isActive = true;
     currButtons = &gameOverButtons;
     state = game_over;
@@ -339,6 +390,8 @@ void GameMenu::update()
     {
         if (sizeChange == 2) 
         {
+            create_buttons();
+
             create_CRT_Texture();
 
             if (aspectRatio != nullptr) aspectRatio->free();
@@ -498,49 +551,33 @@ int GameMenu::new_highscore()
 
 void GameMenu::create_mainMenu_buttons()
 {
-    auto texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ContinueButton.png")) {
-        std::cerr << "Failed to load continue button texture!" << std::endl;
-    }
-
-    auto greyContinue = tEditor.greyscaleTexture("../../assets/Menu/Buttons/ContinueButton.png", window);
+    auto texture = tEditor.createMenuButton("CONTINUE", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
+    auto greyContinue = tEditor.createMenuButton("CONTINUE", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48, {100,100,100,255});
     
     int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
-    auto button = std::make_shared<Button>(this, rect, greyContinue, &Button::continue_game, buttonSound, texture);
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game, buttonSound, greyContinue);
     menuButtons.push_back(button);
-    
+    // button->swap_textures();
 
-    auto newGameTexture = std::make_shared<LTexture>(window);
-    if (!newGameTexture->loadFromFile("../../assets/Menu/Buttons/NewGameButton.png")) {
-        std::cerr << "Failed to load new game button texture!" << std::endl;
-    }
+    auto newGameTexture = tEditor.createMenuButton("NEW GAME", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     rect.y += 175;
     button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation, buttonSound);
     menuButtons.push_back(button);
 
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/SettingsButton.png")) {
-        std::cerr << "Failed to load settings button texture!" << std::endl;
-    }
+    texture = tEditor.createMenuButton("SETTINGS", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     rect.y += 175;
     button = std::make_shared<Button>(this, rect, texture, &Button::go_to_settings, buttonSound);
     menuButtons.push_back(button);
 
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ExitButton.png")) {
-        std::cerr << "Failed to load texture for exit button" << std::endl;
-    }
+    texture = tEditor.createMenuButton("EXIT", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     rect.y += 175;
     button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop, buttonSound);
     menuButtons.push_back(button);
 
 
     rect.x = HIGHSCORE_CENTREPOS - (BUTTON_WIDTH/2);
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
-        std::cerr << "failed to load reset button texture!" << std::endl;
-    }
+    texture = tEditor.createMenuButton("RESET", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation, buttonSound);
     menuButtons.push_back(button);
 
@@ -553,36 +590,24 @@ void GameMenu::create_pauseMenu_buttons()
 {
     SDL_Rect rect = {(wRect.w-BUTTON_WIDTH)/2, 128, BUTTON_WIDTH, BUTTON_HEIGHT};
 
-    auto texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ResumeButton.png")) {
-        std::cerr << "Failed to load resume button texture!" << std::endl;
-    }
+    auto texture = tEditor.createMenuButton("RESUME", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
 
     auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu, buttonSound);
     pauseButtons.push_back(button);
 
-    auto MenuTexture = std::make_shared<LTexture>(window);
-    if (!MenuTexture->loadFromFile("../../assets/Menu/Buttons/MainMenuButton.png")) {
-        std::cerr << "failed to load main menu button texture!" << std::endl;
-    }
+    auto MenuTexture = tEditor.createMenuButton("MAIN MENU", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic36);
     rect.y += 175;
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation, buttonSound);
     pauseButtons.push_back(button);
 
 
     rect.y = 256;
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/YesButton.png")) {
-        std::cerr << "Failed to load texture for yes button!" << std::endl;
-    }
+    texture = tEditor.createMenuButton("YES", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, buttonSound);
     confirmationButtons.push_back(button);
 
     rect.y += 175;
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/NoButton.png")) {
-        std::cerr << "Failed to load texture for no button!" << std::endl;
-    }
+    texture = tEditor.createMenuButton("NO", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, buttonSound);
     confirmationButtons.push_back(button);
 
@@ -596,26 +621,17 @@ void GameMenu::create_settings_buttons()
     int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
 
-    auto texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/RevertButton.png")) {
-        std::cerr << "Failed to load revert settings button" <<'\n';
-    }
+    auto texture = tEditor.createMenuButton("REVERT", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     auto button = std::make_shared<Button>(this, rect, texture, &Button::revert_settings, buttonSound);
     settingsButtons.push_back(button);
     rect.y += 175;
 
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ResetButton.png")) {
-        std::cerr << "Failed to load reset settings button" <<'\n';
-    }
+    texture = tEditor.createMenuButton("RESET", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     button = std::make_shared<Button>(this, rect, texture, &Button::reset_settings, buttonSound);
     settingsButtons.push_back(button);
     rect.y += 175;
 
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/ReturnButton.png")) {
-        std::cerr << "Failed to load return button" <<'\n';
-    }
+    texture = tEditor.createMenuButton("RETURN", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu, buttonSound);
     settingsButtons.push_back(button);
 
@@ -651,10 +667,7 @@ void GameMenu::create_settings_buttons()
     x = (minX * (1.0f - t)) + (maxX * t);
 
     rect = {x, 361, SLIDER_WIDTH, SLIDER_HEIGHT};
-    texture = std::make_shared<LTexture>(window);
-    if (!texture->loadFromFile("../../assets/Menu/Buttons/Slider.png")) {
-        std::cerr << "Failed to load volume slider" <<'\n';
-    }
+    texture = tEditor.createSliderTexture(SLIDER_WIDTH, SLIDER_HEIGHT, window, {255,255,255,255});
     button = std::make_shared<Button>(this, rect, texture, &Button::volume_slider);
     settingsButtons.push_back(button);
 

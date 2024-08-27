@@ -27,6 +27,11 @@ class TextureManipulator
         std::shared_ptr<LTexture> createEmptyTexture( int width, int height, std::shared_ptr<LWindow> gHolder, SDL_TextureAccess access = SDL_TEXTUREACCESS_TARGET );
         
         std::shared_ptr<LTexture> createSolidColour( int width, int height, Uint32 colour, std::shared_ptr<LWindow> gHolder );
+        std::shared_ptr<LTexture> createSolidColour( int width, int height, SDL_Color colour, std::shared_ptr<LWindow> gHolder );
+
+        // creates some of the main menu buttons
+        std::shared_ptr<LTexture> createMenuButton(std::string txt, int width, int height, std::shared_ptr<LWindow> window, TTF_Font *font, SDL_Color colour = {255,255,255,255});
+        std::shared_ptr<LTexture> createSliderTexture(int width, int height, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255});
 };
 
 

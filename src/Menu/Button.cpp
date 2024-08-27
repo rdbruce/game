@@ -32,6 +32,8 @@ void Button::play_sound() {
 }
 
 bool Button::is_toggled() { return isToggled; }
+int Button::get_width() { return rect.w; }
+int Button::get_height() { return rect.h; }
 
 void Button::doNothing() {}
 
@@ -115,7 +117,7 @@ void Button::load_new_game()
 
     menu->mayContinue = true;
     auto continueButton = menu->menuButtons[0];
-    if (menu->mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
+    if (menu->mayContinue == continueButton->is_toggled()) continueButton->swap_textures();
     
     srand(time(NULL));
     enter_game();

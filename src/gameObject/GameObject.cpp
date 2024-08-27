@@ -445,9 +445,9 @@ void GameObject::update()
         // game over when the player dies, otherwise remove the entity
         if (type == Player) 
         {
-            // game->currSong = game->deathMusic;
-            // game->play_current();
-            // game->gameOver = true;
+            game->currSong = game->deathMusic;
+            game->play_current();
+            game->gameOver = true;
         } 
         else 
         {

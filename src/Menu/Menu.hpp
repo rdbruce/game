@@ -61,6 +61,7 @@ class GameMenu
 
         bool is_inGame();
 
+        void create_buttons();
         // creates all the button objects for the main menu
         void create_mainMenu_buttons();
         // creates all the button objects for the in-game pause menu
@@ -88,7 +89,7 @@ class GameMenu
 
         /* -------- CONSTANTS -------- */
         int BUTTON_WIDTH = 384, BUTTON_HEIGHT = BUTTON_WIDTH/3;
-        int SLIDER_HEIGHT = 66, SLIDER_WIDTH = 20;
+        int SLIDER_HEIGHT = 66, SLIDER_WIDTH = 16;
         int CHECKBOX_SIDELENGTH = 64;
         int GAMEOVER_TXT_WIDTH = 384, GAMEOVER_TEX_HEIGHT = 213;
         int HIGHSCORE_CENTREPOS = 300;
