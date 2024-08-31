@@ -117,4 +117,8 @@ class Button
         void toggle_fullscreen();
 
         void toggle_FPS();
+
+        // void toggle_instructions();
+
+        // void enter_instructions();
 };

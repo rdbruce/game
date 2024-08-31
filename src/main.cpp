@@ -1,3 +1,6 @@
+// prevents the console from opening on application startup
+// #pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <SDL_image.h>
@@ -70,7 +73,6 @@ int main(
     if (!inMenu) 
     {
       game.update_gameobjects();
-
       // call update_cells first
       game.update_cells();
       game.dayNightCycle();

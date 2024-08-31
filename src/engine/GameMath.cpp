@@ -35,6 +35,10 @@ namespace Math
     }
 
 
+    void Vector2::print() {
+        std::cout << x <<' '<< y <<'\n';
+    }
+
 
 
     // unit vector = vector with magnitude of 1 = v / ||v||
@@ -110,6 +114,11 @@ namespace Math
     Vector2Int::Vector2Int(int X, int Y) : x(X), y(Y) {}
     // make x and y both 0 by default
     Vector2Int::Vector2Int() : x(0), y(0) {}
+
+
+    void Vector2Int::print() {
+        std::cout << x <<' '<< y <<'\n';
+    }
 
 
 

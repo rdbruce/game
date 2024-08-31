@@ -14,8 +14,7 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game )
     create_buttons();
 
     auto continueButton = menuButtons[0];
-    if (mayContinue == continueButton->is_toggled()) continueButton->swap_textures();
-
+    if (mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
     continueButton->apply_settings();
 }
 
@@ -52,6 +51,15 @@ void GameMenu::render_background()
         else if (settingsOrMenu && confirmationText == "") {
             SDL_Rect rect = {64 + wRect.x, 32 + wRect.y, 896, 192};
             titleTex->render(rect.x, rect.y, &rect);
+
+            // if (state == game_instructions) 
+            // {
+            //     std::string instructions = "You find yourself in a\nforest, plagued by nightly\nattacks from evil\nwoodland creatures!\n \nThrow item stacks at these\nfoes to defeat them,\nand combine a stack of\n4 planks and a log\nto create a DAM!\nUse these to block the\nriver, and create\na base!";
+            //     renderText(instructions, wRect.w/2 + wRect.x, 256, window, {255,255,255,255}, arcadeClassic36);
+            //     int y = wRect.h - BUTTON_HEIGHT - CHECKBOX_SIDELENGTH - 32;
+            //     instructions = "Don't show this again";
+            //     renderText(instructions, wRect.w/2 + wRect.x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24);
+            // }
         }
     }
 }
@@ -174,7 +182,8 @@ void GameMenu::render_buttons()
             if (button->isPressed(x, y)) 
             {
                 int w = button->get_width(), h = button->get_height();
-                if (w == BUTTON_WIDTH && h == BUTTON_HEIGHT && !button->is_toggled())
+                bool inactiveContinue = button == menuButtons[0] && !button->is_toggled();
+                if (w == BUTTON_WIDTH && h == BUTTON_HEIGHT && !inactiveContinue)
                 {
                     std::string txt = ">";
                     auto tex = std::make_unique<LTexture>(window);
@@ -556,33 +565,32 @@ void GameMenu::create_mainMenu_buttons()
     
     int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
-    auto button = std::make_shared<Button>(this, rect, texture, &Button::continue_game, buttonSound, greyContinue);
+    auto button = std::make_shared<Button>(this, rect, greyContinue, &Button::continue_game, arcadeBonus, texture);
     menuButtons.push_back(button);
-    // button->swap_textures();
 
     auto newGameTexture = tEditor.createMenuButton("NEW GAME", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation, buttonSound);
+    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::new_game_confirmation, arcadeButton99);
     menuButtons.push_back(button);
 
     texture = tEditor.createMenuButton("SETTINGS", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_settings, buttonSound);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_settings, arcadeButton99);
     menuButtons.push_back(button);
 
     texture = tEditor.createMenuButton("EXIT", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop, buttonSound);
+    button = std::make_shared<Button>(this, rect, texture, &Button::exit_to_desktop, arcadeButton99);
     menuButtons.push_back(button);
 
 
     rect.x = HIGHSCORE_CENTREPOS - (BUTTON_WIDTH/2);
     texture = tEditor.createMenuButton("RESET", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
-    button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation, buttonSound);
+    button = std::make_shared<Button>(this, rect, texture, &Button::reset_highscores_confirmation, arcadeButton99);
     menuButtons.push_back(button);
 
     rect = {(wRect.w-BUTTON_WIDTH)/2, wRect.h/2, BUTTON_WIDTH, BUTTON_HEIGHT};
-    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game, buttonSound);
+    button = std::make_shared<Button>(this, rect, newGameTexture, &Button::load_new_game, arcadeBonus);
     gameOverButtons.push_back(button);
 }
 
@@ -592,28 +600,47 @@ void GameMenu::create_pauseMenu_buttons()
 
     auto texture = tEditor.createMenuButton("RESUME", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
 
-    auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu, buttonSound);
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu, arcadeBonus);
     pauseButtons.push_back(button);
 
     auto MenuTexture = tEditor.createMenuButton("MAIN MENU", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic36);
     rect.y += 175;
-    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation, buttonSound);
+    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation, arcadeBonus);
     pauseButtons.push_back(button);
 
 
     rect.y = 256;
     texture = tEditor.createMenuButton("YES", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
-    button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, buttonSound);
+    button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, arcadeBonus);
     confirmationButtons.push_back(button);
 
     rect.y += 175;
     texture = tEditor.createMenuButton("NO", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
-    button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, buttonSound);
+    button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, arcadeButton99);
     confirmationButtons.push_back(button);
 
     rect = {(wRect.w-BUTTON_WIDTH)/2, (wRect.h/2)+175, BUTTON_WIDTH, BUTTON_HEIGHT};
-    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover, buttonSound);
+    button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover, arcadeButton99);
     gameOverButtons.push_back(button);
+
+
+    // instructions buttons
+    // rect = {rect.x, wRect.h - BUTTON_HEIGHT - 32, BUTTON_WIDTH, BUTTON_HEIGHT};
+    // texture = tEditor.createMenuButton("OK", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
+    // button = std::make_shared<Button>(this, rect, texture, &Button::load_new_game, arcadeBonus);
+    // instructionsButtons.push_back(button);
+
+    // auto unselected = std::make_shared<LTexture>(window),
+    //      selected   = std::make_shared<LTexture>(window);
+    // if (!unselected->loadFromFile("../../assets/Menu/Buttons/UnselectedCheckbox.png")) {
+    //     std::cerr << "Failed to load unselected checkbox!" << std::endl;
+    // }
+    // if (!selected->loadFromFile("../../assets/Menu/Buttons/SelectedCheckbox.png")) {
+    //     std::cerr << "Failed to load selected checkbox!" << std::endl;
+    // }
+    // rect = {wRect.w/2 - CHECKBOX_SIDELENGTH - 192, rect.y - CHECKBOX_SIDELENGTH - 16, CHECKBOX_SIDELENGTH, CHECKBOX_SIDELENGTH};
+    // button = std::make_shared<Button>(this, rect, selected, &Button::toggle_instructions, arcadeButton99, unselected);
+    // instructionsButtons.push_back(button);
 }
 
 void GameMenu::create_settings_buttons()
@@ -622,17 +649,17 @@ void GameMenu::create_settings_buttons()
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
 
     auto texture = tEditor.createMenuButton("REVERT", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
-    auto button = std::make_shared<Button>(this, rect, texture, &Button::revert_settings, buttonSound);
+    auto button = std::make_shared<Button>(this, rect, texture, &Button::revert_settings, arcadeButton99);
     settingsButtons.push_back(button);
     rect.y += 175;
 
     texture = tEditor.createMenuButton("RESET", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
-    button = std::make_shared<Button>(this, rect, texture, &Button::reset_settings, buttonSound);
+    button = std::make_shared<Button>(this, rect, texture, &Button::reset_settings, arcadeButton99);
     settingsButtons.push_back(button);
     rect.y += 175;
 
     texture = tEditor.createMenuButton("RETURN", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
-    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu, buttonSound);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_mainMenu, arcadeBonus);
     settingsButtons.push_back(button);
 
 
@@ -647,17 +674,17 @@ void GameMenu::create_settings_buttons()
     if (!selected->loadFromFile("../../assets/Menu/Buttons/SelectedCheckbox.png")) {
         std::cerr << "Failed to load selected checkbox!" << std::endl;
     }
-    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_CRT, buttonSound, selected);
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_CRT, arcadeButton99, selected);
     settingsButtons.push_back(button);
     if (settings.flags&CRT_FILTER) button->swap_textures();
 
     rect.y += CHECKBOX_SIDELENGTH + 16;
-    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_fullscreen, buttonSound, selected);
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_fullscreen, arcadeButton99, selected);
     settingsButtons.push_back(button);
     if (settings.flags&FULLSCREEN) button->swap_textures();
     
     rect.y += CHECKBOX_SIDELENGTH + 16;
-    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_FPS, buttonSound, selected);
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_FPS, arcadeButton99, selected);
     settingsButtons.push_back(button);
     if (settings.flags&SHOW_FPS) button->swap_textures();
     
@@ -693,6 +720,14 @@ void GameMenu::load_assets()
 
     buttonSound = std::make_shared<LAudio>();
     if (!buttonSound->loadFromFile("../../assets/Audio/ThinkFastChucklenuts.wav")) {
+        std::cerr << "Failed to load button sound" << std::endl;
+    }
+    arcadeBonus = std::make_shared<LAudio>();
+    if (!arcadeBonus->loadFromFile("../../assets/Audio/Menu/arcade-bonus.wav")) {
+        std::cerr << "Failed to load button sound" << std::endl;
+    }
+    arcadeButton99 = std::make_shared<LAudio>();
+    if (!arcadeButton99->loadFromFile("../../assets/Audio/Menu/arcadebutton99.wav")) {
         std::cerr << "Failed to load button sound" << std::endl;
     }
 

@@ -1,525 +1,111 @@
 #include "GameObject.hpp"
 #include "../game/Game.hpp"
-#include "AStarPathfinding.hpp"
-#include "Animations.hpp"
 
-// constructor
-GameObject::GameObject( Vector2 pos, EntityType Type, int Idx, int Health, Game *game, int sideLen ) 
-: pos(pos), game(game), type(Type), idx(Idx)
+int get_max_hp(EntityType type)
 {
     switch (type)
     {
-        case Player: {
-            // assign the texture
-            animations = game->playerAnimations;
-            altTex = std::make_shared<LTexture>(game->window);
-            renderingFunc = &GameObject::playerRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-2, sideLen-2);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::deccelerateVelocityFunc;
-            positionFunc = &GameObject::playerPositionFunc;
-            collisionFunc = &GameObject::playerCollisionFunction;
-
-            // other attributes
-            moveSpeed = 2.66666667f * sideLen;
-            max_hp = 5;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = true;
-            break;
-        }
-
-        
-        case Wolf: {
-            // assign the texture
-            animations = game->wolfWalkingAnimation;
-            renderingFunc = &GameObject::wolfRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-2, sideLen-2);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::wolfSpawningFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            // other attributes
-            moveSpeed = 3.2f * sideLen;
-            max_hp = 3;
-            attackInterval = 1.0f;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            break;
-        }
-
-
-        case Falling_Tree: {
-            // assign the texture
-            tex = game->falling_treeTex;
-            renderingFunc = &GameObject::fallingTreeRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(3*sideLen, 10*sideLen);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::defaultVelocityFunc;
-            positionFunc = &GameObject::fallingTreePositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            // other attributes
-            max_hp = hp = 1;
-            timer = 1.0f;
-            hasCollision = false;
-            break;
-        }
-
-        case Log_Item: {
-            // assign the texture
-            tex = game->logTex;
-            renderingFunc = &GameObject::itemRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::itemSpawnFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::stationaryItemCollisionFunction;
-
-            // other attributes
-            max_hp = 5;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            moveSpeed = 0.5f;
-            break;
-        }
-        
-        case Pine_Cone_Item: {
-            // assign the texture
-            tex = game->pine_coneTex;
-            renderingFunc = &GameObject::itemRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::itemSpawnFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::stationaryItemCollisionFunction;
-
-            // other attributes
-            max_hp = 6;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            moveSpeed = 0.333333333f;
-            break;
-        }
-
-        case Plank_Item: {
-            // assign the texture
-            tex = game->plankTex;
-            renderingFunc = &GameObject::itemRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::itemSpawnFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::stationaryItemCollisionFunction;
-
-            // other attributes
-            max_hp = 10;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            moveSpeed = 0.5f;
-            break;
-        }
-        
-        case Dam_Item: {
-            // assign the texture
-            tex = game->damTex;
-            renderingFunc = &GameObject::itemRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::itemSpawnFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::stationaryItemCollisionFunction;
-
-            // other attributes
-            max_hp = 8;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            moveSpeed = 0.5f;
-            break;
-        }
-        
-        
-        case Door_Item: {
-            // assign the texture
-            tex = game->closed_doorTex;
-            renderingFunc = &GameObject::itemRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::itemSpawnFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::stationaryItemCollisionFunction;
-
-            // other attributes
-            max_hp = 4;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            moveSpeed = 0.5f;
-            break;
-        }
-
-        case Fox_NPC: {
-            // assign the texture
-            tex = game->foxTex;
-            altTex = std::make_shared<LTexture>(game->window);
-            renderingFunc = &GameObject::foxRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-2, sideLen-2);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            positionFunc = &GameObject::foxPositionFunc;
-            velocityFunc = &GameObject::foxVelocityFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            // other attributes
-            moveSpeed = 2.66666667f * sideLen;
-            max_hp = 255;
-            hp = Health;
-            hasCollision = false;
-            break;
-        }
-
-        case Berry_Item: {
-            // assign the texture
-            tex = game->berryTex;
-            renderingFunc = &GameObject::itemRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::itemSpawnFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::stationaryItemCollisionFunction;
-
-            // other attributes
-            max_hp = 5;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            moveSpeed = 0.0f;
-            break;
-        }
-
-        case Stone_Item: {
-            // assign the texture
-            tex = game->stoneTex;
-            renderingFunc = &GameObject::itemRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour function
-            velocityFunc = &GameObject::itemSpawnFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::stationaryItemCollisionFunction;
-
-            // other attributes
-            max_hp = 4;
-            hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
-            hasCollision = false;
-            moveSpeed = 1.5f;
-            break;
-        }
-
-        case Bear_NPC: {
-            // assign the texture
-            tex = game->BearTex;
-            renderingFunc = &GameObject::bearRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size((3*sideLen)-2, (3*sideLen)-2);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::defaultVelocityFunc;
-            positionFunc = &GameObject::bearPositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            // other attributes
-            max_hp = 255;
-            hp = Health;
-            hasCollision = true;
-            moveSpeed = 0.0f;
-            break;
-        }
-
-        case Bird: {
-            // assign the texture
-            tex = game->BirdTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-2, sideLen-2);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::defaultVelocityFunc;
-            positionFunc = &GameObject::birdPositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            // other attributes
-            max_hp = hp = 1;
-            timer = game->BIRD_FLIGHT_DURATION;
-            hasCollision = false;
-            velocity = pos;
-            break;
-        }
-
-        case Bomb: {
-            // assign the texture
-            tex = game->BombTex;
-            renderingFunc = &GameObject::defaultRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::defaultVelocityFunc;
-            positionFunc = &GameObject::bombPositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            max_hp = hp = 1;
-            timer = 0.75f;
-            acceleration = Vector2_Up * 8.0f * sideLen;
-            moveSpeed = sideLen;
-            hasCollision = false;
-            break;
-        }
-
-        case Target: {
-            // assign the texture
-            tex = game->TargetTex;
-            renderingFunc = &GameObject::targetRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-20, sideLen-20);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::defaultVelocityFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            max_hp = hp = 1;
-            hasCollision = false;
-            break;
-        }
-
-        case Bomb_Explosion_Indicator: {
-            // assign the texture
-            tex = game->dashed_circleTex;
-            renderingFunc = &GameObject::targetRenderFunc;
-
-            // set up the hitbox
-            radius = game->BOMB_RADIUS * sideLen;
-            Vector2Int size(radius * 2, radius * 2);
-            Vector2Int p(pos.x - radius, pos.y - radius);
-            hitbox = { p.x, p.y, size.x, size.y };
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::defaultVelocityFunc;
-            positionFunc = &GameObject::defaultPositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            max_hp = hp = 1;
-            timer = 0.75f;
-            hasCollision = false;
-            break;
-        }
-
-        case Rabbit_NPC: {
-            // assign the texture
-            tex = game->rabbitTex;
-            renderingFunc = &GameObject::rabbitRenderFunc;
-
-            // set up the hitbox
-            Vector2Int size(sideLen-2, sideLen-2);
-            Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
-            hitbox = { p.x, p.y, size.x, size.y };
-            radius = Max(size.x/2, size.y/2);
-
-            // assign behaviour functions
-            velocityFunc = &GameObject::foxVelocityFunc;
-            positionFunc = &GameObject::rabbitPositionFunc;
-            collisionFunc = &GameObject::defaultCollisionFunction;
-
-            // other attributes
-            moveSpeed = 2.66666667f * sideLen;
-            max_hp = 255;
-            hp = Health;
-            hasCollision = false;
-            break;
-        }
+        case player: return 5;
+        case wolf: return 3;
+        case logItem: return 6;
+        case pineConeItem: return 6;
+        case plankItem: return 12;
+        case damItem: return 8;
+        case doorItem: return 4;
+        case stoneItem: return 5;
+        case berryItem: return 4;
+        case foxNPC: 
+        case bearNPC: 
+        case rabbitNPC: return 255;
+        case fallingTree:
+        case bird:
+        case target:
+        case bomb:
+        case bombExplosionIndicator: return 1;
     }
+    return 0;
 }
-GameObject::GameObject() : type(Log_Item), idx(-1) {}
 
-
-GameObject::~GameObject()
+/* constructor */
+GameObject::GameObject(EntityType type, Vector2 pos, int Idx, int Health, Game *game, int cell_sidelen, bool hasCollision, int width, int height)
+: type(type), pos(pos), idx(Idx), game(game), cell_sidelen(cell_sidelen), hasCollision(hasCollision)
 {
-    // clean up all existing pathfinding nodes
-    AStar::LinkedCell *curr = path;
-    for (AStar::LinkedCell *next = curr; curr != nullptr; curr = next) {
-        next = curr->next;
-        delete curr;
-    }
+    max_hp = get_max_hp(type);
+    hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
+
+    if (height == -1) height = width;
+    Vector2Int size(width, height);
+    Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
+    hitbox = { p.x, p.y, size.x, size.y };
+    radius = Max(size.x/2, size.y/2);
 }
+GameObject::~GameObject() {}
 
-
-void GameObject::render( int camX, int camY, Uint8 alpha )
-{
-    (this->*renderingFunc)( camX, camY, alpha );
-}
-
-void GameObject::update()
-{
-    (this->*positionFunc)();
-    (this->*velocityFunc)();
-    (this->*collisionFunc)();
-
-    // destroy itself if hp reaches 0
-    if (hp <= 0) {
-        // game over when the player dies, otherwise remove the entity
-        if (type == Player) 
-        {
-            game->currSong = game->deathMusic;
-            game->play_current();
-            game->gameOver = true;
-        } 
-        else 
-        {
-            if (is_enemy() && type != Bird) {
-                game->scores.mostEnemiesKilled++;
-                game->scores.calculate_score();
-            }
-            if (deathSound != nullptr) deathSound->play();
-            game->Destroy(game->currLevel->gameObjects[idx]);
-        } 
-    
-    } else {
-        hp = Clamp(0, max_hp, hp);
-    }
-}
-
-
-void GameObject::make_held()
-{
-    velocity = acceleration = Vector2_Zero;
-    timer = 0.0f;
-    positionFunc = &GameObject::heldItemPositionFunc;
-}
-
-void GameObject::make_thrown( Vector2 newVelocity, Vector2 newAcceleration )
-{
-    velocity = newVelocity;
-    acceleration = newAcceleration;
-    positionFunc = &GameObject::thrownItemPositionFunc;
-}
-
-
-bool GameObject::is_item() { return type>ITEM_MIN && type<ITEM_MAX; }
-bool GameObject::is_enemy() { return type>ENEMY_MIN && type<ENEMY_MAX; }
-
-
-// mutators
-void GameObject::set_pos( Vector2 newPos ) { 
-    pos = newPos; 
-    hitbox.x = pos.x - (hitbox.w/2);
-    hitbox.y = pos.y - (hitbox.h/2);
-}
-void GameObject::set_velocity ( Vector2 newVelocity ) { velocity = newVelocity; }
-void GameObject::set_acceleration( Vector2 newAcceleration ) { acceleration = newAcceleration; }
-
-void GameObject::set_HP( int newHP ) { hp = Clamp(0, max_hp, newHP); }
-void GameObject::set_timer( float t ) { timer = t; }
-void GameObject::decrement_idx() { --idx; }
-
-
-// accessors
+/* accessors */
+SDL_Rect GameObject::get_hitbox() { return hitbox; }
+float GameObject::get_radius() { return radius; }
+int GameObject::get_cellSidelen() { return cell_sidelen; }
+int GameObject::get_maxHP() { return max_hp; }
+int GameObject::get_HP() { return hp; }
 Vector2 GameObject::get_pos() { return pos; }
-Vector2 GameObject::get_velocity() { return velocity; }
-Vector2 GameObject::get_acceleration() { return acceleration; }
+Vector2 GameObject::get_vel() { return velocity; }
+Vector2 GameObject::get_accel() { return acceleration; }
+Vector2Int GameObject::get_cell() { return cell; }
+bool GameObject::has_collision() { return hasCollision; }
 int GameObject::get_idx() { return idx; }
 EntityType GameObject::get_type() { return type; }
-int GameObject::get_hp() { return hp; }
-int GameObject::get_maxHP() {return max_hp; }
-int GameObject::get_damage() { return damage; }
-float GameObject::get_moveSpeed() { return moveSpeed; }
-float GameObject::get_radius() { return radius; }
-float GameObject::get_timer() { return timer; }
-bool GameObject::has_collision() { return hasCollision; }
-bool GameObject::is_held() { return game->currLevel->gameObjects[idx] == game->currLevel->held; }
-bool GameObject::is_NPC() { return type>NPC_MIN && type<NPC_MAX; }
-Uint8 GameObject::get_inputKeys() { return game->inputKeys; }
+bool GameObject::is_item() { return type > ITEM_MIN && type < ITEM_MAX; }
+bool GameObject::is_enemy() { return type > ENEMY_MIN && type < ENEMY_MAX; }
+bool GameObject::is_NPC() { return type > NPC_MIN && type < NPC_MAX; }
+
 float GameObject::get_deltaTime() { return game->deltaTime; }
-SDL_Rect GameObject::get_hitbox() { return hitbox; }
-Vector2Int GameObject::get_size() { return Vector2Int(hitbox.w, hitbox.h); }
 Vector2Int GameObject::get_mapDimensions() { return Vector2Int(game->map.w, game->map.h); }
-Vector2Int GameObject::get_cell() {
-    int sideLen = game->currLevel->cell_sideLen;
-    return Vector2Int( pos.x/sideLen, pos.y/sideLen );
+
+/* mutators */
+void GameObject::set_hitbox(SDL_Rect newHitbox) { hitbox = newHitbox; radius = hitbox.w/2; }
+void GameObject::set_radius(float newRadius) { radius = newRadius; }
+void GameObject::set_maxHP(int newMaxHP) { max_hp = newMaxHP; }
+void GameObject::set_HP(int newHP) { hp = newHP; }
+void GameObject::add_HP(int amount) { hp += amount; }
+void GameObject::set_type(EntityType newType) { type = newType; }
+void GameObject::decrement_idx() { idx--; }
+void GameObject::increment_idx() { idx++; }
+void GameObject::set_vel(Vector2 newVel) { velocity = newVel; }
+void GameObject::set_accel(Vector2 newAccel) { acceleration = newAccel; }
+void GameObject::set_pos(Vector2 newPos) {
+    pos = newPos;
+    hitbox.x = pos.x - (hitbox.w/2);
+    hitbox.y = pos.y - (hitbox.h/2);
+    set_cell();
 }
-Vector2 GameObject::get_player_pos() { return game->currLevel->player->pos; };
+void GameObject::set_collision(bool collision) { hasCollision = collision; }
+
+void GameObject::set_cell() {
+    cell = Vector2Int(pos.x/cell_sidelen, pos.y/cell_sidelen);
+}
+
+void GameObject::update() {}
+void GameObject::render(int camX, int camY, Uint8 alpha) {}
+
+
+void GameObject::defualt_update_position()
+{
+    Vector2 newPos = pos + velocity * get_deltaTime();
+    set_pos(newPos);
+}
+
+void GameObject::default_update_velocity()
+{
+    if (acceleration * velocity > 0.0f) halt();
+    velocity += acceleration * get_deltaTime();
+}
+
+void GameObject::halt()
+{
+    acceleration = velocity = Vector2_Zero;
+}
+
+void GameObject::Destroy()
+{
+    game->Destroy(game->currLevel->gameObjects[get_idx()]);
+}

@@ -163,8 +163,9 @@ void Game::attempt_enemy_spawn()
     if (validAttempt) 
     {
         float r = (float)rand() / RAND_MAX;
-        if (r <= BIRD_SPAWN_CHANCE) spawnBird();
-        else spawnWolf();
+        // if (r <= BIRD_SPAWN_CHANCE) 
+        spawnBird();
+        // else spawnWolf();
     }
 }
 
@@ -231,48 +232,86 @@ std::shared_ptr<GameObject> Game::spawnWolf()
     if (validLocation) {
         int idx = rand() % 3;
         wolfSpawnSounds[idx]->play();
-        return Instantiate(Vector2(x,y), Wolf, -1);
+        return Instantiate(wolf, Vector2(x, y), -1);
     }
     return nullptr;
 }
 
 std::shared_ptr<GameObject> Game::spawnBird()
 {
-    Vector2 playerPos = currLevel->player->get_pos();
-
-    // spawn a target that indicates where a bomb will be dropped, that will last until the bomb is dropped
-    auto target = Instantiate(playerPos, Target, 1);
-    float t = playerPos.x / map.w;
-    t = BIRD_FLIGHT_DURATION * (1.0f - t);
-    target->set_timer(t);
-
     // play a sound to indicate the bird spawning
     birdSpawn->play();
-    return Instantiate(playerPos, Bird, 1);
+    return Instantiate(bird, get_playerPos(), 1);
 }
 
 
 // adds a game object and returns a pointer to it
-std::shared_ptr<GameObject> Game::Instantiate( Vector2 pos, int type, int hp, Scene *level )
+std::shared_ptr<GameObject> Game::Instantiate( EntityType type, Vector2 pos, int hp, Scene *level )
 {
-    // create the game object
-    auto obj = std::make_shared<GameObject>(pos, (EntityType)type, (int)level->gameObjects.size(), hp, this, level->cell_sideLen);
-    // add it to the game objects vector
+    if (level == NULL) level = currLevel;
+
+    int idx = level->gameObjects.size(), sideLen = level->cell_sideLen;
+    std::shared_ptr<GameObject> obj = nullptr;
+
+    switch (type)
+    {
+        case player:
+            obj = std::make_shared<Player>(pos, idx, hp, this, sideLen);
+            break;
+        case wolf:
+            obj = std::make_shared<Wolf>(pos, idx, hp, this, sideLen, nullptr);
+            break;
+        case bird:
+            obj = std::make_shared<Bird>(pos, idx, this, sideLen);
+            break;
+        case bomb:
+            obj = std::make_shared<Bomb>(pos, idx, this, sideLen);
+            break;
+        case target:
+            std::cerr << "ERROR: Target may not be spawned using Instantiate!\n";
+            break;
+        case bombExplosionIndicator:
+            std::cerr <<"ERROR: explosion indicator may not be spawned using Instantiate\n";
+            break;
+        case fallingTree:
+            obj = std::make_shared<FallingTree>(pos, idx, this, sideLen);
+            break;
+        // NPCs
+        case foxNPC:
+        case bearNPC:
+        case rabbitNPC:
+            obj = std::make_shared<NPC>(type, pos, idx, this, sideLen);
+            break;
+        // items
+        case logItem:
+        case pineConeItem:
+        case plankItem:
+        case damItem:    
+        case doorItem:      
+        case stoneItem:     
+        case berryItem:
+            obj = std::make_shared<Item>(type, pos, idx, hp, this, sideLen);
+            break;
+        default:
+            std::cerr << "Invalid Entity type used!\n";
+            break;
+    }
+
     level->gameObjects.push_back(obj);
     return obj;
 }
 
 
-std::shared_ptr<GameObject> Game::Instantiate( Vector2 pos, int type, int hp ) {
-    return Instantiate( pos, type, hp, currLevel );
-}
-
-
 void Game::Destroy( std::shared_ptr<GameObject> obj, std::vector<std::shared_ptr<GameObject>> *vec )
 {
+    if (vec == NULL) vec = &currLevel->gameObjects;
+
     if (obj == nullptr) return;
 
-    if (obj->is_held()) currLevel->held = nullptr;
+    if (obj->is_item()) {
+        auto objItem = std::dynamic_pointer_cast<Item>(obj);
+        if (objItem != nullptr) if (objItem->is_held()) currLevel->held = nullptr;
+    }
 
     int n = obj->get_idx();
     // decrement the indices of all following game objects,
@@ -282,12 +321,9 @@ void Game::Destroy( std::shared_ptr<GameObject> obj, std::vector<std::shared_ptr
     // erase the object from the vector
     vec->erase( vec->begin() + n );
 }
-void Game::Destroy( std::shared_ptr<GameObject> obj ) {
-    Destroy( obj, &currLevel->gameObjects );
-}
 
 
-std::shared_ptr<GameObject> Game::spawnItemStack( int type, Vector2 pos, int count )
+std::shared_ptr<Item> Game::spawnItemStack( EntityType type, Vector2 pos, int count )
 {
     // only items will be spawned this way
     if (!is_item(type)) return nullptr;
@@ -298,57 +334,57 @@ std::shared_ptr<GameObject> Game::spawnItemStack( int type, Vector2 pos, int cou
     // normalise dir to get a unit vector direction
     dir.normalise();
 
-    auto obj = Instantiate(pos, type, count);
+    auto obj = Instantiate(type, pos, count);
 
-    obj->set_velocity( dir * 35.0f );
-    obj->set_acceleration( dir * -35.0f );
+    obj->set_vel( dir * 35.0f );
+    obj->set_accel( dir * -35.0f );
 
-    return obj;
+    return std::dynamic_pointer_cast<Item>(obj);
 }
 
 
-std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> item1, std::shared_ptr<GameObject> item2 )
+std::shared_ptr<Item> Game::craftTwoItems( std::shared_ptr<Item> item1, std::shared_ptr<Item> item2 )
 {
     // validation
     if (item1 == nullptr || item2 == nullptr) return nullptr;
     if (item1->is_held() || item2->is_held()) return nullptr;
-    if (item1->get_timer() > 0.0f || item2->get_timer() > 0.0f) return nullptr;
+    if (item1->get_craftTimer() > 0.0f || item2->get_craftTimer() > 0.0f) return nullptr;
     
-    std::shared_ptr<GameObject> res = nullptr;
-    int hp1 = item1->get_hp(), hp2 = item2->get_hp();
+    std::shared_ptr<Item> res = nullptr;
+    int hp1 = item1->get_HP(), hp2 = item2->get_HP();
 
     switch (item1->get_type())
     {
-        case Log_Item:
+        case logItem:
             switch (item2->get_type())
             {
-                case Plank_Item:
+                case plankItem:
                 {
                     // 1 log and 4 planks craft one DAM
                     // make sure there are adequate resources
                     int num = Min(hp1, hp2/4);
                     if (num > 0)
                     {
-                        res = spawnItemStack(Dam_Item, item1->get_pos(), num);
-                        item1->set_HP(hp1 - num); item2->set_HP(hp2 - (4 * num));
+                        res = spawnItemStack(damItem, item1->get_pos(), num);
+                        item1->add_HP(-num); item2->add_HP(-4 * num);
                     }
                     break;
                 }
             }
             break;
 
-        case Plank_Item:
+        case plankItem:
             switch (item2->get_type())
             {
-                case Log_Item:
+                case logItem:
                 {
                     // 1 logs and 4 planks craft one DAM
                     // make sure there are adequate resources
                     int num = Min(hp1/4, hp2);
                     if (num > 0)
                     {
-                        res = spawnItemStack(Dam_Item, item1->get_pos(), num);
-                        item1->set_HP(hp1 - (4 * num)); item2->set_HP(hp2 - num);
+                        res = spawnItemStack(damItem, item1->get_pos(), num);
+                        item1->add_HP(-4 * num); item2->add_HP(-num);
                     }
                     break;
                 }
@@ -360,48 +396,48 @@ std::shared_ptr<GameObject> Game::craftTwoItems( std::shared_ptr<GameObject> ite
 }
 
 
-std::shared_ptr<GameObject> Game::craftItem( std::shared_ptr<GameObject> item )
+std::shared_ptr<Item> Game::craftItem( std::shared_ptr<Item> item )
 {
-    // cannot craft btyy right clicking a held item
+    // cannot craft by right clicking a held item
     if (item->is_held()) return nullptr;
-    std::shared_ptr<GameObject> res = nullptr;
+    std::shared_ptr<Item> res = nullptr;
 
     // which type of item will be created
     switch (item->get_type())
     {
-        case Log_Item: // one log may be crafted into two planks
+        case logItem: // one log may be crafted into two planks
             // spawn a stack of two planks on the log stack
-            res = spawnItemStack(Plank_Item, item->get_pos(), 2);
-            res->set_timer( 0.75f );
-            item->set_HP( item->get_hp()-1 ); // lose one log in crafting
+            res = spawnItemStack(plankItem, item->get_pos(), 2);
+            res->set_craftTimer();
+            item->add_HP(-1); // lose one log in crafting
             break;
 
-        case Dam_Item: {
+        case damItem: {
             // DAMs may be deconstructed back into 4 planks and 1 logs
             Vector2 p = item->get_pos();
-            res = spawnItemStack(Log_Item, p, 1);
-            res->set_timer( 0.75f );
-            res = spawnItemStack(Plank_Item, p, 4);
-            res->set_timer( 0.75f );
-            item->set_HP( item->get_hp()-1 );
+            res = spawnItemStack(logItem, p, 1);
+            res->set_craftTimer();
+            res = spawnItemStack(plankItem, p, 4);
+            res->set_craftTimer();
+            item->add_HP(-1);
             break;
         }
 
-        case Plank_Item: { // four planks may be crafted into one door
-            int hp = item->get_hp();
+        case plankItem: { // four planks may be crafted into one door
+            int hp = item->get_HP();
             if (hp >= 4) {
                 // spawn a door on the plank stack
-                res = spawnItemStack(Door_Item, item->get_pos(), 1);
-                res->set_timer( 0.75f );
-                item->set_HP( hp-4 );
+                res = spawnItemStack(doorItem, item->get_pos(), 1);
+                res->set_craftTimer();
+                item->add_HP(-4);
             }
             break;
         }
 
-        case Door_Item: // doors may be deconstructed into four planks
-            res = spawnItemStack(Plank_Item, item->get_pos(), 4);
-            res->set_timer( 0.75f );
-            item->set_HP( item->get_hp()-1 );
+        case doorItem: // doors may be deconstructed into four planks
+            res = spawnItemStack(plankItem, item->get_pos(), 4);
+            res->set_craftTimer();
+            item->add_HP(-1);
             break;
     }
 
@@ -416,12 +452,14 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     // and added to the new scene, as the held object
     if (currLevel->held != nullptr) {
         // revise using the same position as the player
-        level->held = Instantiate(newPlayerPos, currLevel->held->get_type(), currLevel->held->get_hp(), level);
+        auto newHeld = Instantiate(currLevel->held->get_type(), newPlayerPos, currLevel->held->get_HP(), level);
+        level->held = std::dynamic_pointer_cast<Item>(newHeld);
         level->held->make_held();
         Destroy(currLevel->held);
     }
 
-    level->player = Instantiate(newPlayerPos, Player, currLevel->player->get_hp(), level);
+    auto newPlayer = Instantiate(player, newPlayerPos, currLevel->player->get_HP(), level);
+    level->player = std::dynamic_pointer_cast<Player>(newPlayer);
     Destroy(currLevel->player);
     currLevel->player = nullptr;
     
@@ -440,20 +478,6 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     while(secondRenders.size()) secondRenders.pop();
     while(dialogueRenders.size()) dialogueRenders.pop();
 }
-
-
-std::shared_ptr<GameObject> Game::moveEntityToLevel( std::shared_ptr<GameObject> obj, Scene *level, Vector2 newPos )
-{
-    // if the object being moved is the held object, do nothing since it should move
-    // with the player, not on its own
-    if (obj->is_held() || obj->is_NPC()) return nullptr;
-
-
-    auto res = Instantiate(newPos, obj->get_type(), obj->get_hp(), level);
-    Destroy(obj);
-    return res;
-}
-
 
 void Game::dayNightCycle()
 {
@@ -516,6 +540,8 @@ void Game::stop_music()
     if (currSong != nullptr) currSong->stop();
 }
 
+Vector2 Game::get_playerPos() { return currLevel->player->get_pos(); }
+
 void Game::enter_dialogue( Dialogue newDialogue ) { currDialogue = newDialogue; }
 
 
@@ -543,10 +569,10 @@ int Game::get_building( EntityType type )
 {
     switch (type)
     {
-        case Log_Item: return LOG;
-        case Pine_Cone_Item: return SAPLING;
-        case Dam_Item: return DAM;
-        case Door_Item: return CLOSED_DOOR;
+        case logItem: return LOG;
+        case pineConeItem: return SAPLING;
+        case damItem: return DAM;
+        case doorItem: return CLOSED_DOOR;
         default: return EMPTY;
     }
 }
@@ -586,11 +612,12 @@ void Game::leftClickFunc()
                         if (obj->is_item() && isInRegion(mPos, obj->get_hitbox()))
                         {
                             // make the player pick up the object and exit the function
-                            setHeldObject(obj);
+                            setHeldObject(std::dynamic_pointer_cast<Item>(obj));
                             return;
                         } else if (obj->is_NPC()) {
-                            obj->set_HP( obj->get_hp()+1 );
-                            obj->set_timer( 0.25f );
+                            auto npc = std::dynamic_pointer_cast<NPC>(obj);
+                            npc->add_HP(1);
+                            npc->set_dialogueTimer( 0.25f );
                             return;
                         }
                     }
@@ -601,7 +628,7 @@ void Game::leftClickFunc()
 
             // if an item IS held, throw it :)
             } else if (currLevel->held != nullptr) {
-                if (!tradeItem(currLevel->held->get_type(), currLevel->held->get_hp(), mPos)) 
+                if (!tradeItem(currLevel->held->get_type(), currLevel->held->get_HP(), mPos)) 
                 {
                     throwSingleItem();
                 }
@@ -613,20 +640,21 @@ void Game::leftClickFunc()
 
 bool Game::tradeItem(int heldType, int heldHP, Vector2 mPos)
 {
-    int targetType, requiredHP, spawnedType, spawnedHP;
+    int requiredHP, spawnedHP;
+    EntityType targetType, spawnedType;
 
     switch (heldType)
     {
-        case Stone_Item:
-            targetType = Bear_NPC;
+        case stoneItem:
+            targetType = bearNPC;
             requiredHP = 2;
-            spawnedType = Berry_Item;
+            spawnedType = berryItem;
             spawnedHP = 1;
             break;
-        case Berry_Item:
-            targetType = Rabbit_NPC;
+        case berryItem:
+            targetType = rabbitNPC;
             requiredHP = 1;
-            spawnedType = Log_Item;
+            spawnedType = logItem;
             spawnedHP = 2;
             break;
 
@@ -644,7 +672,7 @@ bool Game::tradeItem(int heldType, int heldHP, Vector2 mPos)
             if (isInRegion(mPos, obj->get_hitbox())) {
                 // clicked on the correct entity for trading
                 // remove the items from the players inventory
-                currLevel->held->set_HP(currLevel->held->get_hp()-requiredHP);
+                currLevel->held->add_HP(-requiredHP);
                 // spawn the item that was traded for
                 spawnItemStack(spawnedType, obj->get_pos(), spawnedHP);
                 return true;
@@ -670,23 +698,25 @@ void Game::rightClickFunc()
         for (int i = 0; i < n; i++)
         {
             auto obj = currLevel->gameObjects[i];
+            auto item = std::dynamic_pointer_cast<Item>(obj);
             // nothing happens when clicking on non items
-            if (!obj->is_item()) continue;
+            if (item == nullptr) continue;
 
-            if (isInRegion(mPos, obj->get_hitbox())) {
+
+            if (isInRegion(mPos, item->get_hitbox())) {
                 // right clicked an item stack, attempt to craft
-                auto crafted = craftItem(obj);
+                auto crafted = craftItem(item);
                 // if successful, return
                 if (crafted != nullptr) return;
             }
         }
     // if the player is holding berries, heal them
-    } else if (held->get_type() == Berry_Item) {
+    } else if (held->get_type() == berryItem) {
         auto player = currLevel->player;
-        int pHP = player->get_hp();
+        int pHP = player->get_HP();
         if (pHP < player->get_maxHP()) {
-            player->set_HP(pHP + 1);
-            held->set_HP(held->get_hp() - 1);
+            player->add_HP(1);
+            held->add_HP(-1);
         }
         return;
     } 
@@ -700,11 +730,11 @@ void Game::rightClickFunc()
     int building = (held == nullptr)? EMPTY : get_building(held->get_type());
 
     int status = PlaceObjectInCell(cell, building, true);
-    if (status == 0 && held != nullptr) held->set_HP(held->get_hp() - 1);
+    if (status == 0 && held != nullptr) held->add_HP(-1);
 }
 
 
-void Game::setHeldObject( std::shared_ptr<GameObject> obj )
+void Game::setHeldObject( std::shared_ptr<Item> obj )
 {
     obj->make_held();
     currLevel->held = obj;
@@ -726,7 +756,7 @@ void Game::throwHeldObject()
     Vector2 vel((bool(inputKeys&1)-bool(inputKeys&4)), (bool(inputKeys&2)-bool(inputKeys&8)));
     vel.normalise(); vel *= s;
 
-    vel += currLevel->player->get_velocity() + (dir * (5.2f * currLevel->cell_sideLen));
+    vel += currLevel->player->get_vel() + (dir * (5.2f * currLevel->cell_sideLen));
     Vector2 accel = vel * -0.7f;
 
     obj->make_thrown( vel, accel );
@@ -734,7 +764,7 @@ void Game::throwHeldObject()
 
 void Game::throwSingleItem()
 {
-    int heldHP = currLevel->held->get_hp();
+    int heldHP = currLevel->held->get_HP();
     // if there is only one item in the stack, just throw the whole thing
     if (heldHP == 1) throwHeldObject();
 
@@ -750,16 +780,17 @@ void Game::throwSingleItem()
         Vector2 vel((bool(inputKeys&1)-bool(inputKeys&4)), (bool(inputKeys&2)-bool(inputKeys&8)));
         vel.normalise(); vel *= s;
 
-        vel += currLevel->player->get_velocity() + (dir * (4.5f * currLevel->cell_sideLen));
+        vel += currLevel->player->get_vel() + (dir * (4.5f * currLevel->cell_sideLen));
         Vector2 accel  = vel * -0.7f;
 
         float r = 2.0f * (currLevel->player->get_radius() + currLevel->held->get_radius());
         Vector2 p = pPos + (dir * r);
 
-        auto obj = Instantiate(p, currLevel->held->get_type(), 1);
-        obj->make_thrown( vel, accel );
+        auto obj = Instantiate(currLevel->held->get_type(), p, 1);
+        auto item = std::dynamic_pointer_cast<Item>(obj);
+        item->make_thrown( vel, accel );
 
-        currLevel->held->set_HP( heldHP - 1 );
+        currLevel->held->add_HP(-1);
     }
 }
 
@@ -771,18 +802,18 @@ void Game::spawnNPCs()
     int n = Town.gameObjects.size();
     for (int i = 0; i < n && flags != 3; i++) 
     {
-        int type = Town.gameObjects[i]->get_type();
-        if (type == Fox_NPC) flags |= 2;
-        else if (type == Rabbit_NPC) flags |= 1;
+        EntityType type = Town.gameObjects[i]->get_type();
+        if (type == foxNPC) flags |= 2;
+        else if (type == rabbitNPC) flags |= 1;
     }
 
     if (!(flags & 2)) { // no fox, spawn fox
         Vector2 pos(913.0f, -50.0f);
-        Instantiate(pos, Fox_NPC, 1, &Town);
+        Instantiate(foxNPC, pos, 1, &Town);
     }
     if (!(flags & 1)) { // no rabbit, spawn rabbit
         Vector2 pos(-50.0f, 850.0f);
-        Instantiate(pos, Rabbit_NPC, 1, &Town);
+        Instantiate(rabbitNPC, pos, 1, &Town);
     }
 
 
@@ -792,11 +823,11 @@ void Game::spawnNPCs()
         n = Base.gameObjects.size();
         int i;
         for (i = 0; i < n; i++) {
-            if (Base.gameObjects[i]->get_type() == Fox_NPC) break;
+            if (Base.gameObjects[i]->get_type() == foxNPC) break;
         }
         if (i == n) {
             Vector2 pos(2000.0f, 3050.0f);
-            Instantiate(pos, Fox_NPC, 1, &Base);
+            Instantiate(foxNPC, pos, 1, &Base);
         }
     }
 }

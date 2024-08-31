@@ -1,5 +1,11 @@
 #include "Scene.hpp"
-#include "../gameObject/GameObject.hpp"
+#include "../gameObject/Bird.hpp"
+#include "../gameObject/Bomb.hpp"
+#include "../gameObject/CosmeticGameObjects.hpp"
+#include "../gameObject/Item.hpp"
+#include "../gameObject/NPC.hpp"
+#include "../gameObject/Player.hpp"
+#include "../gameObject/Wolf.hpp"
 
 Scene::Scene( std::string filePath, Game *game ) : game(game)
 {
@@ -51,10 +57,10 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
 
             if (id == idxPlayer) {
                 // assign obj to the player pointer
-                player = obj;
+                player = std::dynamic_pointer_cast<Player>(obj);
             } else if (id == idxHeld) {
                 // assign obj to the held object pointer
-                held = obj;
+                held = std::dynamic_pointer_cast<Item>(obj);
                 held->make_held();
             }
         }
@@ -103,8 +109,48 @@ std::shared_ptr<GameObject> Scene::CreateGameObjectFromFile( std::istringstream 
     // read in values from iss
     *iss >> idx >> type >> pos.x >> pos.y >> HP;
 
-    auto obj = std::make_shared<GameObject>(pos, (EntityType)type, idx, HP, game, cell_sideLen);
+    std::shared_ptr<GameObject> obj = nullptr;
 
+    switch (type)
+    {
+        case 0:
+            obj = std::make_shared<Player>(pos, idx, HP, game, cell_sideLen);
+            break;
+        case wolf:
+            obj = std::make_shared<Wolf>(pos, idx, HP, game, cell_sideLen, nullptr);
+            break;
+        case bird:
+            obj = std::make_shared<Bird>(pos, idx, game, cell_sideLen);
+            break;
+        case bomb:
+            obj = std::make_shared<Bomb>(pos, idx, game, cell_sideLen);
+            break;
+        case target:
+            std::cerr << "ERROR: Target may not be loaded\n";
+            break;
+        case bombExplosionIndicator:
+            std::cerr <<"ERROR: explosion indicator may not be loaded\n";
+            break;
+        // NPCs
+        case foxNPC:
+        case bearNPC:
+        case rabbitNPC:
+            obj = std::make_shared<NPC>(type, pos, idx, game, cell_sideLen);
+            break;
+        // items
+        case logItem:
+        case pineConeItem:
+        case plankItem:
+        case damItem:    
+        case doorItem:      
+        case stoneItem:     
+        case berryItem:
+            obj = std::make_shared<Item>(type, pos, idx, HP, game, cell_sideLen);
+            break;
+        default:
+            std::cerr << "Invalid Entity type loaded!\n";
+            break;
+    }
     return obj;
 }
 
@@ -161,7 +207,7 @@ void Scene::SaveGameObjectToFile( std::fstream *file, std::shared_ptr<GameObject
     if (file && obj != nullptr) 
     {
         Vector2 pos = obj->get_pos();
-        int idx = obj->get_idx(), type = obj->get_type(), HP = obj->get_hp();
+        int idx = obj->get_idx(), type = obj->get_type(), HP = obj->get_HP();
 
         *file <<std::dec<< idx <<'\t'<< type <<'\t'<< pos.x <<'\t'<< pos.y <<'\t'<< HP <<'\n';
     }

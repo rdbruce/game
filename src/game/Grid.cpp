@@ -141,7 +141,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 case 1: { // log
                     // spawn a log
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Log_Item, pos, 1);
+                    spawnItemStack(logItem, pos, 1);
                     logDestruction->play();
                     break;
                 }
@@ -149,7 +149,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 case 2: { // DAM
                     // spawn a DAM
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Dam_Item, pos, 1);
+                    spawnItemStack(damItem, pos, 1);
                     logDestruction->play();
                     break;
                 }
@@ -169,7 +169,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                         level->grid[cell.x][cell.y] &= 0xFF9000;
                         // spawn a falling tree in its place
                         Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
-                        Instantiate(pos, Falling_Tree, 1, level);
+                        Instantiate(fallingTree, pos, 1, level);
 
                         treeFalling->play();
 
@@ -183,7 +183,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 case 4: { // stump
                     // spawn a log
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Log_Item, pos, 1);
+                    spawnItemStack(logItem, pos, 1);
                     logDestruction->play();
                     break;
                 }
@@ -191,7 +191,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 case 5: { // sapling
                     // spawn a pine cone
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Pine_Cone_Item, pos, 1);
+                    spawnItemStack(pineConeItem, pos, 1);
                     leaves->play();
                     break;
                 }
@@ -202,7 +202,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 case 8: { // open door
                     // spawn a door
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Door_Item, pos, 1);
+                    spawnItemStack(doorItem, pos, 1);
                     logDestruction->play();
                     break;
                 }
@@ -210,7 +210,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                 case 10: { // berry bush
                     // spawn a berry
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
-                    spawnItemStack(Berry_Item, pos, 1);
+                    spawnItemStack(berryItem, pos, 1);
                     // place a depleted bush where the berry bush is
                     leaves->play();
                     return PlaceObjectInCell(cell, EMPTY_BUSH, false, level);
@@ -697,7 +697,7 @@ void Game::removeWaterFollowingCell( Vector2Int cell )
             {
                 int sideLen = currLevel->cell_sideLen;
                 Vector2 pos(currCell.x*sideLen, currCell.y*sideLen);
-                Instantiate( pos, Stone_Item, 1 );
+                Instantiate(stoneItem, pos, 1);
             }
         }
     }

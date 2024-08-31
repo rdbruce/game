@@ -9,6 +9,13 @@
 #include "../engine/LAudio.hpp"
 
 #include "../gameObject/GameObject.hpp"
+#include "../gameObject/Bird.hpp"
+#include "../gameObject/Bomb.hpp"
+#include "../gameObject/CosmeticGameObjects.hpp"
+#include "../gameObject/Item.hpp"
+#include "../gameObject/NPC.hpp"
+#include "../gameObject/Player.hpp"
+#include "../gameObject/Wolf.hpp"
 #include "../gameObject/Animations.hpp"
 
 #include "Scene.hpp"
@@ -35,6 +42,16 @@ class Game
 {
     // declare GameObject as a friend of Game, so the private members can be accessed
     friend class GameObject;
+    friend class Temp;
+    friend class Player;
+    friend class Wolf;
+    friend class Item;
+    friend class NPC;
+    friend class FallingTree;
+    friend class Bird;
+    friend class Target;
+    friend class Bomb;
+    friend class ExplosionIndicator;
 
     public:
 
@@ -86,33 +103,30 @@ class Game
 
         // finds the position of the mouse (on the map)
         Vector2 find_mouse_pos();
+        // returns position of the player
+        Vector2 get_playerPos();
 
-
+        
         // adds a game object and returns a pointer to it
-        std::shared_ptr<GameObject> Instantiate( Vector2 pos, int type, int hp, Scene *level );
-        std::shared_ptr<GameObject> Instantiate( Vector2 pos, int type, int hp ); // for convenience
+        std::shared_ptr<GameObject> Instantiate(EntityType type, Vector2 pos, int hp, Scene *level = NULL);
 
         // deletes the specified object
-        void Destroy( std::shared_ptr<GameObject> obj, std::vector<std::shared_ptr<GameObject>> *vec );
-        void Destroy( std::shared_ptr<GameObject> obj ); // for convenience
+        void Destroy(std::shared_ptr<GameObject> obj, std::vector<std::shared_ptr<GameObject>> *vec = NULL);
 
         // spawns an item stack with random velocity. returns a pointer to the item created
-        std::shared_ptr<GameObject> spawnItemStack( int type, Vector2 pos, int count );
+        std::shared_ptr<Item> spawnItemStack( EntityType type, Vector2 pos, int count );
 
         // when throwing two different item stacks together, they may combine, and produce
         // a third, different item. returns a pointer to the crafted item
-        std::shared_ptr<GameObject> craftTwoItems( std::shared_ptr<GameObject> item1, std::shared_ptr<GameObject> item2 );
+        std::shared_ptr<Item> craftTwoItems( std::shared_ptr<Item> item1, std::shared_ptr<Item> item2 );
         // when right clicking an item stack, it may be crafted into another type of item
-        std::shared_ptr<GameObject> craftItem( std::shared_ptr<GameObject> item );
+        std::shared_ptr<Item> craftItem( std::shared_ptr<Item> item );
         // if the player is holding a tradable item, see if they clicked on an entity that trades for it
         bool tradeItem( int heldType, int heldHP, Vector2 mPos );
 
 
         // moves the player into the specified level, and makes said level the active scene
         void movePlayerToLevel( Scene *level, Vector2 newPlayerPos );
-
-        // moves an entity into the specified level
-        std::shared_ptr<GameObject> moveEntityToLevel( std::shared_ptr<GameObject> obj, Scene *level, Vector2 newPos );
 
         // deals a specified amount of damage to a cell
         void damageCell( Vector2Int cell, int damage, Scene *level = NULL );
@@ -258,7 +272,7 @@ class Game
         // currently, wolf spawn chance will be 1 - this ^^
 
         // how fast an object needs to be going (in number of cells/sec) to deal damage
-        float ITEM_MINIMUM_DAMAGE_VELOCITY = 2.0f;
+        float ITEM_MINIMUM_DAMAGE_VELOCITY = 1.5f;
         
 
 
@@ -371,7 +385,7 @@ class Game
 
 
         // sets the selected object to be held by the player
-        void setHeldObject( std::shared_ptr<GameObject> obj );
+        void setHeldObject( std::shared_ptr<Item> obj );
         // throw the object the player is currently holding
         void throwHeldObject();
         // throw one of the item the player is currently holding

@@ -55,7 +55,7 @@ void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
     if (type != -1)
     {
         // may left click to trade 2 stone for 1 berry
-        if (type == Bear_NPC && currLevel->held->get_type() == Stone_Item)
+        if (type == bearNPC && currLevel->held->get_type() == stoneItem)
         {
             // render the left mouse icon
             LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
@@ -77,7 +77,7 @@ void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
             return;
         }
 
-        else if (type == Rabbit_NPC && currLevel->held->get_type() == Berry_Item)
+        else if (type == rabbitNPC && currLevel->held->get_type() == berryItem)
         {
             // render the left mouse icon
             LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
@@ -105,11 +105,11 @@ void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
 void Game::render_BuildThrow_commands( SDL_Rect *mRect )
 {
     int x = mRect->x;
-    int type = currLevel->held->get_type(), hp = currLevel->held->get_hp();
+    int type = currLevel->held->get_type(), hp = currLevel->held->get_HP();
     std::string txt;
 
     // find the amount of damage the item will do when thrown
-    int damage = ceilToInt(currLevel->held->get_moveSpeed() * hp);
+    int damage = currLevel->held->get_damage();
 
 
     // if there is only one item, middle OR left click to throw it
@@ -134,7 +134,7 @@ void Game::render_BuildThrow_commands( SDL_Rect *mRect )
         txt = "Throw one item   ";
         controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
-        txt = std::to_string(ceilToInt(currLevel->held->get_moveSpeed()));
+        txt = std::to_string(ceilToInt(currLevel->held->get_damageMult()));
         controlsTex->loadFromRenderedText(txt, {255,0,0,255}, arcadeClassic24);
         controlsTex->render(mRect->x, mRect->y); mRect->x += controlsTex->getWidth();
         mRect->x = x; mRect->y += mRect->h;
@@ -154,23 +154,23 @@ void Game::render_BuildThrow_commands( SDL_Rect *mRect )
 
     switch (type)
     {
-        case Log_Item:
+        case logItem:
             txt = "Build log";
             renderFlag = true;
             break;
-        case Pine_Cone_Item:
+        case pineConeItem:
             txt = "Plant sapling";
             renderFlag = true;
             break;
-        case Dam_Item:
+        case damItem:
             txt = "Build dam";
             renderFlag = true;
             break;
-        case Door_Item:
+        case doorItem:
             txt = "Build door";
             renderFlag = true;
             break;
-        case Berry_Item:
+        case berryItem:
             txt = "Heal 1 hp";
             renderFlag = true;
             break;
@@ -197,7 +197,7 @@ bool Game::render_hovering_over_entity_controls( Vector2 mPos, SDL_Rect *mRect )
         auto obj = currLevel->gameObjects[i];
         if (isInRegion(mPos, obj->get_hitbox())) {
             type = obj->get_type(); 
-            hp = obj->get_hp();
+            hp = obj->get_HP();
             break;
         }
     }
@@ -237,7 +237,7 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
     switch (type)
     {
         // right click to craft 2 planks from one log
-        case Log_Item:
+        case logItem:
         {
             RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
             int w = mRect->w, h = mRect->h;
@@ -257,7 +257,7 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
         }
 
         // right click to craft 1 door for 4 planks
-        case Plank_Item:
+        case plankItem:
         {
             if (hp >= 4)
             {
@@ -280,7 +280,7 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
         }
 
         // right click to craft 4 planks for 1 door
-        case Door_Item:
+        case doorItem:
         {
             RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
             int w = mRect->w, h = mRect->h;
@@ -300,7 +300,7 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
         }
 
         // right click to craft 4 planks and 1 log for 1 dam
-        case Dam_Item:
+        case damItem:
         {
             RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w;
             int w = mRect->w, h = mRect->h;
@@ -409,7 +409,7 @@ void Game::render_player_health()
 {
     // the space each heart will take up
     SDL_Rect heartRect = {0+renderOffset.x, 30+renderOffset.y, 50, 50};
-    int full = currLevel->player->get_hp(); // the number of full hearts there will be
+    int full = currLevel->player->get_HP(); // the number of full hearts there will be
 
     for (int i = 0; i < 5; i++) 
     {

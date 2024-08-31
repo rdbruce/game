@@ -21,7 +21,7 @@ enum State
     in_game,
     Quit,
     game_over,
-    settings_menu
+    settings_menu,
 };
 
 
@@ -103,7 +103,7 @@ class GameMenu
                                   titleTex;
 
         // the sound made when you click a button
-        std::shared_ptr<LAudio> buttonSound = nullptr;
+        std::shared_ptr<LAudio> buttonSound = nullptr, arcadeBonus, arcadeButton99;
 
         // fonts
         TTF_Font *sevenSegment48, *sevenSegment24, *sevenSegment36,

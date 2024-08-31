@@ -9,6 +9,15 @@
 
 #include "../engine/GameMath.hpp"
 
+#include "../gameObject/GameObject.hpp"
+#include "../gameObject/Bird.hpp"
+#include "../gameObject/Bomb.hpp"
+#include "../gameObject/CosmeticGameObjects.hpp"
+#include "../gameObject/Item.hpp"
+#include "../gameObject/NPC.hpp"
+#include "../gameObject/Player.hpp"
+#include "../gameObject/Wolf.hpp"
+
 using namespace Math;
 
 // forward declaration of GameObject class
@@ -41,8 +50,8 @@ class Scene
         std::string name = "New Scene";
 
         // game objects
-        std::shared_ptr<GameObject> player = nullptr; // pointer to the player
-        std::shared_ptr<GameObject> held = nullptr; // pointer to an object held by the player
+        std::shared_ptr<Player> player = nullptr; // pointer to the player
+        std::shared_ptr<Item> held = nullptr; // pointer to an object held by the player
 
         // vector of all the game objects
         std::vector<std::shared_ptr<GameObject>> gameObjects;

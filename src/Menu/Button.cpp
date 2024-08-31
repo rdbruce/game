@@ -106,6 +106,23 @@ void Button::new_game_confirmation()
     menu->currButtons = &menu->confirmationButtons;
 }
 
+// void Button::toggle_instructions()
+// {
+//     menu->settings.flags ^= SHOW_INSTRUCTIONS;
+//     swap_textures();
+// }
+
+// void Button::enter_instructions()
+// {
+//     if (menu->settings.flags&SHOW_INSTRUCTIONS) {
+//         menu->state = game_instructions;
+//         menu->confirmationText = "";
+//         menu->currButtons = &menu->instructionsButtons;
+//     } else {
+//         load_new_game();
+//     }
+// }
+
 void Button::load_new_game()
 {
     menu->game->load_levels("../../saves/NewGame/");
@@ -164,6 +181,8 @@ void Button::go_to_mainMenu()
     menu->currButtons = &menu->menuButtons;
     menu->confirmationText = "";
     menu->highscores[0] = menu->game->scores;
+
+    apply_settings();
 }
 
 void Button::go_to_main_menu_from_gameover()
@@ -274,6 +293,13 @@ void Button::apply_settings()
     idx -= 1;
     checkbox = menu->settingsButtons[idx];
     if (bool(menu->settings.flags&CRT_FILTER) != checkbox->is_toggled()) checkbox->swap_textures();
+
+    // idx = menu->instructionsButtons.size()-1;
+    // checkbox = menu->instructionsButtons[idx];
+    // if (bool(menu->settings.flags&SHOW_INSTRUCTIONS) != checkbox->is_toggled()) checkbox->swap_textures();
+
+    auto continueButton = menu->menuButtons[0];
+    if (menu->mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
 }
 
 void Button::get_pos( int *x, int *y )

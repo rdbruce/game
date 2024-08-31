@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 
+#define SHOW_INSTRUCTIONS       0b00100000
 #define FULLSCREEN              0b00010000
 #define PLAY_MUSIC              0b00001000
 #define MUTE_WHILE_UNFOCUSED    0b00000100
@@ -50,8 +51,8 @@ struct Settings
 
     int volume = MIX_MAX_VOLUME;
     int musicVolume = MIX_MAX_VOLUME;
-    /* 0 - 0 - 0 - 0 - music - mute while unfocused - CRT filter - display FPS */
-    int flags = 10;
+    /* 0 - 0 - instructions - fullscreen - music - mute while unfocused - CRT filter - display FPS */
+    int flags = 0b00101010;
 
     int max_framrate = -1;
 };

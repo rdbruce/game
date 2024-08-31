@@ -2,6 +2,7 @@
 #define GAME_MATH_HPP
 
 #include <cmath>
+#include <iostream>
 
 // mathematical constants
 #define PI              3.141592654f
@@ -33,6 +34,9 @@ namespace Math
         float length();
         void normalise(); // makes itself a unit vector
         Vector2 normalised(); // returns itself as a unit vector
+
+        // prints x and y
+        void print();
 
 
 
@@ -78,6 +82,9 @@ namespace Math
         // contructors
         Vector2Int( int X, int Y );
         Vector2Int();
+
+        // prints x and y
+        void print();
 
 
         // overload operators
