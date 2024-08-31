@@ -37,6 +37,7 @@ enum EntityType
     fallingTree,
     target,
     bombExplosionIndicator,
+    ghostBuilding,
 
     // item types
     ITEM_MIN,

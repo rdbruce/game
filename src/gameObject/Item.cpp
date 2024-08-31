@@ -119,6 +119,9 @@ void Item::make_held()
     craftTimer = damageTimer = 0.0f;
     halt();
     updatePos = &Item::held_updatePos;
+    // make a ghost building when the player picks something up
+    Vector2Int cell = get_cell();
+    game->Instantiate(ghostBuilding, Vector2(cell.x, cell.y), 1);
 }
 
 void Item::make_thrown(Vector2 newVel, Vector2 newAccel)

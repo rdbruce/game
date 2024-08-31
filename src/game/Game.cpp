@@ -276,6 +276,9 @@ std::shared_ptr<GameObject> Game::Instantiate( EntityType type, Vector2 pos, int
         case fallingTree:
             obj = std::make_shared<FallingTree>(pos, idx, this, sideLen);
             break;
+        case ghostBuilding:
+            obj = std::make_shared<GhostBuilding>(Vector2Int(pos.x, pos.y), currLevel->held->get_type(), idx, this, sideLen);
+            break;
         // NPCs
         case foxNPC:
         case bearNPC:
@@ -736,8 +739,8 @@ void Game::rightClickFunc()
 
 void Game::setHeldObject( std::shared_ptr<Item> obj )
 {
-    obj->make_held();
     currLevel->held = obj;
+    obj->make_held();
 }
 
 void Game::throwHeldObject()

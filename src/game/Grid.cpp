@@ -94,7 +94,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
         case 7: // closed door
             // cell is occupied or water, AND the placement was made by player, not loading
             if (((num&OCCUPIED) || (num&WATER && !(num&IS_DRIED))) && playerPlacement) {
-                if (num&255 != 8) return -2;
+                if ((num&CELL_ID) != 8) return -2;
                 num &= ~(CELL_ID|BARRIER);
                 num |= CLOSED_DOOR;
                 doorToggle->play();
