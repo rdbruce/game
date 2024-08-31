@@ -457,7 +457,6 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
         // revise using the same position as the player
         auto newHeld = Instantiate(currLevel->held->get_type(), newPlayerPos, currLevel->held->get_HP(), level);
         level->held = std::dynamic_pointer_cast<Item>(newHeld);
-        level->held->make_held();
         Destroy(currLevel->held);
     }
 
@@ -467,6 +466,7 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     currLevel->player = nullptr;
     
     currLevel = level;
+    if (level->held != nullptr) level->held->make_held();
     interactRange = 3.0f * currLevel->cell_sideLen;
 
     // update pathfinding variables
