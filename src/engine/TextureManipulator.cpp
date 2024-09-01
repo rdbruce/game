@@ -250,3 +250,10 @@ std::shared_ptr<LTexture> TextureManipulator::createSliderTexture(int width, int
     auto res = createSolidColour(width, height, colour, window);
     return res;
 }
+
+std::shared_ptr<LTexture> TextureManipulator::createFPSButton(int fps, int width, int height, std::shared_ptr<LWindow> window, TTF_Font *font, SDL_Color colour)
+{
+    std::string txt = (fps == -1)? "unlimited" : std::to_string(fps)+"FPS";
+    auto res = createMenuButton(txt, width, height, window, font, colour);
+    return res;
+}

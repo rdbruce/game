@@ -76,7 +76,7 @@ void Button::music_volume_slider()
 
 void Button::enter_game()
 {
-    menu->game->new_game();
+    menu->game->new_game(bool(menu->settings.flags&SHOW_INSTRUCTIONS));
     menu->game->clear_input();
     menu->state = in_game;
     menu->isActive = false;
@@ -106,22 +106,11 @@ void Button::new_game_confirmation()
     menu->currButtons = &menu->confirmationButtons;
 }
 
-// void Button::toggle_instructions()
-// {
-//     menu->settings.flags ^= SHOW_INSTRUCTIONS;
-//     swap_textures();
-// }
-
-// void Button::enter_instructions()
-// {
-//     if (menu->settings.flags&SHOW_INSTRUCTIONS) {
-//         menu->state = game_instructions;
-//         menu->confirmationText = "";
-//         menu->currButtons = &menu->instructionsButtons;
-//     } else {
-//         load_new_game();
-//     }
-// }
+void Button::toggle_instructions()
+{
+    menu->settings.flags ^= SHOW_INSTRUCTIONS;
+    swap_textures();
+}
 
 void Button::load_new_game()
 {
@@ -272,8 +261,30 @@ void Button::apply_settings()
     slider->get_pos(&X, &Y);
     slider->set_pos(x, Y);
 
-    idx -= 1;
+    idx--;
+    auto fpsbutton = std::dynamic_pointer_cast<FPSButton>(menu->settingsButtons[idx]);
+    if (fpsbutton->is_toggled()) fpsbutton->swap_textures();
+    if (menu->settings.max_framrate == fpsbutton->get_max_FPS()) fpsbutton->swap_textures();
+    idx--;
+    fpsbutton = std::dynamic_pointer_cast<FPSButton>(menu->settingsButtons[idx]);
+    if (fpsbutton->is_toggled()) fpsbutton->swap_textures();
+    if (menu->settings.max_framrate == fpsbutton->get_max_FPS()) fpsbutton->swap_textures();
+    idx--;
+    fpsbutton = std::dynamic_pointer_cast<FPSButton>(menu->settingsButtons[idx]);
+    if (fpsbutton->is_toggled()) fpsbutton->swap_textures();
+    if (menu->settings.max_framrate == fpsbutton->get_max_FPS()) fpsbutton->swap_textures();
+    idx--;
+    fpsbutton = std::dynamic_pointer_cast<FPSButton>(menu->settingsButtons[idx]);
+    if (fpsbutton->is_toggled()) fpsbutton->swap_textures();
+    if (menu->settings.max_framrate == fpsbutton->get_max_FPS()) fpsbutton->swap_textures();
+    idx--;
+    menu->game->set_max_framerate(menu->settings.max_framrate);
+
     auto checkbox = menu->settingsButtons[idx];
+    if (bool(menu->settings.flags&SHOW_INSTRUCTIONS) != checkbox->is_toggled()) checkbox->swap_textures();
+
+    idx -= 1;
+    checkbox = menu->settingsButtons[idx];
     if (bool(menu->settings.flags&SHOW_FPS) != checkbox->is_toggled()) checkbox->swap_textures();
 
     idx -= 1;
@@ -294,9 +305,6 @@ void Button::apply_settings()
     checkbox = menu->settingsButtons[idx];
     if (bool(menu->settings.flags&CRT_FILTER) != checkbox->is_toggled()) checkbox->swap_textures();
 
-    // idx = menu->instructionsButtons.size()-1;
-    // checkbox = menu->instructionsButtons[idx];
-    // if (bool(menu->settings.flags&SHOW_INSTRUCTIONS) != checkbox->is_toggled()) checkbox->swap_textures();
 
     auto continueButton = menu->menuButtons[0];
     if (menu->mayContinue != continueButton->is_toggled()) continueButton->swap_textures();
@@ -337,4 +345,33 @@ void Button::toggle_FPS()
 {
     menu->settings.flags ^= SHOW_FPS;
     swap_textures();
+}
+
+
+FPSButton::FPSButton(int fps, GameMenu *Menu, SDL_Rect Rect, void (FPSButton::*Func)(), std::shared_ptr<LAudio> PressSound)
+:   Button( Menu, Rect, 
+            Menu->tEditor.createFPSButton(fps, Rect.w, Rect.h, Menu->window, Menu->arcadeClassic18, {100,100,100,255}),
+            &Button::doNothing, PressSound, 
+            Menu->tEditor.createFPSButton(fps, Rect.w, Rect.h, Menu->window, Menu->arcadeClassic18)),
+    maxFPS(fps) 
+{
+    if (menu->settings.max_framrate == maxFPS) swap_textures();
+    set_func(&FPSButton::set_max_FPS);
+}
+
+void FPSButton::execute_function()
+{
+    (this->*func)();
+}
+
+void FPSButton::set_func(void (FPSButton::*newFunc)()) { func = newFunc; }
+int FPSButton::get_max_FPS() { return maxFPS; }
+
+void FPSButton::set_max_FPS()
+{
+    if (menu->settings.max_framrate != maxFPS) {
+        menu->settings.max_framrate = maxFPS;
+        swap_textures();
+        apply_settings();
+    }
 }

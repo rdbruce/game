@@ -27,10 +27,11 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
 float Game::get_time() { return g_time; }
 bool Game::game_over() { return gameOver; }
 
-void Game::new_game() { 
+void Game::new_game(bool show_tutorial) { 
     mayGatherStone = true;
     gameOver = false;
     firstDay = true;
+    showTutorial = show_tutorial && scores.mostNightsSurvived == 0;
 }
 
 void Game::clear_input() { inputKeys = 0; }
@@ -526,8 +527,9 @@ void Game::dayNightCycle()
             currSong = nightMusic;
             firstDay = false;
 
-            if (scores.mostNightsSurvived == 0) {
+            if (showTutorial) {
                 Instantiate(tutorialText, Vector2(-50.0f, -50.0f), 1);
+                showTutorial = false;
             }
         }
         play_current();
@@ -838,6 +840,8 @@ void Game::spawnNPCs()
             Instantiate(foxNPC, pos, 1, &Base);
         }
 
+    }
+    if (showTutorial) {
         Vector2 pos(-50.0f, -50.0f);
         Instantiate(tutorialText, pos, 1, &Base);
     }

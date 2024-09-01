@@ -11,6 +11,8 @@ class Button;
 
 class Button
 {
+    friend class FPSButton;
+
     private:
 
         // posiiton and dimensions of the button
@@ -33,10 +35,10 @@ class Button
         
     public:
 
-        Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)() = &Button::doNothing, std::shared_ptr<LAudio> PressSound = nullptr, std::shared_ptr<LTexture> AltTex = nullptr );
+        Button(GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)() = &Button::doNothing, std::shared_ptr<LAudio> PressSound = nullptr, std::shared_ptr<LTexture> AltTex = nullptr);
 
         // updates execute func
-        void set_func( void (Button::*newFunc)() );
+        virtual void set_func( void (Button::*newFunc)() );
 
         // changes position
         void set_pos( int x, int y );
@@ -51,7 +53,7 @@ class Button
         bool isPressed( int x, int y );
 
         // does something when the button is pressed
-        void execute_function();
+        virtual void execute_function();
 
         // plays pressSound
         void play_sound();
@@ -118,7 +120,27 @@ class Button
 
         void toggle_FPS();
 
-        // void toggle_instructions();
+        void toggle_instructions();
+};
 
-        // void enter_instructions();
+class FPSButton : public Button
+{
+    public:
+
+        FPSButton(int fps, GameMenu *Menu, SDL_Rect Rect, void (FPSButton::*Func)() = &Button::doNothing, std::shared_ptr<LAudio> PressSound = nullptr);
+
+        virtual void execute_function();
+
+        virtual void set_func( void (FPSButton::*newFunc)() );
+
+        void set_max_FPS();
+
+        int get_max_FPS();
+
+    private:
+
+        int maxFPS = -1;
+
+        // what happens when the button is pressed
+        void (FPSButton::*func)() = &Button::doNothing;
 };

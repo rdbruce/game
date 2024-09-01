@@ -28,6 +28,7 @@ enum State
 class GameMenu
 {
     friend class Button;
+    friend class FPSButton;
 
     public:
 

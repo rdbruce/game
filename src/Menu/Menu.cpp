@@ -48,18 +48,9 @@ void GameMenu::render_background()
             SDL_Rect rect = {(wRect.w-GAMEOVER_TXT_WIDTH)/2 + wRect.x, 128, GAMEOVER_TXT_WIDTH, GAMEOVER_TEX_HEIGHT};
             gameOverTex->render(rect.x, rect.y, &rect);
         } 
-        else if (settingsOrMenu && confirmationText == "") {
+        else if (state == main_menu && confirmationText == "") {
             SDL_Rect rect = {64 + wRect.x, 32 + wRect.y, 896, 192};
             titleTex->render(rect.x, rect.y, &rect);
-
-            // if (state == game_instructions) 
-            // {
-            //     std::string instructions = "You find yourself in a\nforest, plagued by nightly\nattacks from evil\nwoodland creatures!\n \nThrow item stacks at these\nfoes to defeat them,\nand combine a stack of\n4 planks and a log\nto create a DAM!\nUse these to block the\nriver, and create\na base!";
-            //     renderText(instructions, wRect.w/2 + wRect.x, 256, window, {255,255,255,255}, arcadeClassic36);
-            //     int y = wRect.h - BUTTON_HEIGHT - CHECKBOX_SIDELENGTH - 32;
-            //     instructions = "Don't show this again";
-            //     renderText(instructions, wRect.w/2 + wRect.x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24);
-            // }
         }
     }
 }
@@ -68,7 +59,7 @@ void GameMenu::render_settings()
 {
     if (state == settings_menu)
     {
-        int x = 64 + wRect.x, y = 256;
+        int x = 64 + wRect.x, y = 64;
 
         renderText("Audio", x, y, window, {255,255,255,255}, arcadeClassic36, Left_aligned);
         y += 40;
@@ -103,6 +94,17 @@ void GameMenu::render_settings()
         
         y += CHECKBOX_SIDELENGTH + 16;
         renderText("Show framerate", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
+
+        y += 96;
+        renderText("Max framerate", x, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
+        
+        x = 512 + wRect.x;
+        renderText("Gameplay", x, y, window, {255,255,255,255}, arcadeClassic36, Left_aligned);
+        y += 40;
+
+        white->render(x, y, &rect);
+        y += 48;
+        renderText("Show tutorial", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
 
         white->free();
         grey->free();
@@ -480,6 +482,7 @@ void GameMenu::load_data()
 
     // commit loaded settings
     Mix_Volume(-1, settings.volume);
+    Mix_Volume(0, ((float)settings.volume/MIX_MAX_VOLUME)*settings.musicVolume);
 
     if (settings.flags & FULLSCREEN) {
         fullscreen = window->toggleFullscreen();
@@ -622,30 +625,11 @@ void GameMenu::create_pauseMenu_buttons()
     rect = {(wRect.w-BUTTON_WIDTH)/2, (wRect.h/2)+175, BUTTON_WIDTH, BUTTON_HEIGHT};
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover, arcadeButton99);
     gameOverButtons.push_back(button);
-
-
-    // instructions buttons
-    // rect = {rect.x, wRect.h - BUTTON_HEIGHT - 32, BUTTON_WIDTH, BUTTON_HEIGHT};
-    // texture = tEditor.createMenuButton("OK", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
-    // button = std::make_shared<Button>(this, rect, texture, &Button::load_new_game, arcadeBonus);
-    // instructionsButtons.push_back(button);
-
-    // auto unselected = std::make_shared<LTexture>(window),
-    //      selected   = std::make_shared<LTexture>(window);
-    // if (!unselected->loadFromFile("../../assets/Menu/Buttons/UnselectedCheckbox.png")) {
-    //     std::cerr << "Failed to load unselected checkbox!" << std::endl;
-    // }
-    // if (!selected->loadFromFile("../../assets/Menu/Buttons/SelectedCheckbox.png")) {
-    //     std::cerr << "Failed to load selected checkbox!" << std::endl;
-    // }
-    // rect = {wRect.w/2 - CHECKBOX_SIDELENGTH - 192, rect.y - CHECKBOX_SIDELENGTH - 16, CHECKBOX_SIDELENGTH, CHECKBOX_SIDELENGTH};
-    // button = std::make_shared<Button>(this, rect, selected, &Button::toggle_instructions, arcadeButton99, unselected);
-    // instructionsButtons.push_back(button);
 }
 
 void GameMenu::create_settings_buttons()
 {
-    int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 256;
+    int x = wRect.w - (9 * BUTTON_WIDTH/8), y = 64;
     SDL_Rect rect = {x, y, BUTTON_WIDTH, BUTTON_HEIGHT};
 
     auto texture = tEditor.createMenuButton("REVERT", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
@@ -664,7 +648,7 @@ void GameMenu::create_settings_buttons()
 
 
 
-    rect = {64, 700, CHECKBOX_SIDELENGTH, CHECKBOX_SIDELENGTH};
+    rect = {64, 508, CHECKBOX_SIDELENGTH, CHECKBOX_SIDELENGTH};
     
     auto unselected = std::make_shared<LTexture>(window),
          selected   = std::make_shared<LTexture>(window);
@@ -688,12 +672,33 @@ void GameMenu::create_settings_buttons()
     settingsButtons.push_back(button);
     if (settings.flags&SHOW_FPS) button->swap_textures();
     
+    rect.y = 852; rect.x = 512;
+    button = std::make_shared<Button>(this, rect, unselected, &Button::toggle_instructions, arcadeButton99, selected);
+    settingsButtons.push_back(button);
+    if (settings.flags&SHOW_INSTRUCTIONS) button->swap_textures();
+
+    rect = {64, 820, BUTTON_WIDTH/2, BUTTON_HEIGHT/2};
+    auto fpsbutton = std::make_shared<FPSButton>(-1, this, rect);
+    settingsButtons.push_back(fpsbutton);
+
+    rect.y += rect.h + 16;
+    fpsbutton = std::make_shared<FPSButton>(120, this, rect);
+    settingsButtons.push_back(fpsbutton);
+
+    rect.x += rect.w + 16;
+    fpsbutton = std::make_shared<FPSButton>(144, this, rect);
+    settingsButtons.push_back(fpsbutton);
+
+    rect.y -= rect.h + 16;
+    fpsbutton = std::make_shared<FPSButton>(60, this, rect);
+    settingsButtons.push_back(fpsbutton);
+    
 
     int minX = 72, maxX = 504;
     float t = (float)settings.volume / MIX_MAX_VOLUME;
     x = (minX * (1.0f - t)) + (maxX * t);
 
-    rect = {x, 361, SLIDER_WIDTH, SLIDER_HEIGHT};
+    rect = {x, 169, SLIDER_WIDTH, SLIDER_HEIGHT};
     texture = tEditor.createSliderTexture(SLIDER_WIDTH, SLIDER_HEIGHT, window, {255,255,255,255});
     button = std::make_shared<Button>(this, rect, texture, &Button::volume_slider);
     settingsButtons.push_back(button);
@@ -701,7 +706,7 @@ void GameMenu::create_settings_buttons()
     t = (float)settings.musicVolume / MIX_MAX_VOLUME;
     rect.x = (minX * (1.0f - t)) + (maxX * t);
 
-    rect.y = 532 - SLIDER_HEIGHT/2;
+    rect.y = 341 - SLIDER_HEIGHT/2;
     button = std::make_shared<Button>(this, rect, texture, &Button::music_volume_slider);
     settingsButtons.push_back(button);
 }

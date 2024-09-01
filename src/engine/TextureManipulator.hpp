@@ -32,6 +32,7 @@ class TextureManipulator
         // creates some of the main menu buttons
         std::shared_ptr<LTexture> createMenuButton(std::string txt, int width, int height, std::shared_ptr<LWindow> window, TTF_Font *font, SDL_Color colour = {255,255,255,255});
         std::shared_ptr<LTexture> createSliderTexture(int width, int height, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255});
+        std::shared_ptr<LTexture> createFPSButton(int fps, int width, int height, std::shared_ptr<LWindow> window, TTF_Font *font, SDL_Color colour = {255,255,255,255});
 };
 
 

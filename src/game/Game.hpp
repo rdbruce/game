@@ -165,7 +165,7 @@ class Game
         // returns gameOver
         bool game_over();
         // makes game_over false
-        void new_game();
+        void new_game(bool show_tutorial);
 
         // stops music from playing
         void stop_music();
@@ -222,6 +222,8 @@ class Game
         bool gameOver = false;
         // if this is the first day in the session
         bool firstDay = true;
+        // whether or no to show the tutorial text
+        bool showTutorial = true;
 
 
         // position and dimensions of the camera
