@@ -25,7 +25,7 @@ class Wolf : public GameObject
         float moveSpeed;
 
         float attackInterval = 1.0f, attackTimer = 0.0f;
-        float pathfindTimer = 0.0f;
+        float pathfindInterval = 0.5f, pathfindTimer = 0.0f, collisionPathfindTimer = 0.0f;
         int damage = 1;
 
         void die();

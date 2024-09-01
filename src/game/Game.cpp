@@ -173,68 +173,23 @@ void Game::attempt_enemy_spawn()
 std::shared_ptr<GameObject> Game::spawnWolf()
 {
     // choose a random world edge to spawn on
-    int edge = rand() % 4;
-    float x, y; // coordinates the wolf will spawn at
+    int edge; 
+    int sideLen = currLevel->cell_sideLen, xRange = currLevel->gridDimensions.x*sideLen;
 
-    // set to true when a valid spawning location has been chosen
-    bool validLocation = false;
-    int sideLen = currLevel->cell_sideLen;
+    Vector2 pPos = get_playerPos()/sideLen;
+    Vector2Int pCell(pPos.x, pPos.y);
+    int pNum = currLevel->grid[pCell.x][pCell.y];
+    if (!(pNum&WATER)) {
+        if (pCell.y > currLevel->gridDimensions.y/2) edge = 1;
+        else edge = 0;
+    } else edge = rand() % 2;
 
-    switch (edge)
-    {
-        case 0: { // top edge of the map
-            y = sideLen/2;
-            // make x a random number between 0 and len
-            x = rand()%map.w;
+    float x = rand()%xRange, y = (edge == 0)? -50.0f : (currLevel->gridDimensions.y*sideLen)+50.0f;
 
-            // check cell below to make sure it's not water
-            Vector2Int cell(x/sideLen, y/sideLen);
-            if (!(currLevel->grid[cell.x][cell.y+1]&WATER)) validLocation = true;
-            break;
-        }
-        case 1: { // left edge
-            x = sideLen/2;
-            y = rand() % map.h;
-
-            // check the cell to the right to make sure it's not water
-            Vector2Int cell(x/sideLen, y/sideLen);
-            int n0 = (cell.y>0)? currLevel->grid[cell.x+1][cell.y-1] : 0,
-                n1 = currLevel->grid[cell.x+1][cell.y],
-                n2 = (cell.y<currLevel->gridDimensions.y-1)? currLevel->grid[cell.x+1][cell.y+1] : 0;
-            int n = n0|n1|n2;
-            if (!(n&WATER)) validLocation = true;
-            break;
-        }
-        case 2: { // bottom edge
-            y = map.h-(sideLen/2);
-            x = rand() % map.w;
-
-            // check the cell above to make sure it's not water
-            Vector2Int cell(x/sideLen, y/sideLen);
-            if (!(currLevel->grid[cell.x][cell.y-1]&WATER)) validLocation = true;
-            break;
-        }
-        case 3: { // right edge
-            x = map.w-(sideLen/2);
-            y = rand() % map.h;
-
-            // check the cell to the left to make sure it's not water
-            Vector2Int cell(x/sideLen, y/sideLen);
-            int n0 = (cell.y>0)? currLevel->grid[cell.x-1][cell.y-1] : 0,
-                n1 = currLevel->grid[cell.x-1][cell.y],
-                n2 = (cell.y<currLevel->gridDimensions.y-1)? currLevel->grid[cell.x-1][cell.y+1] : 0;
-            int n = n0|n1|n2;
-            if (!(n&WATER)) validLocation = true;
-            break;
-        }
-    }
     // spawn a wolf at the chosen location
-    if (validLocation) {
-        int idx = rand() % 3;
-        wolfSpawnSounds[idx]->play();
-        return Instantiate(wolf, Vector2(x, y), -1);
-    }
-    return nullptr;
+    int idx = rand() % 3;
+    wolfSpawnSounds[idx]->play();
+    return Instantiate(wolf, Vector2(x, y), -1);
 }
 
 std::shared_ptr<GameObject> Game::spawnBird()
@@ -767,6 +722,7 @@ void Game::throwHeldObject()
     vel.normalise(); vel *= s;
 
     vel += currLevel->player->get_vel() + (dir * (5.2f * currLevel->cell_sideLen));
+    vel *= THROWN_ITEM_SPEED_MULT;
     Vector2 accel = vel * -0.7f;
 
     obj->make_thrown( vel, accel );
@@ -791,6 +747,7 @@ void Game::throwSingleItem()
         vel.normalise(); vel *= s;
 
         vel += currLevel->player->get_vel() + (dir * (4.5f * currLevel->cell_sideLen));
+        vel *= THROWN_ITEM_SPEED_MULT;
         Vector2 accel  = vel * -0.7f;
 
         float r = 2.0f * (currLevel->player->get_radius() + currLevel->held->get_radius());

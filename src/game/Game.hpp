@@ -276,7 +276,9 @@ class Game
         // currently, wolf spawn chance will be 1 - this ^^
 
         // how fast an object needs to be going (in number of cells/sec) to deal damage
-        float ITEM_MINIMUM_DAMAGE_VELOCITY = 1.5f;
+        float ITEM_MINIMUM_DAMAGE_VELOCITY = 1.0f;
+        // multiplier that alters the speed of thrown items
+        float THROWN_ITEM_SPEED_MULT = 1.15f;
         
 
 

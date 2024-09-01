@@ -97,16 +97,21 @@ void Item::held_updatePos()
     // place the item a fixes distance from the player, in the direction of the mouse
     float r = game->currLevel->player->get_radius() + get_radius() + 5.0f;
     set_pos( pPos + (dir * r) );
+    halt();
 }
 
 void Item::thrown_updatePos()
 {
     float dt = get_deltaTime();
 
-    Vector2 newPos = get_pos() + (get_vel() * dt);
+    Vector2 vel = get_vel();
+    Vector2 newPos = get_pos() + (vel * dt);
     set_pos(newPos);
 
-    craftTimer -= dt; damageTimer -= dt;
+    if (vel.length() < game->ITEM_MINIMUM_DAMAGE_VELOCITY * get_cellSidelen()) {
+        damageTimer = damageInterval;
+    } else damageTimer -= dt;
+    craftTimer -= dt;
 }
 
 void Item::die()
@@ -187,7 +192,7 @@ void Item::handleCollisionsWithGameObjects()
             if (other->is_enemy()) 
             {
                 // make sure that it is moving fast enough
-                if (get_vel().length() > game->ITEM_MINIMUM_DAMAGE_VELOCITY * sideLen) 
+                if (damageTimer <= 0.0f) 
                 {
                     // calculate the damage by multiplying the speed by the number of items in the stack
                     int dam = ceilToInt(get_HP() * damage);

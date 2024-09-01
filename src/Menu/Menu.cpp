@@ -678,19 +678,19 @@ void GameMenu::create_settings_buttons()
     if (settings.flags&SHOW_INSTRUCTIONS) button->swap_textures();
 
     rect = {64, 820, BUTTON_WIDTH/2, BUTTON_HEIGHT/2};
-    auto fpsbutton = std::make_shared<FPSButton>(-1, this, rect);
+    auto fpsbutton = std::make_shared<FPSButton>(-1, this, rect, &Button::doNothing, arcadeButton99);
     settingsButtons.push_back(fpsbutton);
 
     rect.y += rect.h + 16;
-    fpsbutton = std::make_shared<FPSButton>(120, this, rect);
+    fpsbutton = std::make_shared<FPSButton>(120, this, rect, &Button::doNothing, arcadeButton99);
     settingsButtons.push_back(fpsbutton);
 
     rect.x += rect.w + 16;
-    fpsbutton = std::make_shared<FPSButton>(144, this, rect);
+    fpsbutton = std::make_shared<FPSButton>(144, this, rect, &Button::doNothing, arcadeButton99);
     settingsButtons.push_back(fpsbutton);
 
     rect.y -= rect.h + 16;
-    fpsbutton = std::make_shared<FPSButton>(60, this, rect);
+    fpsbutton = std::make_shared<FPSButton>(60, this, rect, &Button::doNothing, arcadeButton99);
     settingsButtons.push_back(fpsbutton);
     
 

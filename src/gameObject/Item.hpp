@@ -48,5 +48,5 @@ class Item : public GameObject
 
         float craftInterval = 0.75f, craftTimer = craftInterval;
         float damage;
-        float damageInterval = 1.0f, damageTimer = 0.0f;
+        float damageInterval = 1.0f, damageTimer = damageInterval;
 };

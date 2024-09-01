@@ -8,7 +8,7 @@
 bool Game::is_barrier( Vector2Int cell, Scene *level ) {
     if (level == NULL) level = currLevel;
     // validate the cell 
-    if (cell.x < 0 || cell.y < 0 || cell.x>=level->gridDimensions.x || cell.y>=level->gridDimensions.y) return false;
+    if (cell.x < 0 || cell.y < 0 || cell.x>=level->gridDimensions.x || cell.y>=level->gridDimensions.y) return true;
     return level->grid[cell.x][cell.y]&BARRIER; 
 }
 

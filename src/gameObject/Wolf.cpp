@@ -33,8 +33,11 @@ void Wolf::spawn()
     }
     else
     {
-        set_collision(true);
-        updateVel = &Wolf::chase_player;
+        Vector2Int dimensions = game->currLevel->gridDimensions;
+        if (cell.x == Clamp(2, dimensions.x-2, cell.x) && cell.y == Clamp(2, dimensions.y-2, cell.y)) {
+            set_collision(true);
+            updateVel = &Wolf::chase_player;
+        }
     }
 }
 
@@ -68,7 +71,8 @@ void Wolf::chase_player()
             else if (attackTimer <= 0.5f) enterJumpAttack();
         }
 
-        attackTimer -= get_deltaTime();
+        float dt = get_deltaTime();
+        attackTimer -= dt; pathfindTimer -= dt; collisionPathfindTimer -= dt;
 
         if (path != nullptr) walkToNextCell();
     }
@@ -169,17 +173,7 @@ void Wolf::updatePathfinding()
         // update pathfinding
         pathfindToPlayer();
 
-        // if the new pathfinding cell is different than the new cell, then the wolf was in
-        // the process of moving to the next node, progress the node to represent this.
-        // sometimes, two wolves can get each other stuck by trying to move into the same cell
-        // since they push each other back and never reach the centre, they are stuck forever.
-        // to break this "stalemate", give the wolf a 50% chance to progress to the next node
-        float random = float(rand()) / RAND_MAX;
-        if (path->cell != currCell || random < 0.5f) {
-            path = path->next;
-        }
-        // reset the timer
-        pathfindTimer = 0.5f;
+        pathfindTimer = pathfindInterval;
     }
     else pathfindToPlayer();
 }
@@ -290,7 +284,7 @@ void Wolf::handleCollisionsWithGameObjects()
             disp.normalise();
 
             // knock objects apart
-            Vector2 newVel = disp * (2.0f * get_cellSidelen());
+            Vector2 newVel = disp * (1.0f * get_cellSidelen());
 
             // damage non-enemies
             if (!other->is_enemy() && attackTimer <= 0.0f)
@@ -298,6 +292,11 @@ void Wolf::handleCollisionsWithGameObjects()
                 newVel *= float(damage + 1);
                 other->add_HP(-damage);
                 attackTimer = attackInterval;
+            }
+            else if (other->get_type() == wolf && collisionPathfindTimer <= 0.0f)
+            {
+                if (path != nullptr) path = path->next;
+                collisionPathfindTimer = pathfindInterval;
             }
             other->set_vel(newVel);
             other->set_accel(newVel * -1.5f);
