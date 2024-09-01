@@ -22,6 +22,7 @@ int get_max_hp(EntityType type)
         case target:
         case bomb:
         case ghostBuilding:
+        case tutorialText:
         case bombExplosionIndicator: return 1;
     }
     std::cerr << "Invalid Entity type!\n";

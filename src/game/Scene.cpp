@@ -50,6 +50,7 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
 
             // create the game object
             auto obj = CreateGameObjectFromFile( &iss );
+            if (obj == nullptr) continue;
 
             // obj will already have an index, so insert it at that index in lvlObjects
             int id = obj->get_idx();
@@ -125,11 +126,12 @@ std::shared_ptr<GameObject> Scene::CreateGameObjectFromFile( std::istringstream 
         case bomb:
             obj = std::make_shared<Bomb>(pos, idx, game, cell_sideLen);
             break;
+        // cosmetic entities
         case target:
-            std::cerr << "ERROR: Target may not be loaded\n";
-            break;
         case bombExplosionIndicator:
-            std::cerr <<"ERROR: explosion indicator may not be loaded\n";
+        case ghostBuilding:
+        case tutorialText:
+            std::cerr << "ERROR: entity type "<< (int)type <<" may not be loaded from file!\n";
             break;
         // NPCs
         case foxNPC:
@@ -148,7 +150,7 @@ std::shared_ptr<GameObject> Scene::CreateGameObjectFromFile( std::istringstream 
             obj = std::make_shared<Item>(type, pos, idx, HP, game, cell_sideLen);
             break;
         default:
-            std::cerr << "Invalid Entity type loaded!\n";
+            std::cerr << "Invalid Entity type loaded: " << (int)type <<'\n';
             break;
     }
     return obj;

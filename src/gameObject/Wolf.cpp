@@ -135,12 +135,6 @@ void Wolf::beginRetreat()
     Vector2 mCentre(map.x/2, map.y/2);
     set_vel(getUnitVector(get_pos(), mCentre) * 300.0f);
     updateVel = &Wolf::retreat;
-    updatePos = &Wolf::accelerate;
-}
-
-void Wolf::accelerate()
-{
-    set_vel(get_vel() + get_accel()*get_deltaTime());
 }
 
 void Wolf::retreat()
@@ -438,6 +432,8 @@ void Wolf::handleCornerCollisionsWithWalls()
             attackTimer = attackInterval;
         } 
     }
+
+    set_pos(pos); set_vel(velocity); set_accel(acceleration);
 }
 
 void Wolf::render(int camX, int camY, Uint8 alpha)

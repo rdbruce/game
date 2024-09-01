@@ -32,7 +32,6 @@ class Wolf : public GameObject
 
         /* how the wolf moves */
         void (Wolf::*updatePos)() = &GameObject::defualt_update_position;
-        void accelerate();
 
         /* how the wolf updates velocity */
         void (Wolf::*updateVel)() = &Wolf::spawn;

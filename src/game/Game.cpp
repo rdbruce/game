@@ -163,9 +163,8 @@ void Game::attempt_enemy_spawn()
     if (validAttempt) 
     {
         float r = (float)rand() / RAND_MAX;
-        // if (r <= BIRD_SPAWN_CHANCE) 
-        spawnBird();
-        // else spawnWolf();
+        if (r <= BIRD_SPAWN_CHANCE) spawnBird();
+        else spawnWolf();
     }
 }
 
@@ -279,6 +278,9 @@ std::shared_ptr<GameObject> Game::Instantiate( EntityType type, Vector2 pos, int
         case ghostBuilding:
             obj = std::make_shared<GhostBuilding>(Vector2Int(pos.x, pos.y), currLevel->held->get_type(), idx, this, sideLen);
             break;
+        case tutorialText:
+            obj = std::make_shared<TutorialText>(pos, idx, this, sideLen);
+            break;
         // NPCs
         case foxNPC:
         case bearNPC:
@@ -299,8 +301,7 @@ std::shared_ptr<GameObject> Game::Instantiate( EntityType type, Vector2 pos, int
             std::cerr << "Invalid Entity type used!\n";
             break;
     }
-
-    level->gameObjects.push_back(obj);
+    if (obj != nullptr) level->gameObjects.push_back(obj);
     return obj;
 }
 
@@ -524,6 +525,10 @@ void Game::dayNightCycle()
         {
             currSong = nightMusic;
             firstDay = false;
+
+            if (scores.mostNightsSurvived == 0) {
+                Instantiate(tutorialText, Vector2(-50.0f, -50.0f), 1);
+            }
         }
         play_current();
     }
@@ -832,6 +837,9 @@ void Game::spawnNPCs()
             Vector2 pos(2000.0f, 3050.0f);
             Instantiate(foxNPC, pos, 1, &Base);
         }
+
+        Vector2 pos(-50.0f, -50.0f);
+        Instantiate(tutorialText, pos, 1, &Base);
     }
 }
 

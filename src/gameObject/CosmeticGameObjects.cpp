@@ -1,5 +1,7 @@
 #include "CosmeticGameObjects.hpp"
 #include "../game/Game.hpp"
+#include "../game/CellTypes.hpp"
+#include "Item.hpp"
 
 /*          FALLING TREES          */
 
@@ -105,8 +107,281 @@ void GhostBuilding::render(int camX, int camY, Uint8 alpha)
         if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
             return;
         }
+        Vector2 dist = game->get_playerPos() - get_pos();
+        if (dist.length() > game->interactRange) return;
+
         tex->setAlpha(alpha);
         tex->render(p.x, p.y, &hitbox);
         tex->setAlpha(255);
     }
+}
+
+
+
+
+/*          TUTORIAL TEXT          */
+
+TutorialText::TutorialText(Vector2 pos, int Idx, Game *game, int cell_sideLen)
+: GameObject(tutorialText, pos, Idx, 1, game, cell_sideLen, false, cell_sideLen) 
+{
+    Update = (game->isNight)? &TutorialText::night_0_update : &TutorialText::stage_0_update;
+}
+
+void TutorialText::update() {
+    (this->*Update)();
+}
+
+void TutorialText::render(int camX, int camY, Uint8 alpha) {
+    if (alpha == 255) {
+        game->secondRenders.push(this);
+    } else if (txt != "") {
+        Vector2 pos = get_pos();
+        Vector2Int p( pos.x-camX, pos.y-camY );
+        // not within the camera's view, don't render
+        if (p.x != Clamp(game->renderOffset.x-100, game->camera.w+game->renderOffset.x+100, p.x) || p.y != Clamp(game->renderOffset.y-100, game->camera.h+game->renderOffset.y+100, p.y)) {
+            return;
+        }
+        renderText(txt, p.x, p.y, game->window, {255,255,255,255}, game->arcadeClassic24);
+    }
+}
+
+bool TutorialText::tree_has_been_chopped()
+{
+    if ((game->currLevel->grid[treeCell.x][treeCell.y]&CELL_ID) == 3) return false;
+    else return true;
+}
+
+bool TutorialText::findItem(EntityType itemType, int minHP)
+{
+    auto vec = &game->currLevel->gameObjects;
+    int n = vec->size();
+    for (int i = 0; i < n; i++) {
+        auto obj = (*vec)[i];
+        if (obj->get_type() == itemType && obj->get_HP() >= minHP) {
+            item = std::dynamic_pointer_cast<Item>(obj);
+            return item != nullptr;
+        }
+    }
+    return false;
+}
+
+bool TutorialText::findNearestItem()
+{
+    auto vec = &game->currLevel->gameObjects;
+    int n = vec->size();
+
+    Vector2 pPos = game->get_playerPos();
+
+    int bestIdx = -1;
+    float least = INFINITY;
+
+    for (int i = 0; i < n; i++) 
+    {
+        auto obj = (*vec)[i];
+        if (obj->is_item() && obj->get_type() != berryItem)
+        {
+            Vector2 dist = pPos - obj->get_pos();
+            float len = dist.length();
+            if (len < least) {
+                bestIdx = i;
+                least = len;
+            }
+        }
+    }
+    if (bestIdx > 0) item = std::dynamic_pointer_cast<Item>((*vec)[bestIdx]);
+    return item != nullptr;
+}
+
+void TutorialText::stage_0_update()
+{
+    // instruct player to destroy a tree
+    if (tree_has_been_chopped())
+    {
+        Update = &TutorialText::stage_1_update;
+        txt = "";
+    }
+    else
+    {
+        int sideLen = get_cellSidelen();
+        Vector2 pos((treeCell.x-2)*sideLen, treeCell.y*sideLen);
+        set_pos(pos);
+
+        int time = game->get_time() * 0.75f;
+
+        txt = "chop down tree";
+        txt += (time%2)? ">" : " >";
+    }
+}
+
+void TutorialText::stage_1_update() 
+{
+    if (findItem(logItem)) {
+        Update = &TutorialText::stage_2_update;
+    }
+}
+
+void TutorialText::stage_2_update()
+{
+    if (item == nullptr || findItem(plankItem)) 
+    {
+        txt = "";
+        Update = &TutorialText::stage_3_update;
+    }
+    else
+    {
+        Vector2 logPos = item->get_pos();
+        logPos.y -= 1.25f * get_cellSidelen();
+        set_pos(logPos);
+
+        int time = game->get_time() * 0.75f;
+        txt = "craft planks\n";
+        txt += (time%2)? "V" : " \nV";
+    }
+}
+
+void TutorialText::stage_3_update()
+{
+    if (item == nullptr || findItem(plankItem, 4))
+    {
+        txt = "";
+        Update = &TutorialText::stage_4_update;
+    }
+    else 
+    {
+        Vector2 pos = item->get_pos();
+        pos.y -= 1.25f * get_cellSidelen();
+        set_pos(pos);
+
+        int time = game->get_time() * 0.75f;
+        txt = "gather 4 planks\n";
+        txt += (time%2)? "V" : " \nV";
+    }
+}
+
+void TutorialText::stage_4_update()
+{
+    if (item->is_held())
+    {
+        txt = "";
+        Update = &TutorialText::stage_5_update;
+    }
+    else
+    {
+        Vector2 pos = item->get_pos();
+        pos.y -= 1.25f * get_cellSidelen();
+        set_pos(pos);
+
+        int time = game->get_time() * 0.75f;
+        txt = "pick up\n";
+        txt += (time%2)? "V" : " \nV";
+    }
+}
+
+void TutorialText::stage_5_update()
+{
+    if (findItem(logItem)) {
+        Update = &TutorialText::stage_6_update;
+    }
+}
+
+void TutorialText::stage_6_update()
+{
+    if (item == nullptr || findItem(damItem))
+    {
+        txt = "";
+        Update = &TutorialText::stage_7_update;
+    }
+    else
+    {
+        Vector2 pos = item->get_pos();
+        pos.y -= 1.5f * get_cellSidelen();
+        set_pos(pos);
+
+        int time = game->get_time() * 0.75f;
+        txt = "combine stacks to\ncraft a dam\n";
+        txt += (time%2)? "V" : " \nV";
+    }
+}
+
+void TutorialText::stage_7_update()
+{
+    if (item->is_held())
+    {
+        treeCell = Vector2Int(20, 19);
+        txt = "";
+        Update = &TutorialText::stage_8_update;
+    }
+    // in case the player uncrafts the dam
+    else if (game->currLevel->gameObjects[item->get_idx()]->get_type() != damItem)
+    {
+        txt = "";
+        Update = &TutorialText::stage_5_update;
+    }
+    else
+    {
+        Vector2 pos = item->get_pos();
+        pos.y -= 1.25f * get_cellSidelen();
+        set_pos(pos);
+
+        int time = game->get_time() * 0.75f;
+        txt = "pick up\n";
+        txt += (time%2)? "V" : " \nV";
+    }
+}
+
+void TutorialText::stage_8_update()
+{
+    if (game->currLevel->held == nullptr)
+    {
+        txt = "";
+        if (findItem(damItem)) Update = &TutorialText::stage_7_update;
+        else Destroy();
+    }
+    else
+    {
+        int sideLen = get_cellSidelen();
+        Vector2 pos(treeCell.x*sideLen, treeCell.y*sideLen);
+        
+        
+        int time = game->get_time() * 0.75f;
+        if (time%2) {
+            pos .y -= 30.0f;
+            txt = "^\n \n";
+        } else txt = "^\n";
+
+        txt += "bridge across river\nto block it";  
+        set_pos(pos);
+    }
+}
+
+void TutorialText::night_0_update()
+{
+    if (findNearestItem()) {
+        txt = "";
+        Update = &TutorialText::night_1_update;
+    }
+}
+
+void TutorialText::night_1_update()
+{
+    if (item->is_held() || item == nullptr)
+    {
+        txt = "throw items to\ndamage enemies!";
+        Update = &TutorialText::night_2_update;
+    }
+    else
+    {
+        Vector2 pos = item->get_pos();
+        pos.y -= 1.25f * get_cellSidelen();
+        set_pos(pos);
+
+        int time = game->get_time() * 0.75f;
+        txt = "pick up\n";
+        txt += (time%2)? "V" : " \nV";
+    }
+}
+
+void TutorialText::night_2_update()
+{
+    if (!item->is_held()) Destroy();
 }

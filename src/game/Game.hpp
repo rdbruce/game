@@ -53,6 +53,7 @@ class Game
     friend class Bomb;
     friend class ExplosionIndicator;
     friend class GhostBuilding;
+    friend class TutorialText;
 
     public:
 

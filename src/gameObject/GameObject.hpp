@@ -38,6 +38,7 @@ enum EntityType
     target,
     bombExplosionIndicator,
     ghostBuilding,
+    tutorialText,
 
     // item types
     ITEM_MIN,
