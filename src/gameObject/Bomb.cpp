@@ -54,7 +54,7 @@ void Bomb::explode()
             auto obj = (*vec)[i];
 
             Vector2 disp = obj->get_pos() - get_pos();
-            if (disp.length() < r && (obj->is_item() || obj->get_type() == player)) 
+            if (disp.length() < r && (obj->is_item() || obj->get_type() == player || obj->get_type() == wolf)) 
             {
                 // damage the object
                 obj->add_HP(-damage);
