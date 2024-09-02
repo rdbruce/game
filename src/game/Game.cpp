@@ -103,11 +103,12 @@ void Game::handle_events( SDL_Event& e )
 // updates all the game objects
 void Game::update_gameobjects()
 {
-    for (int i = 0; i < currLevel->gameObjects.size(); i++) {
+    auto vec = &currLevel->gameObjects;
+    for (int i = 0; i < vec->size(); i++) {
         if (switching_scenes) {
             switching_scenes = false; return;
         }
-        currLevel->gameObjects[i]->update();
+        (*vec)[i]->update();
     }
 }
 
@@ -236,6 +237,9 @@ std::shared_ptr<GameObject> Game::Instantiate( EntityType type, Vector2 pos, int
             break;
         case tutorialText:
             obj = std::make_shared<TutorialText>(pos, idx, this, sideLen);
+            break;
+        case explosion:
+            obj = std::make_shared<Explosion>(pos, idx, this, sideLen);
             break;
         // NPCs
         case foxNPC:
@@ -1206,6 +1210,23 @@ void Game::load_animations()
     }
 
     wolfWalkingAnimation = std::make_shared<Animations>(front, back, left, right, df, db, dl, dr);
+
+
+    // explosion
+    // wolf walking animations
+    front.clear(); back.clear(); left.clear(); right.clear();
+    df = 0.25f, db = 0.25f, dl = 0.25f, dr = 0.25f;
+    path = "../../assets/Entities/Explosion/";
+
+    for (int i = 0; i < 4; i++)
+    {
+        auto newTex = std::make_shared<LTexture>(window);
+        std::string filename = path + std::to_string(i) + ".png";
+        if (!newTex->loadFromFile(filename)) break;
+        front.push_back(newTex);
+    }
+
+    explosionAnimation = std::make_shared<Animations>(front, back, left, right, df, db, dl, dr);
 }
 
 void Game::create_textures()

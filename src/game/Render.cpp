@@ -433,7 +433,14 @@ void Game::render_overlay() {
 void Game::render_darkness() 
 {
     // only update the darkness cover at the beginning of each day/night
-    if (g_time < 10.0f) 
+    if (g_time < 10.0f) createDarknessTex();
+    // render the darkness over the scene
+    darknessTex->render(renderOffset.x, renderOffset.y, &camera);
+}
+
+void Game::createDarknessTex()
+{
+    if (g_time < 10.0f)
     {
         // use an interpolator to determine how dark the texture should be
         float t = g_time / 10.0f;
@@ -442,18 +449,19 @@ void Game::render_darkness()
         if (darknessTex != nullptr) darknessTex->free(); // cleanup
         darknessTex = tEditor.createSolidColour(camera.w, camera.h, alpha, window);
     }
-    // render the darkness over the scene
-    darknessTex->render(renderOffset.x, renderOffset.y, &camera);
+    else if (isNight) darknessTex = tEditor.createSolidColour(camera.w, camera.h, 100, window);
+    else darknessTex = tEditor.createSolidColour(camera.w, camera.h, 0, window);
 }
 
 
 // renders all the game objects
 void Game::render_gameobjects() {
-    for (int i = 0; i < currLevel->gameObjects.size(); i++) {
+    auto vec = &currLevel->gameObjects;
+    for (int i = 0; i < vec->size(); i++) {
         if (switching_scenes) {
             switching_scenes = false; return;
         }
-        currLevel->gameObjects[i]->render( camera.x-renderOffset.x, camera.y-renderOffset.y );
+        (*vec)[i]->render( camera.x-renderOffset.x, camera.y-renderOffset.y );
     }
 }
 

@@ -81,3 +81,22 @@ class TutorialText : public GameObject
         bool findItem(EntityType itemType, int minHP = 1);
         bool findNearestItem();
 };
+
+class Explosion : public GameObject
+{
+    public:
+
+        Explosion(Vector2 pos, int Idx, Game *game, int cell_sideLen);
+
+        virtual void render(int camX, int camY, Uint8 alpha = 255);
+
+        virtual void update();
+
+    private:
+
+        std::shared_ptr<LTexture> animate(bool updateIdx);
+        std::shared_ptr<LTexture> tex = nullptr;
+        std::shared_ptr<Animations> animation = nullptr;
+
+        float timer = 1.0f;
+};

@@ -404,6 +404,7 @@ void GameMenu::update()
             create_buttons();
 
             create_CRT_Texture();
+            game->createDarknessTex();
 
             if (aspectRatio != nullptr) aspectRatio->free();
 

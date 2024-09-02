@@ -39,6 +39,7 @@ enum EntityType
     bombExplosionIndicator,
     ghostBuilding,
     tutorialText,
+    explosion,
 
     // item types
     ITEM_MIN,

@@ -385,3 +385,42 @@ void TutorialText::night_2_update()
 {
     if (!item->is_held()) Destroy();
 }
+
+
+
+/*          EXPLOSION         */
+
+Explosion::Explosion(Vector2 pos, int Idx, Game *game, int cell_sideLen)
+:   GameObject(explosion, pos, Idx, 1, game, cell_sideLen, false, game->BOMB_RADIUS*ROOT2*cell_sideLen),
+    animation(game->explosionAnimation) {}
+
+void Explosion::update() {
+    if (timer <= 0.0f) Destroy();
+    else timer -= get_deltaTime();
+}
+
+void Explosion::render(int camX, int camY, Uint8 alpha)
+{
+    SDL_Rect hitbox = get_hitbox();
+    Vector2Int p( hitbox.x - camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+        return;
+    }
+    Vector2Int cell = get_cell();
+    bool underTree = game->is_under_tree(cell), alpha255 = alpha == 255;
+
+    tex = animate(!alpha255 || (alpha255 && !underTree));
+    tex->setAlpha(Min(alpha, 150));
+    tex->render(p.x, p.y, &hitbox);
+    tex->setAlpha(255);
+
+    if (underTree && alpha255) {
+        game->secondRenders.push(this);
+    }
+}
+
+std::shared_ptr<LTexture> Explosion::animate(bool updateIdx)
+{
+    return animation->getTexture(get_deltaTime(), Forwards, -1.0f, updateIdx);
+}

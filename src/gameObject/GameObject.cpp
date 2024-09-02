@@ -17,16 +17,8 @@ int get_max_hp(EntityType type)
         case foxNPC: 
         case bearNPC: 
         case rabbitNPC: return 255;
-        case fallingTree:
-        case bird:
-        case target:
-        case bomb:
-        case ghostBuilding:
-        case tutorialText:
-        case bombExplosionIndicator: return 1;
+        default: return 1;
     }
-    std::cerr << "Invalid Entity type!\n";
-    return 0;
 }
 
 /* constructor */
@@ -41,6 +33,8 @@ GameObject::GameObject(EntityType type, Vector2 pos, int Idx, int Health, Game *
     Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
     hitbox = { p.x, p.y, size.x, size.y };
     radius = Max(size.x/2, size.y/2);
+
+    set_pos(pos);
 }
 GameObject::~GameObject() {}
 

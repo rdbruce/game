@@ -54,6 +54,7 @@ class Game
     friend class ExplosionIndicator;
     friend class GhostBuilding;
     friend class TutorialText;
+    friend class Explosion;
 
     public:
 
@@ -159,6 +160,7 @@ class Game
 
         // renders every cell in the level, to be used when loading levels
         void initialise_BGTexture();
+        void createDarknessTex();
 
         // returns g_time
         float get_time();
@@ -323,7 +325,7 @@ class Game
                                     TargetTex, dashed_circleTex, rabbitTex;
 
         // animation containers
-        std::shared_ptr<Animations> playerAnimations, wolfWalkingAnimation;
+        std::shared_ptr<Animations> playerAnimations, wolfWalkingAnimation, explosionAnimation;
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,

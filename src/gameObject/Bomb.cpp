@@ -22,6 +22,7 @@ void Bomb::update()
     if (timer <= 0.25f) {
         if (timer <= 0.0f) {
             explode();
+            return;
         } else if (timer + dt > 0.25f) {
             set_vel(Vector2_Down * get_cellSidelen());
             updateVel = &GameObject::default_update_velocity;
@@ -84,6 +85,8 @@ void Bomb::explode()
         }
     }
 
+    auto blast = game->Instantiate(explosion, get_pos(), 1);
+
     indicator->Destroy();
     Destroy();
 }
@@ -106,6 +109,9 @@ void Bomb::render(int camX, int camY, Uint8 alpha)
         game->secondRenders.push(this);
     }
 }
+
+
+
 
 
 ExplosionIndicator::ExplosionIndicator(Vector2 pos, int Idx, Game *game, int cell_sideLen)
