@@ -334,6 +334,7 @@ void Item::handleCornerCollisionsWithWalls()
 
 void Item::render(int camX, int camY, Uint8 alpha)
 {
+    // std::cout << "rendering item\n";
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
@@ -358,4 +359,5 @@ void Item::render(int camX, int camY, Uint8 alpha)
         itemCountTex->render(p.x+hitbox.w-(itemCountTex->getWidth()/2), p.y+hitbox.h-(itemCountTex->getHeight()/2));
         itemCountTex->free();
     }
+    // std::cout << "rendered item\n";
 }

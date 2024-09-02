@@ -122,6 +122,7 @@ std::shared_ptr<LTexture> Player::animate(bool updateIdx)
 
 void Player::render(int camX, int camY, Uint8 alpha)
 {
+    // std::cout << "rendering player\n";
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
@@ -140,6 +141,7 @@ void Player::render(int camX, int camY, Uint8 alpha)
     if (underTree && alpha255) {
         game->secondRenders.push(this);
     } 
+    // std::cout << "rendered player\n";
 }
 
 void Player::collision()

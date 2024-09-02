@@ -292,6 +292,7 @@ void NPC::handleCornerCollisionsWithWalls()
 
 void NPC::render(int camX, int camY, Uint8 alpha)
 {
+    // std::cout << "rendering NPC\n";
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
@@ -308,4 +309,5 @@ void NPC::render(int camX, int camY, Uint8 alpha)
     if (underTree && alpha255) {
         game->secondRenders.push(this);
     } 
+    // std::cout << "rendered NPC\n";
 }

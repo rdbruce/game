@@ -38,6 +38,7 @@ class GhostBuilding : public GameObject
         void validate();
         void go_to_mouse_cell();
 
+        bool valid = false;
         std::shared_ptr<LTexture> tex = nullptr;
 };
 

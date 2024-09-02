@@ -72,10 +72,14 @@ int main(
     game.update_deltaTime();
     if (!inMenu) 
     {
+      // std::cout << "updating game objects\n";
       game.update_gameobjects();
       // call update_cells first
+      // std::cout << "updating cells\n";
       game.update_cells();
+      // std::cout << "updating day/night\n";
       game.dayNightCycle();
+      // std::cout << "attempting enemy spawn\n";
       game.attempt_enemy_spawn();
     }
 
@@ -89,14 +93,21 @@ int main(
       // Render background
       if (menu.is_inGame()) 
       {
+        // std::cout << "centring camera\n";
         game.center_camera_on_player();
+        // std::cout << "rendering background\n";
         game.render_background();
+        // std::cout << "rendering gameobjects\n";
         game.render_gameobjects();
+        // std::cout << "rendering overlay\n";
         game.render_overlay();
+        // std::cout << "rendering objects under trees\n";
         game.render_gameobjects_under_trees();
+        // std::cout << "rendering darkness\n";
         game.render_darkness();
 
         // UI rendering
+        // std::cout << "rendering cell health\n";
         game.render_cell_health();
         game.render_dialogue();
         game.render_player_health();

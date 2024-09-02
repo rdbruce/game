@@ -63,10 +63,10 @@ GhostBuilding::GhostBuilding(Vector2Int cell, EntityType itemType, int Idx, Game
 {
     switch (itemType)
     {
-        case logItem: tex = game->logTex; break;
-        case pineConeItem: tex = game->saplingTex; break;
-        case damItem: tex = game->damTex; break;
-        case doorItem: tex = game->closed_doorTex; break;
+        case logItem: tex = game->logTex; valid = true; break;
+        case pineConeItem: tex = game->saplingTex; valid = true; break;
+        case damItem: tex = game->damTex; valid = true; break;
+        case doorItem: tex = game->closed_doorTex; valid = true; break;
     }
 }
 
@@ -77,7 +77,7 @@ void GhostBuilding::update()
 
 void GhostBuilding::validate()
 {
-    if (tex == nullptr) Destroy();
+    if (!valid) Destroy();
     else Update = &GhostBuilding::go_to_mouse_cell;
 }
 
@@ -98,6 +98,7 @@ void GhostBuilding::go_to_mouse_cell()
 
 void GhostBuilding::render(int camX, int camY, Uint8 alpha)
 {
+    if (!valid) Destroy();
     if (alpha == 255) {
         game->secondRenders.push(this);
     } else {
