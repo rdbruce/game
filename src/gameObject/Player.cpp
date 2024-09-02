@@ -210,7 +210,7 @@ bool Player::collideWithWorldBorders()
     SDL_Rect hitbox = get_hitbox();
     Vector2 pos = get_pos();
     Vector2Int map = get_mapDimensions();
-    if (hitbox.x < 0.0f) {
+    if (hitbox.x <= 0.0f) {
         Scene *lvl = game->currLevel->left;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
@@ -221,7 +221,7 @@ bool Player::collideWithWorldBorders()
             hitbox.x = 0.0f;
             pos.x = hitbox.x + hitbox.w/2;
         }
-    } else if (hitbox.x > map.x-hitbox.w) {
+    } else if (hitbox.x >= map.x-hitbox.w) {
         Scene *lvl = game->currLevel->right;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
@@ -233,7 +233,7 @@ bool Player::collideWithWorldBorders()
             pos.x = hitbox.x + hitbox.w/2;
         }
     }
-    if (hitbox.y < 0.0f) {
+    if (hitbox.y <= 0.0f) {
         Scene *lvl = game->currLevel->above;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
@@ -244,7 +244,7 @@ bool Player::collideWithWorldBorders()
             hitbox.y = 0.0f;
             pos.y = hitbox.y + hitbox.h/2;
         }
-    } else if (hitbox.y > map.y-hitbox.h) {
+    } else if (hitbox.y >= map.y-hitbox.h) {
         Scene *lvl = game->currLevel->below;
         if (lvl != nullptr) {
             Vector2Int newMap = lvl->gridDimensions * lvl->cell_sideLen;
