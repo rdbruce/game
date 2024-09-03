@@ -12,6 +12,20 @@ float Player::get_moveSpeed() { return moveSpeed; }
 
 void Player::set_dialogueTimer(float timer) { dialogueTimer = timer; }
 
+void Player::set_HP(int newHP)
+{
+    if (newHP < get_HP()) game->playerDamage->play();
+    else game->healSound->play();
+    GameObject::set_HP(newHP);
+}
+
+void Player::add_HP(int amount)
+{
+    if (amount < 0) game->playerDamage->play();
+    else if (amount > 0) game->healSound->play();
+    GameObject::add_HP(amount);
+}
+
 void Player::update()
 {
     (this->*updatePos)();
@@ -21,13 +35,14 @@ void Player::update()
 
     // game ends when the player dies
     if (get_HP() <= 0) gameOver();
-    else set_HP(Clamp(0, get_maxHP(), get_HP()));
+    else GameObject::set_HP(Clamp(0, get_maxHP(), get_HP()));
 }
 
 void Player::gameOver()
 {
     game->currSong = game->deathMusic;
     game->play_current();
+    game->gameOverSound->play();
     game->gameOver = true;
 }
 

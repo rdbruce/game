@@ -201,6 +201,11 @@ void TutorialText::stage_0_update()
         Update = &TutorialText::stage_1_update;
         txt = "";
     }
+    else if (findItem(logItem))
+    {
+        Update = &TutorialText::stage_2_update;
+        txt = "";
+    }
     else
     {
         int sideLen = get_cellSidelen();

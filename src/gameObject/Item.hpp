@@ -19,7 +19,7 @@ class Item : public GameObject
         void set_craftTimer();
         float get_playerCollisionTimer();
 
-        void make_held();
+        void make_held(bool makeGhostBuilding = true);
         void make_thrown(Vector2 newVel, Vector2 newAccel);
 
     private:

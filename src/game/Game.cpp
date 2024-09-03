@@ -689,6 +689,7 @@ void Game::rightClickFunc()
         if (pHP < player->get_maxHP()) {
             player->add_HP(1);
             held->add_HP(-1);
+            healSound->play();
         }
         return;
     } 

@@ -18,7 +18,6 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
         // get the scene's name from the first line
         std::getline( file, name );
 
-
         // get the line of the file as a string
         std::string line;
         std::getline( file, line );
@@ -50,7 +49,10 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
 
             // create the game object
             auto obj = CreateGameObjectFromFile( &iss );
-            if (obj == nullptr) continue;
+            if (obj == nullptr) {
+                gameObjects[i] = nullptr;
+                continue;
+            }
 
             // obj will already have an index, so insert it at that index in lvlObjects
             int id = obj->get_idx();
@@ -62,11 +64,22 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
             } else if (id == idxHeld) {
                 // assign obj to the held object pointer
                 held = std::dynamic_pointer_cast<Item>(obj);
-                held->make_held();
+                held->make_held(false);
             }
         }
-
-
+        
+        // clear out all invalid entity types
+        for (int i = 0; i < gameObjects.size(); i++)
+        {
+            auto obj = gameObjects[i];
+            if (obj == nullptr) {
+                gameObjects.erase(gameObjects.begin() + i);
+                for (int j = i; j < gameObjects.size(); j++) {
+                    auto obj2 = gameObjects[j];
+                    if (obj2 != nullptr) obj2->decrement_idx();
+                }
+            }
+        }
 
 
         // next line

@@ -15,6 +15,9 @@ class Player : public GameObject
 
         void set_dialogueTimer(float timer);
 
+        virtual void set_HP(int newHP);
+        virtual void add_HP(int amount);
+
     private:
 
         /* gets which input keys are being held in the game */

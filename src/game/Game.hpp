@@ -331,7 +331,7 @@ class Game
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
-                                birdSpawn;
+                                birdSpawn, playerDamage, healSound, gameOverSound;
 
         std::shared_ptr<LAudio> wolfSpawnSounds[3], splashSounds[3];
 

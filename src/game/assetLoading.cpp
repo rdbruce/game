@@ -194,6 +194,18 @@ void Game::load_audio()
     if (!birdSpawn->loadFromFile("../../assets/Audio/EntitySounds/BirdSpawn.wav")) {
         std::cerr << "Failed to load bird spawn sound!" << std::endl;
     }
+    gameOverSound = std::make_shared<LAudio>();
+    if (!gameOverSound->loadFromFile("../../assets/Audio/GameOver.wav")) {
+        std::cerr << "Failed to load bird spawn sound!" << std::endl;
+    }
+    healSound = std::make_shared<LAudio>();
+    if (!healSound->loadFromFile("../../assets/Audio/EntitySounds/Heal.wav")) {
+        std::cerr << "Failed to load bird spawn sound!" << std::endl;
+    }
+    playerDamage = std::make_shared<LAudio>();
+    if (!playerDamage->loadFromFile("../../assets/Audio/EntitySounds/PlayerDamage.wav")) {
+        std::cerr << "Failed to load bird spawn sound!" << std::endl;
+    }
 
     for (int i = 0; i < 3; i++) {
         std::string filename = "../../assets/Audio/EntitySounds/WolfSpawn"+std::to_string(i+1)+".wav";

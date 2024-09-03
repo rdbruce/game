@@ -102,8 +102,8 @@ class GameObject
         void set_hitbox(SDL_Rect newHitbox);
         void set_radius(float newRadius);
         void set_maxHP(int newMaxHP);
-        void set_HP(int newHP);
-        void add_HP(int amount);
+        virtual void set_HP(int newHP);
+        virtual void add_HP(int amount);
         void set_vel(Vector2 newVel);
         void set_pos(Vector2 newPos);
         void set_accel(Vector2 newAccel);

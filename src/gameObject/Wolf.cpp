@@ -217,7 +217,7 @@ void Wolf::walkToNextCell()
 
     // if it is close enough (within one unit), progress to the next node
     // otherwise, move towards the cell centre
-    if (len <= 2.0f) {
+    if (len <= 5.0f) {
         // make the position exact
         set_pos( cellPos );
         // progress to the next node
