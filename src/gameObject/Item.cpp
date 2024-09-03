@@ -44,6 +44,7 @@ Item::Item(int Type, Vector2 pos, int idx, int count, Game *game, int cell_sideL
 
 int Item::get_damage() { return ceilToInt(damage * get_HP()); }
 float Item::get_damageMult() { return damage; }
+float Item::get_playerCollisionTimer() {return playerCollisionTimer; }
 bool Item::is_held() { 
     if (game->currLevel->held != nullptr) {
         return  game->currLevel->gameObjects[get_idx()]->get_idx() == 
@@ -112,6 +113,7 @@ void Item::thrown_updatePos()
         damageTimer = damageInterval;
     } else damageTimer -= dt;
     craftTimer -= dt;
+    playerCollisionTimer -= dt;
 }
 
 void Item::die()
@@ -134,6 +136,7 @@ void Item::make_thrown(Vector2 newVel, Vector2 newAccel)
     set_vel(newVel); set_accel(newAccel);
     updatePos = &Item::thrown_updatePos;
     craftTimer = damageTimer = 0.0f;
+    playerCollisionTimer = 0.5f;
 }
 
 void Item::collision()
@@ -146,7 +149,12 @@ void Item::collision()
     Vector2Int cell = get_cell();
     int num = game->currLevel->grid[cell.x][cell.y];
     if ((num&(WATER|BARRIER)) == (WATER|BARRIER)) {
-        if (!is_held()) set_HP(0);
+        if (!is_held()) {
+            set_HP(0);
+            int idx = rand()%2 + 1;
+            game->splashSounds[idx]->play();
+            game->Instantiate(splash, get_pos(), 1);
+        }
     }
 }
 
@@ -161,7 +169,9 @@ void Item::handleCollisionsWithGameObjects()
         // doesn't collide with itself or objects that have no collision
         if (get_idx() == i || !other->has_collision()) continue;
         // held item won't collide with player, other items won't collide with held item
-        if ((is_held() && other->get_type() == player)) continue;
+        if (other->get_type() == player) {
+            if (is_held() || playerCollisionTimer > 0.0f) continue;
+        }
         auto item = std::dynamic_pointer_cast<Item>(other);
         if (item != nullptr) if (item->is_held()) continue;
 
@@ -177,7 +187,8 @@ void Item::handleCollisionsWithGameObjects()
         // if d < r, the objects are too close to each other and need to be pushed apart
         if ( d < r )
         {
-            if (other->is_item()) {
+            if (other->is_item()) 
+            {
                 if (item->get_type() == get_type()) transferItems(item);
                 else game->craftTwoItems(std::dynamic_pointer_cast<Item>(gameObjects[get_idx()]), item);
             }
@@ -334,7 +345,6 @@ void Item::handleCornerCollisionsWithWalls()
 
 void Item::render(int camX, int camY, Uint8 alpha)
 {
-    // std::cout << "rendering item\n";
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
@@ -359,5 +369,4 @@ void Item::render(int camX, int camY, Uint8 alpha)
         itemCountTex->render(p.x+hitbox.w-(itemCountTex->getWidth()/2), p.y+hitbox.h-(itemCountTex->getHeight()/2));
         itemCountTex->free();
     }
-    // std::cout << "rendered item\n";
 }

@@ -55,6 +55,7 @@ class Game
     friend class GhostBuilding;
     friend class TutorialText;
     friend class Explosion;
+    friend class Splash;
 
     public:
 
@@ -320,18 +321,19 @@ class Game
                                     pine_coneTex, plankTex, foxTex, berryTex,
                                     shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
                                     shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
-                                    berry_bushTex, empty_bushTex, full_heartTex, empty_heartTex,
+                                    berry_bushTex, empty_bushTex, heartTex,
                                     stoneTex, LMBTex, MMBTex, RMBTex, BearTex, BirdTex, BombTex,
                                     TargetTex, dashed_circleTex, rabbitTex;
 
         // animation containers
-        std::shared_ptr<Animations> playerAnimations, wolfWalkingAnimation, explosionAnimation;
+        std::shared_ptr<Animations> playerAnimations, wolfWalkingAnimation, explosionAnimation,
+                                    splashAnimation;
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
                                 birdSpawn;
 
-        std::shared_ptr<LAudio> wolfSpawnSounds[3];
+        std::shared_ptr<LAudio> wolfSpawnSounds[3], splashSounds[3];
 
         // music
         std::shared_ptr<LAudio> nightMusic, dayMusic, deathMusic, menuMusic;

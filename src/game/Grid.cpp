@@ -648,6 +648,7 @@ void Game::damRiver()
         }
     }
     
+    bool flag = false;
     for (int y = 11; y < 19; y++) {
         for (int i = 1; i < x; i++) 
         {
@@ -655,10 +656,12 @@ void Game::damRiver()
             if (num&IS_DRIED) {
                 Vector2Int curr(i, y);
                 currLevel->grid[i][y] &= ~IS_DRIED;
+                flag = true;
                 PlaceObjectInCell(curr, EMPTY, false);
             }
         }
     }
+    if (flag) splashSounds[0]->play();
 }
 
 bool Game::blocksRiver( Vector2Int cell )

@@ -101,3 +101,22 @@ class Explosion : public GameObject
 
         float timer = 1.0f;
 };
+
+class Splash : public GameObject
+{
+    public:
+
+        Splash(Vector2 pos, int Idx, Game *game, int cell_sideLen);
+
+        virtual void render(int camx, int camY, Uint8 alpha = 255);
+
+        virtual void update();
+
+    private:
+
+        std::shared_ptr<LTexture> animate();
+        std::shared_ptr<LTexture> tex = nullptr;
+        std::shared_ptr<Animations> animation = nullptr;
+
+        float timer = 1.0f;
+};

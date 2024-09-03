@@ -40,6 +40,7 @@ enum EntityType
     ghostBuilding,
     tutorialText,
     explosion,
+    splash,
 
     // item types
     ITEM_MIN,

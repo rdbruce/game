@@ -17,6 +17,7 @@ class Item : public GameObject
         float get_damageMult();
         float get_craftTimer();
         void set_craftTimer();
+        float get_playerCollisionTimer();
 
         void make_held();
         void make_thrown(Vector2 newVel, Vector2 newAccel);
@@ -49,4 +50,5 @@ class Item : public GameObject
         float craftInterval = 0.75f, craftTimer = craftInterval;
         float damage;
         float damageInterval = 1.0f, damageTimer = damageInterval;
+        float playerCollisionTimer = 0.0f;
 };

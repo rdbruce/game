@@ -7,7 +7,7 @@ bool is_in_region(Vector2 p, SDL_Rect rect) {
 
 void Game::render_controls()
 {
-    SDL_Rect mRect = {0+renderOffset.x, 70+renderOffset.y, 24, 30};
+    SDL_Rect mRect = {0+renderOffset.x, 904+renderOffset.y, 24, 30};
     std::string txt;
 
     Vector2 mPos = find_mouse_pos();
@@ -407,17 +407,15 @@ void Game::render_framerate()
 
 void Game::render_player_health()
 {
+    int hp = currLevel->player->get_HP(); // the number of full hearts there will be
+    int x = (camera.w-(60*hp))/2;
     // the space each heart will take up
-    SDL_Rect heartRect = {0+renderOffset.x, 30+renderOffset.y, 50, 50};
-    int full = currLevel->player->get_HP(); // the number of full hearts there will be
+    SDL_Rect heartRect = {x+renderOffset.x, 832+renderOffset.y, 50, 50};
 
-    for (int i = 0; i < 5; i++) 
+    for (int i = 0; i < hp; i++)
     {
-        // render the number of hitpoints the player has as a full heart
-        // and show the rest of the hearts as empty
-        if (i < full) full_heartTex->render(heartRect.x, heartRect.y, &heartRect);
-        else empty_heartTex->render(heartRect.x, heartRect.y, &heartRect);
-        heartRect.x += heartRect.w;
+        heartTex->render(heartRect.x, heartRect.y, &heartRect);
+        heartRect.x += heartRect.w + 10;
     }
 }
 

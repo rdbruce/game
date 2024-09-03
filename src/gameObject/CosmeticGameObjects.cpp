@@ -425,3 +425,34 @@ std::shared_ptr<LTexture> Explosion::animate(bool updateIdx)
 {
     return animation->getTexture(get_deltaTime(), Forwards, -1.0f, updateIdx);
 }
+
+
+
+/*          SPLASH          */
+
+Splash::Splash(Vector2 pos, int Idx, Game *game, int cell_sideLen)
+:   GameObject(splash, pos, Idx, 1, game, cell_sideLen, false, cell_sideLen),
+    animation(game->splashAnimation) {}
+
+void Splash::update() {
+    if (timer <= 0.0f) Destroy();
+    else timer -= get_deltaTime();
+}
+
+void Splash::render(int camX, int camY, Uint8 alpha)
+{
+    SDL_Rect hitbox = get_hitbox();
+    Vector2Int p( hitbox.x - camX, hitbox.y-camY );
+    // not within the camera's view, don't render
+    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+        return;
+    }
+
+    tex = animate();
+    tex->render(p.x, p.y, &hitbox);
+}
+
+std::shared_ptr<LTexture> Splash::animate()
+{
+    return animation->getTexture(get_deltaTime(), Forwards, -1.0f);
+}

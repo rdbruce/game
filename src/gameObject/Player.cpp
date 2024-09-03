@@ -160,6 +160,8 @@ void Player::collision()
         updatePos = &GameObject::defualt_update_position;
         updateVelocity = &Player::return_to_shore;
         set_collision(false);
+        int idx = rand()%2 + 1;
+        game->splashSounds[idx]->play();
     }
 }
 
@@ -176,6 +178,10 @@ void Player::handleCollisionWithGameObjects()
 
         // doesn't collide with itself or objects that have no collision
         if (get_idx() == i || !other->has_collision()) continue;
+        if (other->is_item()) {
+            auto item = std::dynamic_pointer_cast<Item>(other);
+            if (item->get_playerCollisionTimer() > 0.0f) continue;
+        }
 
         // find the displacement between the two objects
         Vector2 disp = other->get_pos() - get_pos();

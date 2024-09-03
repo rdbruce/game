@@ -254,7 +254,12 @@ void Wolf::collision()
     // die if in water
     Vector2Int cell = get_cell();
     int num = game->currLevel->grid[cell.x][cell.y];
-    if ((num&(WATER|BARRIER)) == (WATER|BARRIER)) set_HP(0);
+    if ((num&(WATER|BARRIER)) == (WATER|BARRIER)) {
+        set_HP(0);
+        int idx = rand()%2 + 1;
+        game->splashSounds[idx]->play();
+        game->Instantiate(splash, get_pos(), 1);
+    } 
 }
 
 void Wolf::handleCollisionsWithGameObjects()
