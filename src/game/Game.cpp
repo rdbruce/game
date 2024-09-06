@@ -629,11 +629,11 @@ bool Game::tradeItem(int heldType, int heldHP, Vector2 mPos)
             spawnedType = berryItem;
             spawnedHP = 1;
             break;
-        case berryItem:
+        case logItem:
             targetType = rabbitNPC;
             requiredHP = 1;
-            spawnedType = logItem;
-            spawnedHP = 2;
+            spawnedType = stoneItem;
+            spawnedHP = 1;
             break;
 
         default: return false; // not holding a tradable item

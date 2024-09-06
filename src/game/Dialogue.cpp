@@ -676,18 +676,26 @@ void NPC::rabbitDialogue()
                 set_HP(7); dialogueTimer = dialogueInterval; break;
             }
             
-            std::string rend, txt = "Hey tough guy!\nYou need any wood?";
+            std::string rend0, rend1, txt0 = "Hey tough guy!", txt1 = "You need any ";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
-                rend = txt.substr(0, n);
+                int n0 = Max(1, t * txt0.size()), n1 = Max(1, t * txt1.size());
+                rend0 = txt0.substr(0, n0);
+                rend1 = txt1.substr(0, n1);
                 dialogueTimer -= get_deltaTime();
             } else {
-                rend = txt;
+                rend0 = txt0;
+                rend1 = txt1;
                 game->enter_dialogue(rabbit_town_1);
             }
 
-            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-60), game->window);
+            std::vector<std::string> strs = {rend0, rend1, "?"};
+
+            SDL_Color col = {255,255,255,255};
+            auto diag = std::make_shared<DialogueRender>(
+                strs, Vector2Int(p.x, p.y-60), game->window, col, 
+                Centred, &DialogueRender::rabbit_town_case2, game->stoneTex
+            );
             diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
@@ -696,61 +704,51 @@ void NPC::rabbitDialogue()
 
         case 4:
         {
-            std::string rend, txt = "Alright! Lemme tell ya,\nI got the BEST.\nFreakin' wood.";
+            std::string rend, txt = "Alright! Lemme tell ya,\nI got the BEST.";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
                 int n = Max(1, t * txt.size());
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
-                rend = txt;
+                rend = txt + "\n ";
             }
+            std::vector<std::string> strs = {rend, "Freakin' "};
 
-            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-90), game->window);
+            SDL_Color col = {255,255,255,255};
+            auto diag = std::make_shared<DialogueRender>(
+                strs, Vector2Int(p.x, p.y-90), game->window, col,
+                Centred, &DialogueRender::rabbit_town_case4, game->stoneTex
+            );
+
             diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
         case 5:
         {
-            std::vector<std::string> strs = {"Just gimme 1", "for 2"};
+            std::vector<std::string> strs = {"Just gimme 1 ", " for 2"};
 
             SDL_Color col = {255,255,255,255};
             auto diag = std::make_shared<DialogueRender>(
                 strs, Vector2Int(p.x, p.y-30), game->window,
                 col, Centred, &DialogueRender::rabbit_town_case5, 
-                game->berryTex, game->logTex
+                game->logTex, game->stoneTex
             );
             diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
 
         case 7:
-        {
-            std::string rend, txt = "Aww, come on! I'm freakin'\nstarvin' out here!";
-            if (dialogueTimer >= 0.0f) {
-                float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
-                rend = txt.substr(0, n);
-                dialogueTimer -= get_deltaTime();
-            } else {
-                rend = txt;
-            }
-
-            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-60), game->window);
-            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-            break;
-        }
-
         case 8:
         {
-            std::vector<std::string> strs = {"Just gimme some ", "!"};
+            std::vector<std::string> strs = {"Aww, come on!", "Just gimme some ", "!"};
             SDL_Color col = {255,255,255,255};
 
             auto diag = std::make_shared<DialogueRender>(
                 strs, Vector2Int(p.x, p.y-30), 
                 game->window, col, Centred, 
-                &DialogueRender::rabbit_town_case8, game->berryTex
+                &DialogueRender::rabbit_town_case8, game->logTex
             );
             diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
@@ -1673,6 +1671,59 @@ void DialogueRender::fox_base_case11()
     tex3->free(); tex4->free(); tex5->free();
 }
 
+void DialogueRender::rabbit_town_case2()
+{
+    if (strings.size() != 3) return;
+
+    renderText(strings[0], pos.x-BKG_DISPLACE, pos.y+BKG_DISPLACE, window, bkgColour, font, orientation);
+    renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
+
+    std::string txt0 = strings[1], txt1 = strings[2];
+
+    auto tex0 = std::make_shared<LTexture>(window),
+         tex1 = std::make_shared<LTexture>(window),
+         tex2 = std::make_shared<LTexture>(window),
+         tex3 = std::make_shared<LTexture>(window);
+
+    tex0->loadFromRenderedText(txt0, colour, font);
+    tex1->loadFromRenderedText(txt1, colour, font);
+    tex2->loadFromRenderedText(txt0, bkgColour, font);
+    tex3->loadFromRenderedText(txt1, bkgColour, font);
+
+    int w = tex0->getWidth() + 30,
+        x = pos.x - (w/2), y = pos.y + 30;
+    SDL_Rect rect = {0, 0, 30, 30};
+
+    tex2->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
+    texture0->render(x, y, &rect); x += 30;
+    tex3->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex1->render(x, y);
+
+    tex0->free(); tex1->free(); tex2->free(); tex3->free();
+}
+
+void DialogueRender::rabbit_town_case4()
+{
+    if (strings.size() != 2) return;
+
+    renderText(strings[0], pos.x-BKG_DISPLACE, pos.y+BKG_DISPLACE, window, bkgColour, font, orientation);
+    renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
+
+    auto tex0 = std::make_unique<LTexture>(window),
+         tex1 = std::make_unique<LTexture>(window);
+
+    tex0->loadFromRenderedText(strings[1], colour, font);
+    tex1->loadFromRenderedText(strings[1], bkgColour, font);
+
+    int w = tex0->getWidth() + 30,
+        x = pos.x - (w/2), y = pos.y + 60;
+    SDL_Rect rect = {0, 0, 30, 30};
+
+    tex1->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
+    texture0->render(x, y, &rect);
+
+    tex1->free(); tex0->free();
+}
+
 void DialogueRender::rabbit_town_case5()
 {
     if (strings.size() != 2) return;
@@ -1703,9 +1754,12 @@ void DialogueRender::rabbit_town_case5()
 
 void DialogueRender::rabbit_town_case8()
 {
-    if (strings.size() != 2) return;
+    if (strings.size() != 3) return;
 
-    std::string txt0 = strings[0], txt1 = strings[1];
+    renderText(strings[0], pos.x-BKG_DISPLACE, pos.y+BKG_DISPLACE, window, bkgColour, font, orientation);
+    renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
+
+    std::string txt0 = strings[1], txt1 = strings[2];
     auto tex0 = std::make_unique<LTexture>(window),
          tex1 = std::make_unique<LTexture>(window),
          tex2 = std::make_unique<LTexture>(window),
@@ -1717,7 +1771,7 @@ void DialogueRender::rabbit_town_case8()
     tex3->loadFromRenderedText(txt1, bkgColour, font);
 
     int w = tex0->getWidth() + tex1->getWidth() + 30,
-        x = pos.x -(w/2), y = pos.y;
+        x = pos.x -(w/2), y = pos.y + 30;
     SDL_Rect rect{0, 0, 30, 30};
 
     tex2->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();

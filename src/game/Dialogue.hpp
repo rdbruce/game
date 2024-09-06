@@ -95,6 +95,8 @@ class DialogueRender
         void bear_town_5_2_diag();
         void bear_town_case14();
         void fox_base_case11();
+        void rabbit_town_case2();
+        void rabbit_town_case4();
         void rabbit_town_case5();
         void rabbit_town_case8();
 };

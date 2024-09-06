@@ -61,13 +61,7 @@ void FallingTree::update()
 GhostBuilding::GhostBuilding(Vector2Int cell, EntityType itemType, int Idx, Game *game, int cell_sideLen)
 : GameObject(ghostBuilding, Vector2(((float)cell.x+0.5f)*cell_sideLen,((float)cell.x+0.5f)*cell_sideLen), Idx, 1, game, cell_sideLen, false, cell_sideLen)
 {
-    switch (itemType)
-    {
-        case logItem: tex = game->logTex; valid = true; break;
-        case pineConeItem: tex = game->saplingTex; valid = true; break;
-        case damItem: tex = game->damTex; valid = true; break;
-        case doorItem: tex = game->closed_doorTex; valid = true; break;
-    }
+    assign_texture(itemType);
 }
 
 void GhostBuilding::update()
@@ -102,6 +96,21 @@ void GhostBuilding::go_to_mouse_cell()
              b = (num&(WATER|IS_DRIED))==WATER,
              c = game->currLevel->held->get_type() != damItem;
         show = !(a || (b && c));
+
+        auto held = game->currLevel->held;
+        if (held != nullptr) assign_texture(held->get_type());
+    }
+}
+
+void GhostBuilding::assign_texture(EntityType itemType)
+{
+    switch (itemType)
+    {
+        case logItem: tex = game->logTex; valid = true; break;
+        case pineConeItem: tex = game->saplingTex; valid = true; break;
+        case damItem: tex = game->damTex; valid = true; break;
+        case doorItem: tex = game->closed_doorTex; valid = true; break;
+        default: valid = false; break;
     }
 }
 

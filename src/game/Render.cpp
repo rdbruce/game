@@ -77,7 +77,7 @@ void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
             return;
         }
 
-        else if (type == rabbitNPC && currLevel->held->get_type() == berryItem)
+        else if (type == rabbitNPC && currLevel->held->get_type() == logItem)
         {
             // render the left mouse icon
             LMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w + 8;
@@ -88,13 +88,13 @@ void Game::render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag )
             controlsTex->render(mRect->x, mRect->y + 8); mRect->x += controlsTex->getWidth();
 
             mRect->w = mRect->h = 30;
-            berryTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w + 8;
+            logTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w + 8;
 
-            txt = " for 2 ";
+            txt = " for 1 ";
             controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y + 8); mRect->x += controlsTex->getWidth();
 
-            logTex->render(mRect->x, mRect->y, mRect);
+            stoneTex->render(mRect->x, mRect->y, mRect);
             *flag = false;
             return;
         }
