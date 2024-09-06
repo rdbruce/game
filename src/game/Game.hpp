@@ -423,7 +423,7 @@ class Game
 
         void render_held_object_controls( Vector2 mPos, SDL_Rect *mRect );
         void render_NPC_trade_controls( int type, SDL_Rect *mRect, bool *flag );
-        void render_BuildThrow_commands( SDL_Rect *mRect );
+        void render_BuildThrow_commands( Vector2 mPos, SDL_Rect *mRect );
         bool render_hovering_over_entity_controls( Vector2 mPos, SDL_Rect *mRect );
         void render_crafting_controls( int type, SDL_Rect *mRect, int hp );
         void render_cell_controls( Vector2 mPos, SDL_Rect *mRect );

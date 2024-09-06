@@ -85,23 +85,32 @@ void GhostBuilding::go_to_mouse_cell()
 {
     // ensure that there is still something being held
     if (game->currLevel->held == nullptr) Destroy();
+    else
+    {
+        Vector2 mPos = game->find_mouse_pos();
+        float sideLen = get_cellSidelen();
+        mPos /= sideLen;
+        mPos.x = (int)mPos.x; mPos.y = (int)mPos.y;
+        mPos *= sideLen;
+        mPos += Vector2_One * 0.5f * sideLen;
 
-    Vector2 mPos = game->find_mouse_pos();
-    float sideLen = get_cellSidelen();
-    mPos /= sideLen;
-    mPos.x = (int)mPos.x; mPos.y = (int)mPos.y;
-    mPos *= sideLen;
-    mPos += Vector2_One * 0.5f * sideLen;
+        set_pos(mPos);
 
-    set_pos(mPos);
+        Vector2Int cell = get_cell();
+        int num = game->currLevel->grid[cell.x][cell.y];
+        bool a = num&OCCUPIED,
+             b = (num&(WATER|IS_DRIED))==WATER,
+             c = game->currLevel->held->get_type() != damItem;
+        show = !(a || (b && c));
+    }
 }
 
 void GhostBuilding::render(int camX, int camY, Uint8 alpha)
 {
     if (!valid) Destroy();
-    if (alpha == 255) {
+    else if (alpha == 255) {
         game->secondRenders.push(this);
-    } else {
+    } else if (show) {
         SDL_Rect hitbox = get_hitbox();
         Vector2Int p( hitbox.x - camX, hitbox.y-camY );
         // not within the camera's view, don't render

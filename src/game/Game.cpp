@@ -93,7 +93,7 @@ void Game::handle_events( SDL_Event& e )
                 case SDL_BUTTON_RIGHT:
                     rightClickFunc(); break;
                 case SDL_BUTTON_MIDDLE:
-                    if (currLevel->held != nullptr) throwHeldObject(); break;
+                    if (currLevel->held != nullptr) throwSingleItem(); break;
             }
             break;
     }
@@ -365,8 +365,6 @@ std::shared_ptr<Item> Game::craftTwoItems( std::shared_ptr<Item> item1, std::sha
 
 std::shared_ptr<Item> Game::craftItem( std::shared_ptr<Item> item )
 {
-    // cannot craft by right clicking a held item
-    if (item->is_held()) return nullptr;
     std::shared_ptr<Item> res = nullptr;
 
     // which type of item will be created
@@ -408,7 +406,15 @@ std::shared_ptr<Item> Game::craftItem( std::shared_ptr<Item> item )
             break;
     }
 
-    if (res != nullptr) pop->play();
+    if (res != nullptr) {
+        pop->play();
+        // when crafting the held item, if you used all of the items in the held stack, 
+        // make the product held
+        if (item->is_held() && item->get_HP() <= 0) {
+            currLevel->held = res;
+            res->make_held();
+        }
+    }
     return res;
 }
 
@@ -602,7 +608,7 @@ void Game::leftClickFunc()
             } else if (currLevel->held != nullptr) {
                 if (!tradeItem(currLevel->held->get_type(), currLevel->held->get_HP(), mPos)) 
                 {
-                    throwSingleItem();
+                    throwHeldObject();
                 }
             }
             break;
@@ -792,21 +798,7 @@ void Game::spawnNPCs()
         Instantiate(rabbitNPC, pos, 1, &Town);
     }
 
-
     // spawn NPCS in the base level
-    if (scores.mostNightsSurvived == 0) 
-    {
-        n = Base.gameObjects.size();
-        int i;
-        for (i = 0; i < n; i++) {
-            if (Base.gameObjects[i]->get_type() == foxNPC) break;
-        }
-        if (i == n) {
-            Vector2 pos(2000.0f, 3050.0f);
-            Instantiate(foxNPC, pos, 1, &Base);
-        }
-
-    }
     if (showTutorial) {
         Vector2 pos(-50.0f, -50.0f);
         Instantiate(tutorialText, pos, 1, &Base);

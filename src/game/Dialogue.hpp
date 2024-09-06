@@ -67,7 +67,7 @@ class DialogueRender
     private:
 
         std::vector<std::string> strings;
-        SDL_Color colour;
+        SDL_Color colour, bkgColour;
         Vector2Int pos;
         std::shared_ptr<LWindow> window = nullptr;
         TextOrientation orientation;
@@ -77,6 +77,8 @@ class DialogueRender
         TTF_Font *font = NULL;
 
         void (DialogueRender::*renderFunc)();
+
+        int BKG_DISPLACE = 5;
 
     public: 
 

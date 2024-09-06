@@ -1529,11 +1529,15 @@ void Game::handle_dialogue( int e )
 DialogueRender::DialogueRender(std::string txt, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour, TextOrientation orientation, void (DialogueRender::*func)(), std::shared_ptr<LTexture> tex0, std::shared_ptr<LTexture> tex1)
 : pos(pos), window(window), colour(colour), orientation(orientation), renderFunc(func), texture0(tex0), texture1(tex1)
 {
+    bkgColour = {Uint8(colour.r/2),Uint8(colour.g/2), Uint8(colour.b/2), Uint8(colour.a-50)};
     strings.push_back(txt);
 }
 
 DialogueRender::DialogueRender(std::vector<std::string> strings, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour, TextOrientation orientation, void (DialogueRender::*func)(), std::shared_ptr<LTexture> tex0, std::shared_ptr<LTexture> tex1)
-: strings(strings), pos(pos), window(window), colour(colour), orientation(orientation), renderFunc(func), texture0(tex0), texture1(tex1) {}
+: strings(strings), pos(pos), window(window), colour(colour), orientation(orientation), renderFunc(func), texture0(tex0), texture1(tex1) 
+{
+    bkgColour = {Uint8(colour.r/2),Uint8(colour.g/2), Uint8(colour.b/2), Uint8(colour.a-25)};
+}
 
 void DialogueRender::set_font( TTF_Font * Font ) { font = Font; };
 
@@ -1544,6 +1548,7 @@ void DialogueRender::render()
 
 void DialogueRender::defaultTextRender()
 {
+    renderText(strings[0], pos.x-BKG_DISPLACE, pos.y+BKG_DISPLACE, window, bkgColour, font, orientation);
     renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
 }
 
@@ -1555,20 +1560,25 @@ void DialogueRender::bear_town_5_diag()
 
     std::string txt0 = strings[1], txt1 = strings[2];
     auto tex0 = std::make_unique<LTexture>(window),
-         tex1 = std::make_unique<LTexture>(window); 
+         tex1 = std::make_unique<LTexture>(window), 
+         tex2 = std::make_unique<LTexture>(window), 
+         tex3 = std::make_unique<LTexture>(window); 
     
     tex0->loadFromRenderedText(txt0, colour, font);
     tex1->loadFromRenderedText(txt1, colour, font);
+    tex2->loadFromRenderedText(txt0, bkgColour, font);
+    tex3->loadFromRenderedText(txt1, bkgColour, font);
 
     int w = tex0->getWidth()+tex1->getWidth()+30,
         x = pos.x - (w/2), y = pos.y+30;
     SDL_Rect rect = {0, 0, 30, 30};
 
-    tex0->render(x, y); x += tex0->getWidth();
+    tex2->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
-    tex1->render(x, y); 
+    tex3->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex1->render(x, y);
 
     tex0->free(); tex1->free();
+    tex2->free(); tex3->free();
 }
 
 void DialogueRender::bear_town_5_2_diag()
@@ -1577,20 +1587,25 @@ void DialogueRender::bear_town_5_2_diag()
 
     std::string txt0 = strings[0], txt1 = strings[1];
     auto tex0 = std::make_unique<LTexture>(window),
-         tex1 = std::make_unique<LTexture>(window); 
+         tex1 = std::make_unique<LTexture>(window), 
+         tex2 = std::make_unique<LTexture>(window), 
+         tex3 = std::make_unique<LTexture>(window); 
     
     tex0->loadFromRenderedText(txt0, colour, font);
     tex1->loadFromRenderedText(txt1, colour, font);
+    tex2->loadFromRenderedText(txt0, bkgColour, font);
+    tex3->loadFromRenderedText(txt1, bkgColour, font);
 
     int w = tex0->getWidth()+tex1->getWidth()+30,
         x = pos.x - (w/2), y = pos.y;
     SDL_Rect rect = {0, 0, 30, 30};
 
-    tex0->render(x, y); x += tex0->getWidth();
+    tex2->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
-    tex1->render(x, y); 
+    tex3->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex1->render(x, y);
 
     tex0->free(); tex1->free();
+    tex2->free(); tex3->free();
 }
 
 void DialogueRender::bear_town_case14()
@@ -1600,49 +1615,62 @@ void DialogueRender::bear_town_case14()
     std::string txt0 = strings[0], txt1 = strings[1]; 
 
     auto tex0 = std::make_unique<LTexture>(window),
-         tex1 = std::make_unique<LTexture>(window); 
+         tex1 = std::make_unique<LTexture>(window), 
+         tex2 = std::make_unique<LTexture>(window), 
+         tex3 = std::make_unique<LTexture>(window); 
     
     tex0->loadFromRenderedText(txt0, colour, font);
     tex1->loadFromRenderedText(txt1, colour, font);
+    tex2->loadFromRenderedText(txt0, bkgColour, font);
+    tex3->loadFromRenderedText(txt1, bkgColour, font);
 
     int w = tex0->getWidth()+tex1->getWidth() + 60,
         x = pos.x - (w/2), y = pos.y;
     SDL_Rect rect = {0, 0, 30, 30};
 
-    tex0->render(x, y); x += tex0->getWidth();
+    tex2->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
-    tex1->render(x, y); x += tex1->getWidth();
+    tex3->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex1->render(x, y); x += tex1->getWidth();
     texture1->render(x, y, &rect);
 
     tex0->free(); tex1->free();
+    tex2->free(); tex3->free();
 }
 
 void DialogueRender::fox_base_case11()
 {
     if (strings.size() != 4) return;
 
+    renderText(strings[0], pos.x-BKG_DISPLACE, pos.y+BKG_DISPLACE, window, bkgColour, font, orientation);
     renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
 
     std::string txt0 = strings[1], txt1 = strings[2], txt2 = strings[3];
     auto tex0 = std::make_unique<LTexture>(window),
          tex1 = std::make_unique<LTexture>(window),
-         tex2 = std::make_unique<LTexture>(window);
+         tex2 = std::make_unique<LTexture>(window),
+         tex3 = std::make_unique<LTexture>(window),
+         tex4 = std::make_unique<LTexture>(window),
+         tex5 = std::make_unique<LTexture>(window);
 
     tex0->loadFromRenderedText(txt0, colour, font);
     tex1->loadFromRenderedText(txt1, colour, font);
     tex2->loadFromRenderedText(txt2, colour, font);
+    tex3->loadFromRenderedText(txt0, bkgColour, font);
+    tex4->loadFromRenderedText(txt1, bkgColour, font);
+    tex5->loadFromRenderedText(txt2, bkgColour, font);
 
     int w = tex0->getWidth()+tex1->getWidth()+tex2->getWidth()+60,
         x = pos.x - (w/2), y = pos.y + 30;
     SDL_Rect rect = {0, 0, 30, 30};
 
-    tex0->render(x, y); x += tex0->getWidth();
+    tex3->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
-    tex1->render(x, y); x += tex1->getWidth();
+    tex4->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex1->render(x, y); x += tex1->getWidth();
     texture1->render(x, y, &rect); x += 30;
-    tex2->render(x, y);
+    tex5->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex2->render(x, y);
 
     tex0->free(); tex1->free(); tex2->free();
+    tex3->free(); tex4->free(); tex5->free();
 }
 
 void DialogueRender::rabbit_town_case5()
@@ -1651,21 +1679,26 @@ void DialogueRender::rabbit_town_case5()
 
     std::string txt0 = strings[0], txt1 = strings[1];
     auto tex0 = std::make_unique<LTexture>(window),
-         tex1 = std::make_unique<LTexture>(window);
+         tex1 = std::make_unique<LTexture>(window),
+         tex2 = std::make_unique<LTexture>(window),
+         tex3 = std::make_unique<LTexture>(window);
 
     tex0->loadFromRenderedText(txt0, colour, font);
     tex1->loadFromRenderedText(txt1, colour, font);
+    tex2->loadFromRenderedText(txt0, bkgColour, font);
+    tex3->loadFromRenderedText(txt1, bkgColour, font);
 
     int w = tex0->getWidth() + tex1->getWidth() + 60,
         x = pos.x -(w/2), y = pos.y;
     SDL_Rect rect{0, 0, 30, 30};
 
-    tex0->render(x, y); x += tex0->getWidth();
+    tex2->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
-    tex1->render(x, y); x += tex1->getWidth();
+    tex3->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex1->render(x, y); x += tex1->getWidth();
     texture1->render(x, y, &rect);
 
     tex0->free(); tex1->free();
+    tex2->free(); tex3->free();
 }
 
 void DialogueRender::rabbit_town_case8()
@@ -1674,18 +1707,23 @@ void DialogueRender::rabbit_town_case8()
 
     std::string txt0 = strings[0], txt1 = strings[1];
     auto tex0 = std::make_unique<LTexture>(window),
-         tex1 = std::make_unique<LTexture>(window);
+         tex1 = std::make_unique<LTexture>(window),
+         tex2 = std::make_unique<LTexture>(window),
+         tex3 = std::make_unique<LTexture>(window);
 
     tex0->loadFromRenderedText(txt0, colour, font);
     tex1->loadFromRenderedText(txt1, colour, font);
+    tex2->loadFromRenderedText(txt0, bkgColour, font);
+    tex3->loadFromRenderedText(txt1, bkgColour, font);
 
     int w = tex0->getWidth() + tex1->getWidth() + 30,
         x = pos.x -(w/2), y = pos.y;
     SDL_Rect rect{0, 0, 30, 30};
 
-    tex0->render(x, y); x += tex0->getWidth();
+    tex2->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex0->render(x, y); x += tex0->getWidth();
     texture0->render(x, y, &rect); x += 30;
-    tex1->render(x, y); x += tex1->getWidth();
+    tex3->render(x-BKG_DISPLACE, y+BKG_DISPLACE); tex1->render(x, y); x += tex1->getWidth();
 
     tex0->free(); tex1->free();
+    tex2->free(); tex3->free();
 }
