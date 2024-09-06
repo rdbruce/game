@@ -3,6 +3,48 @@
 #include "../engine/LWindow.hpp"
 #include "../engine/LAudio.hpp"
 
+
+void Game::load_levels( std::string dir )
+{
+    Base = Scene(dir + "Base.txt", this);
+    if (Base.player != nullptr) currLevel = &Base;
+
+    Woods = Scene(dir + "Woods.txt", this);
+    if (Woods.player != nullptr) currLevel = &Woods;
+
+    Town = Scene(dir + "Town.txt", this);
+    if (Town.player != nullptr) currLevel = &Town;
+
+    // set up pointers to adjacent levels
+    Base.assignNeighbours(&Town, &Woods);
+    Woods.assignNeighbours(&Base, nullptr);
+    Town.assignNeighbours(nullptr, &Base);
+
+    isNight = false;
+    g_time = 0.0f;
+
+    interactRange = 3.0f * currLevel->cell_sideLen;
+
+    load_gameData(dir + "gameData.txt");
+}
+
+void Game::load_gameData( std::string filename )
+{
+    std::ifstream file(filename);
+
+    if (!file) {
+        std::cerr << "Couldn't open " << filename << std::endl;
+    } else {
+        std::string line;
+        std::getline(file, line);
+
+        std::istringstream iss( line );
+
+        iss >> std::dec >> isNight >> mayGatherStone;
+        file.close();
+    }
+}
+
 void Game::load_textures()
 {
     fpsTex = std::make_unique<LTexture>(window);
@@ -205,6 +247,10 @@ void Game::load_audio()
     playerDamage = std::make_shared<LAudio>();
     if (!playerDamage->loadFromFile("../../assets/Audio/EntitySounds/PlayerDamage.wav")) {
         std::cerr << "Failed to load bird spawn sound!" << std::endl;
+    }
+    explosionSound = std::make_shared<LAudio>();
+    if (!explosionSound->loadFromFile("../../assets/Audio/Destruction/Explosion.wav")) {
+        std::cerr << "Failed to load explosion sound!" << std::endl;
     }
 
     for (int i = 0; i < 3; i++) {

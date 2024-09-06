@@ -85,7 +85,8 @@ void Bomb::explode()
         }
     }
 
-    auto blast = game->Instantiate(explosion, get_pos(), 1);
+    game->Instantiate(explosion, get_pos(), 1);
+    game->explosionSound->play();
 
     indicator->Destroy();
     Destroy();
