@@ -283,6 +283,11 @@ void Game::load_audio()
     if (!vocalHigh1->loadFromFile(filename)) {
         std::cerr << "Failed to load " << filename << std::endl;
     }
+    filename = "../../assets/Audio/Repair.wav";
+    repairSound = std::make_shared<LAudio>();
+    if (!repairSound->loadFromFile(filename)) {
+        std::cerr << "Failed to laod " << filename << std::endl;
+    }
     
 
     for (int i = 0; i < 3; i++) {

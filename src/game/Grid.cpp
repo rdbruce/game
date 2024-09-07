@@ -142,7 +142,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a log
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(logItem, pos, 1);
-                    logDestruction->play();
+                    playerDamage->play();
                     break;
                 }
 
@@ -150,7 +150,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a DAM
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(damItem, pos, 1);
-                    logDestruction->play();
+                    playerDamage->play();
                     break;
                 }
 
@@ -158,9 +158,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     int hp = num&HEALTH;
                     if (hp != 0) {
                         // damage the tree until broken
-                        damageCell(cell, 2);
-
-                        logDestruction->play();
+                        damageCell(cell, 2, NULL);
                         return 0;
 
                     } else {
@@ -170,7 +168,6 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                         // spawn a falling tree in its place
                         Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
                         Instantiate(fallingTree, pos, 1, level);
-
                         treeFalling->play();
 
                         // place a stump where the tree once stood
@@ -184,7 +181,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a log
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(logItem, pos, 1);
-                    logDestruction->play();
+                    playerDamage->play();
                     break;
                 }
 
@@ -203,7 +200,7 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                     // spawn a door
                     Vector2 pos(x-10.0f+(cellRect.w/2), y-10.0f+(cellRect.h/2));
                     spawnItemStack(doorItem, pos, 1);
-                    logDestruction->play();
+                    playerDamage->play();
                     break;
                 }
 
@@ -575,7 +572,7 @@ void Game::DrawWaterToCell( Vector2Int cell, SDL_Rect cellRect )
 
 
 // deals a specified amount of damage to a cell
-void Game::damageCell( Vector2Int cell, int damage, Scene *level )
+void Game::damageCell( Vector2Int cell, int damage, Scene *level, bool playSound )
 {
     if (level == NULL) level = currLevel;
 
@@ -592,7 +589,13 @@ void Game::damageCell( Vector2Int cell, int damage, Scene *level )
 
     // subtract the amount of damage dealth
     health = clamp(0, maxHealth, health-damage);
-
+    // if the health is now non-positive, destroy the cell
+    bool emptyFlag = false;
+    if (health <= 0) emptyFlag = true;
+    else if (playSound) {
+        if (damage > 0) logDestruction->play();
+        else repairSound->play();
+    }
     // bit shift health to be in the right position
     health <<= 8;
     // reset the health bits of the cell
@@ -601,8 +604,7 @@ void Game::damageCell( Vector2Int cell, int damage, Scene *level )
     num |= health;
     level->grid[cell.x][cell.y] = num;
 
-    // if the health is now non-positive, destroy the cell
-    if (health <= 0) PlaceObjectInCell(cell, EMPTY, true);
+    if (emptyFlag) PlaceObjectInCell(cell, EMPTY, true);
 }
 
 

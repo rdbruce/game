@@ -481,7 +481,6 @@ void Game::dayNightCycle()
             if (!firstDay) {
                 scores.mostNightsSurvived++;
                 scores.calculate_score();
-                std::cout << scores.mostNightsSurvived <<'\n';
             }
             else firstDay = false;
             // reset daily booleans

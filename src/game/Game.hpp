@@ -133,7 +133,7 @@ class Game
         void movePlayerToLevel( Scene *level, Vector2 newPlayerPos );
 
         // deals a specified amount of damage to a cell
-        void damageCell( Vector2Int cell, int damage, Scene *level = NULL );
+        void damageCell( Vector2Int cell, int damage, Scene *level = NULL, bool playSound = true );
 
         // toggles day/night, when the appropriate amount of time has passed
         void dayNightCycle();
@@ -271,7 +271,7 @@ class Game
         // the amount of time (int seconds) it takes for birds to fly across the map
         float BIRD_FLIGHT_DURATION = 3.0f;
         // the number of times each day or night buildings take damage from water
-        int WATER_DAMAGE_INTERVAL = 2;
+        int WATER_DAMAGE_INTERVAL = 24;
         // multiplies the amount of damage taken by buildings placed in water
         float WATER_DAMAGE_MULT = 0.5f;
 
@@ -335,6 +335,7 @@ class Game
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
                                 birdSpawn, playerDamage, healSound, gameOverSound, explosionSound,
+                                repairSound,
                                 // dialogue sounds
                                 vocalDeep0, vocalDeep1, vocalMed0, vocalMed1, vocalHigh0, vocalHigh1;
 
