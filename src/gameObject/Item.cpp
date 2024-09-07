@@ -63,14 +63,14 @@ void Item::update()
     collision();
 
     if (get_HP() <= 0) die();
-    else set_HP(Clamp(0, get_maxHP(), get_HP()));
+    else set_HP(clamp(0, get_maxHP(), get_HP()));
 }
 
 void Item::spawn()
 {
     Vector2Int cell = get_cell(), gridDimension = game->currLevel->gridDimensions;
 
-    if (cell.x == Clamp(0, gridDimension.x-1, cell.x) && cell.y == Clamp(0, gridDimension.y-1, cell.y))
+    if (cell.x == clamp(0, gridDimension.x-1, cell.x) && cell.y == clamp(0, gridDimension.y-1, cell.y))
     {
         int num = game->currLevel->grid[cell.x][cell.y];
         if (!(num&BARRIER) || (num&WATER) || is_held())
@@ -231,7 +231,7 @@ void Item::transferItems(std::shared_ptr<Item> other)
 
     int otherHP = other->get_HP();
     // number of items being transfered
-    int transfer = Min(otherHP, spaceAvailable);
+    int transfer = min(otherHP, spaceAvailable);
 
     // transfer the items
     add_HP(transfer);
@@ -245,10 +245,10 @@ void Item::collideWithWorldBorders()
     Vector2 pos = get_pos();
     SDL_Rect hitbox = get_hitbox();
     float w = hitbox.w/2, h = hitbox.h/2;
-    
-    pos.x = clampf(w, map.x-w, pos.x);
-    pos.y = clampf(h, map.y-h, pos.y);
 
+    clamp(w, map.x-w, &pos.x);
+    clamp(h, map.y-h, &pos.y);
+    
     set_pos(pos);
 }
 
@@ -348,7 +348,7 @@ void Item::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     tex->setAlpha(alpha);

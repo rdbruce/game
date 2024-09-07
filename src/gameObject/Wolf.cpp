@@ -19,7 +19,7 @@ void Wolf::update()
     collision();
 
     if (get_HP() <= 0) die();
-    else set_HP(Clamp(0, get_maxHP(), get_HP()));
+    else set_HP(clamp(0, get_maxHP(), get_HP()));
 }
 
 void Wolf::spawn()
@@ -34,7 +34,7 @@ void Wolf::spawn()
     else
     {
         Vector2Int dimensions = game->currLevel->gridDimensions;
-        if (cell.x == Clamp(2, dimensions.x-2, cell.x) && cell.y == Clamp(2, dimensions.y-2, cell.y)) {
+        if (cell.x == clamp(2, dimensions.x-2, cell.x) && cell.y == clamp(2, dimensions.y-2, cell.y)) {
             set_collision(true);
             updateVel = &Wolf::chase_player;
         }
@@ -155,7 +155,7 @@ void Wolf::retreat()
     set_vel(get_vel() + accel*get_deltaTime());
 
     Vector2 pos = get_pos();
-    if (pos.x != clampf(0.0f, map.x, pos.x) || pos.y != clampf(0.0f, map.y, pos.y)) {
+    if (pos.x != clamp(0.0f, (float)map.x, pos.x) || pos.y != clamp(0.0f, (float)map.y, pos.y)) {
         Destroy();
     }
 }
@@ -316,8 +316,8 @@ void Wolf::collideWithWorldBorders()
     SDL_Rect hitbox = get_hitbox();
     float w = hitbox.w/2, h = hitbox.h/2;
     
-    pos.x = clampf(w, map.x-w, pos.x);
-    pos.y = clampf(h, map.y-h, pos.y);
+    clamp(w, map.x-w, &pos.x);
+    clamp(h, map.y-h, &pos.y);
 
     set_pos(pos);
 }
@@ -445,7 +445,7 @@ void Wolf::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     Vector2Int cell = get_cell();

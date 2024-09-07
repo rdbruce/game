@@ -13,405 +13,242 @@ void NPC::foxDialogue()
     if (dist > 1.5f*game->interactRange) {
         if (game->currDialogue > FOX_DIAG_MIN && game->currDialogue < FOX_DIAG_MAX) {
             game->enter_dialogue(None);
+            game->currNPC = nullptr; 
         }
-        set_HP(1); return;
+        GameObject::set_HP(1); 
+        return;
     }
 
     Vector2Int p(get_pos().x - game->camera.x + game->renderOffset.x, 
                  get_hitbox().y - game->camera.y+ game->renderOffset.y);
-    if (game->currLevel == &game->Base) 
+
+    switch (get_HP())
     {
-        switch (get_HP())
+        case 2:
         {
-            case 2: 
-            {
-                if (game->currDialogue == fox_base_dialogue_1_1) {
-                    set_HP(4); dialogueTimer = 0.25f; break;
-                } else if (game->currDialogue == fox_base_dialogue_1_2) {
-                    set_HP(6); dialogueTimer = 0.25f; break;
-                }
-
-                std::string rend, txt = "Hey, what are you doing here?";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                    game->enter_dialogue(fox_base_dialogue_1);
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
+            dialogueInterval = 0.5f;
+            if (game->currDialogue == fox_town_1_1) {
+                set_HP(4); dialogueTimer = dialogueInterval; break;
+            } else if (game->currDialogue == fox_town_1_2) {
+                set_HP(7); dialogueTimer = dialogueInterval; break;
+            } else if (game->currDialogue == fox_town_1_3) {
+                set_HP(9); dialogueTimer = dialogueInterval; break;
             }
 
-            case 3: set_HP(2); dialogueTimer = 0.25f; break; // go back
-
-            case 4:
-            {
-                if (game->currDialogue == fox_base_dialogue_2_1) {
-                    set_HP(8); dialogueTimer = 0.25f; break;
-                }
-
-                std::string rend, txt = "Good question. Nowhere,\nreally. You ought to go\nnorth of here";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                    game->enter_dialogue(fox_base_dialogue_2);
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-90), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
+            std::string rend, txt = "Heyy you made it up here";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+                game->enter_dialogue(fox_town_1);
             }
 
-            case 5: set_HP(4); dialogueTimer = 0.25f; break; // go back
-
-            case 6:
-            {
-                std::string rend, txt = "What's it to you?";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 7:
-                game->enter_dialogue(None);
-                set_HP(2); dialogueTimer = 0.25f;
-                break;
-
-            case 8:
-            {
-                if (game->currDialogue == fox_base_dialogue_3_1) {
-                    set_HP(10); dialogueTimer = 0.25f; break;
-                } else if (game->currDialogue == fox_base_dialogue_3_2) {
-                    set_HP(13); dialogueTimer = 0.25f; break;
-                }
-
-                std::string rend, txt = "How am I supposed to know?\nDo whatever beavers do,\nbuild a dam or something";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                    game->enter_dialogue(fox_base_dialogue_3);
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-90), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 9: set_HP(8); dialogueTimer = 0.25f; break; // go back
-
-            case 10:
-            {
-                std::string rend, txt = "Some beaver you are...";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 11:
-            {
-                std::string rend, txt = "Look just put\n \nand figure it out";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                std::vector<std::string> vec = {rend, "1 ", " and 4 ", " together"};
-                SDL_Color colour = {255,255,255,255};
-
-                auto diag = std::make_shared<DialogueRender>(
-                    vec, Vector2Int(p.x, p.y-60), game->window, colour,
-                    Centred, &DialogueRender::fox_base_case11, 
-                    game->logTex, game->plankTex
-                );
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-
-                break;
-            }
-
-            case 12:
-                beginRetreat();
-                game->enter_dialogue(None);
-                set_HP(1);
-                break;
-
-            case 13:
-            {
-                std::string rend, txt = "Don't worry about that";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 14:
-                set_HP(11); dialogueTimer = 0.25f;
-                game->enter_dialogue(fox_base_dialogue_3_1);
-                break;
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
         }
-    }
-    else
-    {
-        switch (get_HP())
+
+        case 3: set_HP(2); dialogueTimer = dialogueInterval; break; // go back
+
+        case 4:
         {
-            case 2:
-            {
-                if (game->currDialogue == fox_town_1_1) {
-                    set_HP(4); dialogueTimer = 0.25f; break;
-                } else if (game->currDialogue == fox_town_1_2) {
-                    set_HP(7); dialogueTimer = 0.25f; break;
-                } else if (game->currDialogue == fox_town_1_3) {
-                    set_HP(9); dialogueTimer = 0.25f; break;
-                }
-
-                std::string rend, txt = "Heyy you made it up here";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                    game->enter_dialogue(fox_town_1);
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
+            dialogueInterval = 0.5f;
+            std::string rend, txt = "You ask too many questions";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
             }
 
-            case 3: set_HP(2); dialogueTimer = 0.25f; break; // go back
-
-            case 4:
-            {
-                std::string rend, txt = "You ask too many questions";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 5:
-            {
-                std::string rend, txt = "Look just ask around, you\ncan buy stuff, nothing\n too crazy";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-90), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 6:
-                set_HP(1);
-                game->enter_dialogue(None);
-                break;
-
-            case 7:
-            {
-                std::string rend, txt = "Don't. Worry about that.";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 8:
-                set_HP(5); dialogueTimer = 0.25f;
-                break;
-
-            case 9:
-            {
-                std::string rend, txt = "Oh, those guys...";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 10:
-            {
-                if (game->currDialogue == fox_town_2_1) {
-                    set_HP(12); dialogueTimer = 0.25f; break;
-                } else if (game->currDialogue == fox_town_2_2) {
-                    set_HP(14); dialogueTimer = 0.25f; break;
-                } else if (game->currDialogue == fox_town_2_3) {
-                    set_HP(17); dialogueTimer = 0.25f; break;
-                }
-
-                std::string rend, txt = "Yeah sorry about them, just do\nyour best to survive, I guess";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                    game->enter_dialogue(fox_town_2);
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-60), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 11: set_HP(10); dialogueTimer = 0.25f; break; // go back
-
-            case 12:
-            {
-                std::string rend, txt = "Oops...";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 13: 
-                game->enter_dialogue(fox_town_2);
-                set_HP(10); dialogueTimer = 0.25f; 
-                break;
-
-            case 14:
-            {
-                std::string rend, txt = "I mean you've made it so far...";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 15:
-            {
-                std::string rend, txt = "Just build walls, throw rocks, etc.";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 16: 
-                game->enter_dialogue(fox_town_2);
-                set_HP(10); dialogueTimer = 0.25f; 
-                break;
-
-            case 17:
-            {
-                std::string rend, txt = "Yeahh... this is a..\n\"no soliciting\" sorta thing...";
-                if (dialogueTimer >= 0.0f) {
-                    float t = 1.0f - (dialogueTimer/dialogueInterval);
-                    int n = Max(1, t * txt.size());
-                    rend = txt.substr(0, n);
-                    dialogueTimer -= get_deltaTime();
-                } else {
-                    rend = txt;
-                }
-
-                auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-60), game->window);
-                diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
-                break;
-            }
-
-            case 18:
-                set_HP(1);
-                game->enter_dialogue(None);
-                break;
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
         }
+
+        case 5:
+        {
+            dialogueInterval = 1.25f;
+            maySpeak = false;
+            std::string rend, txt = "Look just ask around, you\ncan buy stuff, nothing\n too crazy";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-90), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+
+        case 7:
+        {
+            dialogueInterval = 0.5f;
+            std::string rend, txt = "Don't. Worry about that.";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+        case 8:
+            set_HP(5); dialogueTimer = dialogueInterval;
+            break;
+
+        case 9:
+        {
+            dialogueInterval = 0.25f;
+            std::string rend, txt = "Oh, those guys...";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+        case 10:
+        {
+            dialogueInterval = 1.0f;
+
+            if (game->currDialogue == fox_town_2_1) {
+                set_HP(12); dialogueTimer = dialogueInterval; break;
+            } else if (game->currDialogue == fox_town_2_2) {
+                set_HP(14); dialogueTimer = dialogueInterval; break;
+            } else if (game->currDialogue == fox_town_2_3) {
+                set_HP(17); dialogueTimer = dialogueInterval; break;
+            }
+
+            std::string rend, txt = "Yeah sorry about them, just do\nyour best to survive, I guess";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+                game->enter_dialogue(fox_town_2);
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-60), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+        case 11: set_HP(10); dialogueTimer = dialogueInterval; break; // go back
+
+        case 12:
+        {
+            dialogueInterval = 0.25f;
+            std::string rend, txt = "Oops...";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+        case 13: 
+            game->enter_dialogue(fox_town_2);
+            set_HP(10); dialogueTimer = dialogueInterval; 
+            break;
+
+        case 14:
+        {
+            dialogueInterval = 0.25f;
+            std::string rend, txt = "I mean you've made it so far...";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+        case 15:
+        {
+            dialogueInterval = 0.75f;
+            std::string rend, txt = "Just build walls, throw rocks, etc.";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-30), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+        case 16: 
+            game->enter_dialogue(fox_town_2);
+            set_HP(10); dialogueTimer = dialogueInterval; 
+            break;
+
+        case 17:
+        {
+            dialogueInterval = 1.0f;
+            maySpeak = false;
+            std::string rend, txt = "Yeahh... this is a..\n\"no soliciting\" sorta thing...";
+            if (dialogueTimer >= 0.0f) {
+                float t = 1.0f - (dialogueTimer/dialogueInterval);
+                int n = max(1, int(t * txt.size()));
+                rend = txt.substr(0, n);
+                dialogueTimer -= get_deltaTime();
+            } else {
+                rend = txt;
+            }
+
+            auto diag = std::make_shared<DialogueRender>(rend, Vector2Int(p.x, p.y-60), game->window);
+            diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
+            break;
+        }
+
+        case 6:
+        case 18:
+            set_HP(1);
+            game->enter_dialogue(None);
+            break;
     }
 }
 
@@ -426,8 +263,10 @@ void NPC::bearDialogue()
     if (dist > 1.5f*game->interactRange) {
         if (game->currDialogue > BEAR_DIAG_MIN && game->currDialogue < BEAR_DIAG_MAX) {
             game->enter_dialogue(None);
+            game->currNPC = nullptr;
         }
-        set_HP(1); return;
+        GameObject::set_HP(1); 
+        return;
     }
 
     Vector2Int p(get_pos().x - game->camera.x + game->renderOffset.x, 
@@ -436,6 +275,7 @@ void NPC::bearDialogue()
     {
         case 2:
         {
+            dialogueInterval = 0.25f;
             if (game->currDialogue == bear_town_1_1) {
                 set_HP(4); dialogueTimer = dialogueInterval; break;
             } else if (game->currDialogue == bear_town_1_2) {
@@ -445,7 +285,7 @@ void NPC::bearDialogue()
             std::string rend, txt = "Hello :)";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -462,6 +302,7 @@ void NPC::bearDialogue()
 
         case 4:
         {
+            dialogueInterval = 0.25f;
             if (game->currDialogue == bear_town_2_1) {
                 set_HP(8); dialogueTimer = dialogueInterval; break;
             } else if (game->currDialogue == bear_town_2_2) {
@@ -471,7 +312,7 @@ void NPC::bearDialogue()
             std::string rend, txt = "Do you like berries?";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -488,6 +329,7 @@ void NPC::bearDialogue()
 
         case 6:
         {
+            dialogueInterval = 0.5f;
             if (game->currDialogue == bear_town_3_1) {
                 set_HP(8); dialogueTimer = dialogueInterval; break;
             } else if (game->currDialogue == bear_town_3_2) {
@@ -497,7 +339,7 @@ void NPC::bearDialogue()
             std::string rend, txt = "Your mom ;)";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -514,6 +356,7 @@ void NPC::bearDialogue()
 
         case 8:
         {
+            dialogueInterval = 0.25f;
             if (game->currDialogue == bear_town_4_1) {
                 set_HP(14); dialogueTimer = dialogueInterval; break;
             } else if (game->currDialogue == bear_town_4_2) {
@@ -523,7 +366,7 @@ void NPC::bearDialogue()
             std::string rend, txt = "You want some? :D";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -540,10 +383,12 @@ void NPC::bearDialogue()
 
         case 10:
         {
+            dialogueInterval = 0.25f;
+            maySpeak = false;
             std::string rend, txt = "... >:(";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -555,17 +400,14 @@ void NPC::bearDialogue()
             break;
         }
 
-        case 11:
-            set_HP(1);
-            game->enter_dialogue(None);
-            break;
         
         case 12:
         {
+            dialogueInterval = 0.25f;
             std::string rend, txt = "Eat berries :)";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -606,10 +448,12 @@ void NPC::bearDialogue()
 
         case 16:
         {
+            dialogueInterval = 0.1f;
             std::string rend, txt = ":P";
+            maySpeak = false;
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -620,18 +464,15 @@ void NPC::bearDialogue()
             diag->set_font(game->arcadeClassic24); game->dialogueRenders.push(diag);
             break;
         }
-
-        case 17:
-            set_HP(1);
-            game->enter_dialogue(None);
-            break;
 
         case 18:
         {
-            std::string rend, txt = "Mash berry into jam :)";
+            dialogueInterval = 0.1f;
+            maySpeak = false;
+            std::string rend, txt = ";)";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -643,8 +484,11 @@ void NPC::bearDialogue()
             break;
         }
 
+        case 11:
+        case 17:
         case 19:
             set_HP(1);
+            dialogueInterval = 0.25f;
             game->enter_dialogue(None);
             break;
     }
@@ -660,8 +504,10 @@ void NPC::rabbitDialogue()
     if (dist > 1.5f*game->interactRange) {
         if (game->currDialogue > RABBIT_DIAG_MIN && game->currDialogue < RABBIT_DIAG_MAX) {
             game->enter_dialogue(None);
+            game->currNPC = nullptr;
         }
-        set_HP(1); return;
+        GameObject::set_HP(1); 
+        return;
     }
 
     Vector2Int p(get_pos().x - game->camera.x + game->renderOffset.x, 
@@ -670,6 +516,7 @@ void NPC::rabbitDialogue()
     {
         case 2:
         {
+            dialogueInterval = 0.5f;
             if (game->currDialogue == rabbit_town_1_1) {
                 set_HP(4); dialogueTimer = dialogueInterval; break;
             } else if (game->currDialogue == rabbit_town_1_2) {
@@ -679,7 +526,7 @@ void NPC::rabbitDialogue()
             std::string rend0, rend1, txt0 = "Hey tough guy!", txt1 = "You need any ";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n0 = Max(1, t * txt0.size()), n1 = Max(1, t * txt1.size());
+                int n0 = max(1, int(t * txt0.size())), n1 = max(1, int(t * txt1.size()));
                 rend0 = txt0.substr(0, n0);
                 rend1 = txt1.substr(0, n1);
                 dialogueTimer -= get_deltaTime();
@@ -704,10 +551,11 @@ void NPC::rabbitDialogue()
 
         case 4:
         {
+            dialogueInterval = 0.5f;
             std::string rend, txt = "Alright! Lemme tell ya,\nI got the BEST.";
             if (dialogueTimer >= 0.0f) {
                 float t = 1.0f - (dialogueTimer/dialogueInterval);
-                int n = Max(1, t * txt.size());
+                int n = max(1, int(t * txt.size()));
                 rend = txt.substr(0, n);
                 dialogueTimer -= get_deltaTime();
             } else {
@@ -727,6 +575,7 @@ void NPC::rabbitDialogue()
 
         case 5:
         {
+            maySpeak = false;
             std::vector<std::string> strs = {"Just gimme 1 ", " for 2"};
 
             SDL_Color col = {255,255,255,255};
@@ -742,6 +591,7 @@ void NPC::rabbitDialogue()
         case 7:
         case 8:
         {
+            maySpeak = false;
             std::vector<std::string> strs = {"Aww, come on!", "Just gimme some ", "!"};
             SDL_Color col = {255,255,255,255};
 
@@ -755,7 +605,8 @@ void NPC::rabbitDialogue()
         }
 
         case 9:
-        case 6:
+        case 6: 
+            dialogueInterval = 0.5f;
             set_HP(1);
             game->enter_dialogue(None);
             break;
@@ -1554,6 +1405,7 @@ void DialogueRender::bear_town_5_diag()
 {
     if (strings.size() != 3) return;
 
+    renderText(strings[0], pos.x-BKG_DISPLACE, pos.y+BKG_DISPLACE, window, bkgColour, font, orientation);
     renderText(strings[0], pos.x, pos.y, window, colour, font, orientation);
 
     std::string txt0 = strings[1], txt1 = strings[2];

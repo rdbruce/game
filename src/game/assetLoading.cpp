@@ -253,6 +253,38 @@ void Game::load_audio()
         std::cerr << "Failed to load explosion sound!" << std::endl;
     }
 
+    std::string filename = "../../assets/Audio/Speech/8bit_vocal_deep0.wav";
+    vocalDeep0 = std::make_shared<LAudio>();
+    if (!vocalDeep0->loadFromFile(filename)) {
+        std::cerr << "Failed to load " << filename << std::endl;
+    }
+    filename = "../../assets/Audio/Speech/8bit_vocal_deep1.wav";
+    vocalDeep1 = std::make_shared<LAudio>();
+    if (!vocalDeep1->loadFromFile(filename)) {
+        std::cerr << "Failed to load " << filename << std::endl;
+    }
+    filename = "../../assets/Audio/Speech/8bit_vocal_med0.wav";
+    vocalMed0 = std::make_shared<LAudio>();
+    if (!vocalMed0->loadFromFile(filename)) {
+        std::cerr << "Failed to load " << filename << std::endl;
+    }
+    filename = "../../assets/Audio/Speech/8bit_vocal_med1.wav";
+    vocalMed1 = std::make_shared<LAudio>();
+    if (!vocalMed1->loadFromFile(filename)) {
+        std::cerr << "Failed to load " << filename << std::endl;
+    }
+    filename = "../../assets/Audio/Speech/8bit_vocal_high0.wav";
+    vocalHigh0 = std::make_shared<LAudio>();
+    if (!vocalHigh0->loadFromFile(filename)) {
+        std::cerr << "Failed to load " << filename << std::endl;
+    }
+    filename = "../../assets/Audio/Speech/8bit_vocal_high1.wav";
+    vocalHigh1 = std::make_shared<LAudio>();
+    if (!vocalHigh1->loadFromFile(filename)) {
+        std::cerr << "Failed to load " << filename << std::endl;
+    }
+    
+
     for (int i = 0; i < 3; i++) {
         std::string filename = "../../assets/Audio/EntitySounds/WolfSpawn"+std::to_string(i+1)+".wav";
         auto sound = std::make_shared<LAudio>();

@@ -390,7 +390,7 @@ void Game::render_cell_health()
         {
             Vector2Int p( xPos, y*sideLen - camera.y );
             // not within the camera's view, don't render
-            if (p.x != Clamp(-sideLen, camera.w, p.x) || p.y != Clamp(-sideLen, camera.h, p.y)) {
+            if (p.x != clamp(-sideLen, camera.w, p.x) || p.y != clamp(-sideLen, camera.h, p.y)) {
                 continue;
             }
 
@@ -591,7 +591,7 @@ void Game::damageCell( Vector2Int cell, int damage, Scene *level )
         maxHealth = (num&MAX_HEALTH)>>17;
 
     // subtract the amount of damage dealth
-    health = Clamp(0, maxHealth, health-damage);
+    health = clamp(0, maxHealth, health-damage);
 
     // bit shift health to be in the right position
     health <<= 8;

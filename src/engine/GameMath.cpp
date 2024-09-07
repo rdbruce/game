@@ -185,28 +185,10 @@ namespace Math
 
 
     // MATH FUNCTIONS
-    
-    float minf( float a, float b ) { return (a<b)? a : b; }
-    float maxf( float a, float b ) { return (a>b)? a : b; }
-
-    int Min( int a, int b ) { return (a<b)? a : b; }
-    int Max( int a, int b ) { return (a>b)? a : b; }
 
     float absf( float x ) { return (x<0.0f)? -x : x; }
+    double absf( double x ) { return (x<0.0)? -x : x; }
     int Abs( int x ) { return (x<0)? -x : x; }
-
-
-
-    float clampf(float min, float max, float x) {
-        if (x < min) return min;
-        return (x>max)? max : x;
-    }
-    int Clamp(int min, int max, int x) {
-        if (x < min) return min;
-        return (x>max)? max : x;
-    }
-
-
     
     float ceil( float x ) {
         int n = (int)x;
@@ -224,56 +206,23 @@ namespace Math
     int floorToInt ( float x ) { return (int)x; }
 
 
-
     int signf( float a ) {
         if (a == 0.0f) return 0;
         return (a < 0.0f)? -1 : 1;
     } 
+    int signd(double a) {
+        if (a == 0.0) return 0;
+        return (a < 0.0)? -1 : 1;
+    }
     int Sign( int a ) {
         if (a == 0) return 0;
         return (a < 0)? -1 : 1;
     }    
 
-
-    float powf( float x, int n ) {
-        int res = 1;
-        bool flag = n < 0;
-        n = Abs(n);
-        while (n > 0) {
-            res *= x;
-            n--;
-        }
-        return (flag)? 1.0f/res : res;
-    }
-
-    int Pow( int x, int n ) {
-        if (n < 0) return 0;
-        int res = 1;
-        while (n > 0) {
-            res *= x;
-            n--;
-        }
-        return res;
-    }     
-
-
     int fact( int x ) {
         int res = 1;
         while (x > 0) res *= x--;
         return res;
-    }
-    
-
-
-
-    // counts the number of active bits in a variable
-    int numBits(int var) {
-        int count = 0;
-        while (var) {
-            if (var%2) count++;
-            var >>= 1;
-        }
-        return count;
     }
 }
 

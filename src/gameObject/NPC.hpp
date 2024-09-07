@@ -11,11 +11,21 @@ class NPC : public GameObject
         virtual void update();
         virtual void render(int camX, int camY, Uint8 alpha = 255);
 
+        virtual void set_HP(int newHP);
+        virtual void add_HP(int amount);
+
+        void play_speech();
+
         void set_dialogueTimer(float newTimer);
+
+        float get_dialogueInterval();
 
     private:
 
         std::shared_ptr<LTexture> tex;
+
+        bool maySpeak = true;
+        std::shared_ptr<LAudio> speechSound = nullptr;
 
         float moveSpeed;
 

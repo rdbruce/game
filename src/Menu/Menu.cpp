@@ -326,11 +326,11 @@ void GameMenu::rename_highscore( SDL_Keycode sym )
         case SDLK_BACKSPACE:
             *ch = '_';
         case SDLK_LEFT:
-            currChar = Max(0, currChar-1);
+            currChar = max(0, currChar-1);
             break;
 
         case SDLK_RIGHT:
-            currChar = Min(2, currChar+1);
+            currChar = min(2, currChar+1);
             break;
 
         case SDLK_RETURN:
@@ -348,7 +348,7 @@ void GameMenu::rename_highscore( SDL_Keycode sym )
         default:
             if (sym >= SDLK_a && sym <= SDLK_z) {
                 *ch = (int)sym - 32; 
-                currChar = Min(2, currChar+1);
+                currChar = min(2, currChar+1);
             }
     }
 }

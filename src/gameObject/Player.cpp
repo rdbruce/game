@@ -35,7 +35,7 @@ void Player::update()
 
     // game ends when the player dies
     if (get_HP() <= 0) gameOver();
-    else GameObject::set_HP(Clamp(0, get_maxHP(), get_HP()));
+    else GameObject::set_HP(clamp(0, get_maxHP(), get_HP()));
 }
 
 void Player::gameOver()
@@ -141,7 +141,7 @@ void Player::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     Vector2Int cell = get_cell();

@@ -14,7 +14,7 @@ void FallingTree::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     // timer is initialised to 1.0f, use it as an interpolator
@@ -123,7 +123,7 @@ void GhostBuilding::render(int camX, int camY, Uint8 alpha)
         SDL_Rect hitbox = get_hitbox();
         Vector2Int p( hitbox.x - camX, hitbox.y-camY );
         // not within the camera's view, don't render
-        if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+        if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
             return;
         }
         Vector2 dist = game->get_playerPos() - get_pos();
@@ -157,7 +157,7 @@ void TutorialText::render(int camX, int camY, Uint8 alpha) {
         Vector2 pos = get_pos();
         Vector2Int p( pos.x-camX, pos.y-camY );
         // not within the camera's view, don't render
-        if (p.x != Clamp(game->renderOffset.x-100, game->camera.w+game->renderOffset.x+100, p.x) || p.y != Clamp(game->renderOffset.y-100, game->camera.h+game->renderOffset.y+100, p.y)) {
+        if (p.x != clamp(game->renderOffset.x-100, game->camera.w+game->renderOffset.x+100, p.x) || p.y != clamp(game->renderOffset.y-100, game->camera.h+game->renderOffset.y+100, p.y)) {
             return;
         }
         renderText(txt, p.x, p.y, game->window, {255,255,255,255}, game->arcadeClassic24);
@@ -428,14 +428,14 @@ void Explosion::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     Vector2Int cell = get_cell();
     bool underTree = game->is_under_tree(cell), alpha255 = alpha == 255;
 
     tex = animate(!alpha255 || (alpha255 && !underTree));
-    tex->setAlpha(Min(alpha, 150));
+    tex->setAlpha(min((int)alpha, 150));
     tex->render(p.x, p.y, &hitbox);
     tex->setAlpha(255);
 
@@ -467,7 +467,7 @@ void Splash::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x - camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
 

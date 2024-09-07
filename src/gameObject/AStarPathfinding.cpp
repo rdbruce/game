@@ -99,9 +99,9 @@ namespace AStar
         int res = 0;
         // method: increase the distance until the two points are equal
         while (dest != origin) {
-            int dispX = Clamp(-1, 1, origin.x-dest.x),
-                dispY = Clamp(-1, 1, origin.y-dest.y),
-                distance = Clamp(0, 14, (10*Abs(dispX))+(10*Abs(dispY)));
+            int dispX = clamp(-1, 1, origin.x-dest.x),
+                dispY = clamp(-1, 1, origin.y-dest.y),
+                distance = clamp(0, 14, (10*Abs(dispX))+(10*Abs(dispY)));
 
             dest.x += dispX; dest.y += dispY;
             res += distance;

@@ -397,8 +397,8 @@ void Game::center_camera_on_player()
             cPos = pPos - Vector2(camera.w/2, camera.h/2);
     
     // if the camera is on the edge of the map, snap it back in bounds
-    cPos.x = clampf(0.0f, map.w-camera.w, cPos.x);
-    cPos.y = clampf(0.0f, map.h-camera.h, cPos.y);
+    clamp(0.0f, float(map.w-camera.w), &cPos.x);
+    clamp(0.0f, float(map.h-camera.h), &cPos.y);
 
     camera.x = cPos.x; camera.y = cPos.y;
 }
@@ -407,7 +407,7 @@ void Game::render_framerate()
 {
     // get the framerate
     int newFPS = 1.0f / deltaTime;
-    fps = (newFPS == Clamp(0, 5000, newFPS))? newFPS : fps; // validation
+    fps = (newFPS > 0)? newFPS : fps; // validation
     std::string txt = std::to_string(fps) + "FPS"; // get the fps as a string
 
     // get the string as a texture, and render it

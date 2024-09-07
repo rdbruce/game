@@ -59,7 +59,7 @@ void Animations::setVector( FacingDirection dir, float newIdx )
             break;
     }
 
-    if (newIdx >= 0.0f) currIdx = Math::clampf(0.0f, (float)*currSize, newIdx);
+    if (newIdx >= 0.0f) currIdx = Math::clamp(0.0f, (float)*currSize, newIdx);
 }
 
 std::shared_ptr<LTexture> Animations::getTexture( float deltaTime, FacingDirection vec, float newIdx, bool updateIdx )

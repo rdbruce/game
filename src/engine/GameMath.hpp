@@ -125,20 +125,9 @@ namespace Math
 
     // math functions
 
-    float minf( float a, float b ); // min for floats
-    float maxf( float a, float b ); // max for floats
-
-    int Max( int a, int b ); // max for ints
-    int Min( int a, int b ); // min for ints
-
-
-    float absf( float x ); // abs for floats
-    int Abs( int x ); // abs for ints
-
-
-    float clampf(float min, float max, float x); // clamps x between 2 values, for floats
-    int Clamp(int min, int max, int x); // clamp for ints
-
+    float absf( float x );
+    double absd( double x );
+    int Abs( int x );
 
     // rounds up/down a float to the nearest integer
     float ceil( float x );
@@ -147,22 +136,45 @@ namespace Math
     int ceilToInt( float x );
     int floorToInt ( float x );
 
-
-    int signf( float a ); // finds the sign of a float
-    int Sign( int a );    // sign for ints
-
-
-    float powf( float x, int n ); // finds x to the nth power
-    int Pow( int x, int n );      // pow for ints
-
+    int signf( float a );
+    int signd( double a );
+    int Sign( int a );
 
     int fact( int x ); // finds x!
 
 
 
+    // generic math functions (using template)
+    template <typename T> T min(T a, T b) { return (a<b)? a : b; }
+    template <typename T> T max(T a, T b) { return (a>b)? a : b; }
+
+    template <typename T> T clamp(T min, T max, T x) {
+        if (x < min) return min;
+        return (x>max)? max : x;
+    }
+
+    template <typename T> void clamp(T min, T max, T *x) {
+        if (*x < min) *x = min;
+        else if (*x>max) *x = max;
+    }
+
+    template <typename T> T pow(T x, int n) 
+    {
+        T res = 1;
+        bool flag = n < 0;
+        for (n = Abs(n); n > 0; n--) res *= x;
+        return (flag)? 1.0/res : res;
+    }   
 
     // counts the number of active bits in a variable
-    int numBits(int var);
+    template <typename T> int numBits(T var) {
+        int count = 0;
+        while (var) {
+            if (var%2) count ++;
+            var >>= 1;
+        }
+        return count;
+    }
 }
 
 #endif

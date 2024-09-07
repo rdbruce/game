@@ -239,6 +239,9 @@ class Game
         // true when switching between levels
         bool switching_scenes = false;
 
+        // pointer to the npc the player is currently speaking to
+        std::shared_ptr<NPC> currNPC = nullptr;
+
         // game objects that will be rendered a second time
         std::stack<GameObject*> secondRenders;
         // all dialogue to be rendered
@@ -331,7 +334,9 @@ class Game
 
         // all of the audio used by the game
         std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
-                                birdSpawn, playerDamage, healSound, gameOverSound, explosionSound;
+                                birdSpawn, playerDamage, healSound, gameOverSound, explosionSound,
+                                // dialogue sounds
+                                vocalDeep0, vocalDeep1, vocalMed0, vocalMed1, vocalHigh0, vocalHigh1;
 
         std::shared_ptr<LAudio> wolfSpawnSounds[3], splashSounds[3];
 

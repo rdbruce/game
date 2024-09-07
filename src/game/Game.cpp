@@ -329,7 +329,7 @@ std::shared_ptr<Item> Game::craftTwoItems( std::shared_ptr<Item> item1, std::sha
                 {
                     // 1 log and 4 planks craft one DAM
                     // make sure there are adequate resources
-                    int num = Min(hp1, hp2/4);
+                    int num = min(hp1, hp2/4);
                     if (num > 0)
                     {
                         res = spawnItemStack(damItem, item1->get_pos(), num);
@@ -347,7 +347,7 @@ std::shared_ptr<Item> Game::craftTwoItems( std::shared_ptr<Item> item1, std::sha
                 {
                     // 1 logs and 4 planks craft one DAM
                     // make sure there are adequate resources
-                    int num = Min(hp1/4, hp2);
+                    int num = min(hp1/4, hp2);
                     if (num > 0)
                     {
                         res = spawnItemStack(damItem, item1->get_pos(), num);
@@ -520,7 +520,10 @@ void Game::stop_music()
 
 Vector2 Game::get_playerPos() { return currLevel->player->get_pos(); }
 
-void Game::enter_dialogue( Dialogue newDialogue ) { currDialogue = newDialogue; }
+void Game::enter_dialogue( Dialogue newDialogue ) 
+{ 
+    currDialogue = newDialogue;
+}
 
 
 void Game::save_game()
@@ -595,7 +598,8 @@ void Game::leftClickFunc()
                         } else if (obj->is_NPC()) {
                             auto npc = std::dynamic_pointer_cast<NPC>(obj);
                             npc->add_HP(1);
-                            npc->set_dialogueTimer( 0.25f );
+                            npc->set_dialogueTimer(npc->get_dialogueInterval());
+                            currNPC = npc;
                             return;
                         }
                     }
@@ -820,8 +824,8 @@ void Game::save_gameData( std::string filename )
 
 bool Game::is_under_tree( Vector2Int cell )
 {
-    int minY = Max(cell.y, 0), maxY = Min(currLevel->gridDimensions.y-1, cell.y+9),
-        minX = Max(cell.x-1, 0), maxX = Min(cell.x+1, currLevel->gridDimensions.x-1);
+    int minY = max(cell.y, 0), maxY = min(currLevel->gridDimensions.y-1, cell.y+9),
+        minX = max(cell.x-1, 0), maxX = min(cell.x+1, currLevel->gridDimensions.x-1);
 
 
     for (int x = minX; x <= maxX; x++) 

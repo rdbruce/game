@@ -73,10 +73,10 @@ void Bomb::explode()
     int cellRadius = (int)game->BOMB_RADIUS;
     Vector2Int gridDimensions = game->currLevel->gridDimensions;
 
-    int minX = Max(0, cell.x-cellRadius), 
-        maxX = Min(gridDimensions.x, cell.x + cellRadius),
-        minY = Max(0, cell.y-cellRadius),
-        maxY = Min(gridDimensions.y, cell.y + cellRadius);
+    int minX = max(0, cell.x-cellRadius), 
+        maxX = min(gridDimensions.x, cell.x + cellRadius),
+        minY = max(0, cell.y-cellRadius),
+        maxY = min(gridDimensions.y, cell.y + cellRadius);
 
     for (int x = minX; x < maxX; x++) {
         for (int y = minY; y < maxY; y++) {
@@ -97,7 +97,7 @@ void Bomb::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     tex->setAlpha(alpha);
@@ -124,7 +124,7 @@ void ExplosionIndicator::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
 

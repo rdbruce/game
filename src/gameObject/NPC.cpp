@@ -12,6 +12,7 @@ NPC::NPC(int type, Vector2 pos, int Idx, Game *game, int cell_sidelen)
             updateVel = &NPC::foxVelocity;
             dialogue = &NPC::foxDialogue;
             moveSpeed = 2.66666667f * cell_sidelen;
+            speechSound = game->vocalMed0;
             break;
 
         case bearNPC:
@@ -24,6 +25,7 @@ NPC::NPC(int type, Vector2 pos, int Idx, Game *game, int cell_sidelen)
             updateVel = &GameObject::halt;
             dialogue = &NPC::bearDialogue;
             moveSpeed = 0.0f;
+            speechSound = game->vocalDeep0;
             break;
 
         case rabbitNPC:
@@ -32,20 +34,37 @@ NPC::NPC(int type, Vector2 pos, int Idx, Game *game, int cell_sidelen)
             updateVel = &NPC::foxVelocity;
             dialogue = &NPC::rabbitDialogue;
             moveSpeed = 2.66666667f * cell_sidelen;
+            speechSound = game->vocalHigh0;
             break;
     }
 }
 
+void NPC::set_HP(int newHP) {
+    GameObject::set_HP(newHP);
+    if (newHP > 1) play_speech();
+    else maySpeak = true;
+}
+
+void NPC::add_HP(int amount) {
+    set_HP(get_HP()+amount);
+}
+
+void NPC::play_speech() { if (speechSound != nullptr && maySpeak) speechSound->play(); }
+
 void NPC::set_dialogueTimer(float newTimer) { dialogueTimer = newTimer; }
+
+float NPC::get_dialogueInterval() { return dialogueInterval; }
 
 void NPC::update()
 {
+    
+
     (this->*updatePos)();
     (this->*updateVel)();
     (this->*dialogue)();
     collision();
 
-    if (get_HP() == 0) set_HP(1);
+    if (get_HP() == 0) GameObject::set_HP(1);
 }
 
 void NPC::foxPosition()
@@ -82,7 +101,7 @@ void NPC::foxVelocity()
 
 void NPC::beginRetreat()
 {
-    set_HP(1);
+    GameObject::set_HP(1);
     // turn off collision and switch to retreat function
     set_collision(false);
     // start with some velocity towards the centre of the map
@@ -109,7 +128,7 @@ void NPC::retreat()
     set_vel(get_vel() + get_accel()*get_deltaTime());
 
     // destroy itself when it goes out of bounds
-    if (pos.x != clampf(0.0f, map.x, pos.x) || pos.y != clampf(0.0f, map.y, pos.y)) {
+    if (pos.x != clamp(0.0f, (float)map.x, pos.x) || pos.y != clamp(0.0f, (float)map.y, pos.y)) {
         Destroy();
     }
 }
@@ -193,8 +212,8 @@ void NPC::collideWithWorldBorders()
     SDL_Rect hitbox = get_hitbox();
     float w = hitbox.w/2, h = hitbox.h/2;
     
-    pos.x = clampf(w, map.x-w, pos.x);
-    pos.y = clampf(h, map.y-h, pos.y);
+    clamp(w, map.x-w, &pos.x);
+    clamp(h, map.y-h, &pos.y);
 
     set_pos(pos);
 }
@@ -296,7 +315,7 @@ void NPC::render(int camX, int camY, Uint8 alpha)
     SDL_Rect hitbox = get_hitbox();
     Vector2Int p( hitbox.x-camX, hitbox.y-camY );
     // not within the camera's view, don't render
-    if (p.x != Clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != Clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
+    if (p.x != clamp(game->renderOffset.x-hitbox.x, game->camera.w+game->renderOffset.x, p.x) || p.y != clamp(game->renderOffset.y-hitbox.h, game->camera.h+game->renderOffset.y, p.y)) {
         return;
     }
     Vector2Int cell = get_cell();

@@ -24,9 +24,9 @@ bool PlayerData::loadFromFile( std::string filename )
 
 void PlayerData::set_newHighscores(int nightsSurvived, int enemiesKilled, int score)
 {
-    mostNightsSurvived = Max(nightsSurvived, mostNightsSurvived);
-    mostEnemiesKilled = Max(enemiesKilled, mostEnemiesKilled);
-    highscore = Max(score, highscore);
+    mostNightsSurvived = max(nightsSurvived, mostNightsSurvived);
+    mostEnemiesKilled = max(enemiesKilled, mostEnemiesKilled);
+    highscore = max(score, highscore);
 }
 
 void PlayerData::set_newHighscores(PlayerData scores)

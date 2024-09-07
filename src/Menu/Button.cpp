@@ -45,7 +45,7 @@ void Button::volume_slider()
 
     int minX = 72, maxX = 504;
 
-    x = Clamp(minX, maxX, x);
+    clamp(minX, maxX, &x);
     rect.x = x;
 
     // find and set the new global volume
@@ -64,7 +64,7 @@ void Button::music_volume_slider()
 
     int minX = 72, maxX = 504;
 
-    x = Clamp(minX, maxX, x);
+    clamp(minX, maxX, &x);
     rect.x = x;
 
     // find and set the new global volume

@@ -26,13 +26,13 @@ GameObject::GameObject(EntityType type, Vector2 pos, int Idx, int Health, Game *
 : type(type), pos(pos), idx(Idx), game(game), cell_sidelen(cell_sidelen), hasCollision(hasCollision)
 {
     max_hp = get_max_hp(type);
-    hp = (Health == -1)? max_hp : Clamp(0, max_hp, Health);
+    hp = (Health == -1)? max_hp : clamp(0, max_hp, Health);
 
     if (height == -1) height = width;
     Vector2Int size(width, height);
     Vector2Int p = Vector2Int(pos.x, pos.y) - (size/2);
     hitbox = { p.x, p.y, size.x, size.y };
-    radius = Max(size.x/2, size.y/2);
+    radius = max(size.x/2, size.y/2);
 
     set_pos(pos);
 }
