@@ -5,10 +5,11 @@
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#include <iostream>
 
 #include "LWindow.hpp"
 
-LWindow::LWindow(int width, int height, std::string name)
+LWindow::LWindow(int width, int height, std::string name, bool shrinkWindowToMonitorSize)
 {
   // Initialize non-existant window
   gWindow = NULL;
@@ -16,9 +17,8 @@ LWindow::LWindow(int width, int height, std::string name)
   wKeyboardFocus = false;
   wFullScreen = false;
   wMinimized = false;
-  wWidth = width;
-  wHeight = height;
   windowName = name;
+
 
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0)
@@ -26,6 +26,34 @@ LWindow::LWindow(int width, int height, std::string name)
     printf("SDL could not initialize! %s\n", SDL_GetError());
     exit(0);
   }
+  
+  // now that SDL is initialised, get the monitor dimensions
+  SDL_DisplayMode DM;
+  SDL_GetCurrentDisplayMode(0, &DM);
+  mWidth = DM.w; mHeight = DM.h;
+
+  if (shrinkWindowToMonitorSize)
+  {
+    int dh = height-32, dw = width-32;
+    if (mHeight < dh) {
+      scaleY = (float)mHeight / dh;
+    } 
+    if (mWidth < dw) {
+      scaleX = (float)mWidth / dw;
+    }
+
+    if (scaleY < scaleX) {
+      scaleX = scaleY;
+    } else scaleY = scaleX;
+
+    wWidth = width * scaleX;
+    wHeight = width * scaleY;
+  }
+  else {
+    wWidth = width;
+    wHeight = height;
+  }
+
   // audio setup
   int result = 0, flags = MIX_INIT_MP3;
   if (flags != (result = Mix_Init(flags))) {
@@ -89,6 +117,10 @@ LWindow::LWindow(int width, int height, std::string name)
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
     exit(0);
   }
+
+  // apply the render scale
+  SDL_RenderSetScale(gRenderer, scaleX, scaleY);
+  SDL_RenderPresent(gRenderer);
 }
 
 void LWindow::handleEvent(SDL_Event &e)
@@ -179,6 +211,9 @@ int LWindow::getHeight()
 {
   return wHeight;
 }
+
+int LWindow::get_mWidth() { return mWidth; }
+int LWindow::get_mHeight() { return mHeight; }
 
 float LWindow::getScaleX() { return scaleX; }
 float LWindow::getScaleY() { return scaleY; }

@@ -24,6 +24,10 @@ public:
   int getWidth();
   int getHeight();
 
+  // monitor dimensions
+  int get_mWidth();
+  int get_mHeight();
+
   float getScaleX();
   float getScaleY();
 
@@ -35,7 +39,7 @@ public:
   bool toggleFullscreen();
 
   // Initializes variables
-  LWindow(int width = 1280, int height = 720, std::string name = "Window");
+  LWindow(int width = 1280, int height = 720, std::string name = "Window", bool shrinkWindowToMonitorSize = false);
 
   // Deallocates memory
   ~LWindow();
@@ -47,6 +51,9 @@ private:
   // Window dimensions
   int wWidth;
   int wHeight;
+  // size of the monitor (not the window)
+  int mWidth;
+  int mHeight;
 
   // scaling factor
   float scaleX = 1.0f;
@@ -57,6 +64,7 @@ private:
   bool wKeyboardFocus;
   bool wFullScreen;
   bool wMinimized;
+
 
   std::string windowName= "";
 };

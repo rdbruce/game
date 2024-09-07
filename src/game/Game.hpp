@@ -60,7 +60,7 @@ class Game
     public:
 
         // constructor
-        Game( std::shared_ptr<LWindow> Window );
+        Game( std::shared_ptr<LWindow> Window, int resolutionWidth, int resolutionY );
 
 
         // handle events like player input

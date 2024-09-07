@@ -32,16 +32,20 @@
 #include <thread>
 #include <vector>
 
+#define GAME_RESOLUTION 1024
 
 int main(
     // int argc, char* args[]
 )
 {
   // Initialize SDL
-  auto gHolder = std::make_shared<LWindow>(1024, 1024, "A Dam Good Game");
+  auto gHolder = std::make_shared<LWindow>(
+    GAME_RESOLUTION, GAME_RESOLUTION, 
+    "A Dam Good Game", true
+  );
 
-  Game game(gHolder);
-  GameMenu menu(gHolder, &game);
+  Game game(gHolder, GAME_RESOLUTION, GAME_RESOLUTION);
+  GameMenu menu(gHolder, &game, GAME_RESOLUTION, GAME_RESOLUTION);
 
   // Event handler
   SDL_Event e;

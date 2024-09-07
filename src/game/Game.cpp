@@ -2,7 +2,8 @@
 #include "../gameObject/AStarPathfinding.hpp"
 
 // constructor
-Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
+Game::Game( std::shared_ptr<LWindow> Window, int resolutionWidth, int resolutionHeight ) 
+: window(Window)
 {
     // for testing
     Bert = std::make_shared<LTexture>(window);
@@ -18,7 +19,7 @@ Game::Game( std::shared_ptr<LWindow> Window ) : window(Window)
     create_textures();
 
     // camera dimensions should be the same as window size
-    camera = { 0, 0, window->getWidth(), window->getHeight() };
+    camera = { 0, 0, resolutionWidth, resolutionHeight };
 
     currSong = menuMusic;
     play_current();

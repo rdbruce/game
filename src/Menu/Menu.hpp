@@ -13,7 +13,6 @@
 // forwards declaration
 class Button;
 
-
 // different menu states
 enum State
 {
@@ -33,7 +32,7 @@ class GameMenu
     public:
 
         // initialise menu
-        GameMenu( std::shared_ptr<LWindow> Window, Game *game );
+        GameMenu( std::shared_ptr<LWindow> Window, Game *game, int resolutionWidth, int resolutionHeight );
 
 
         // renders the background texture
@@ -94,6 +93,8 @@ class GameMenu
         int CHECKBOX_SIDELENGTH = 64;
         int GAMEOVER_TXT_WIDTH = 384, GAMEOVER_TEX_HEIGHT = 213;
         int HIGHSCORE_CENTREPOS = 300;
+        float PIXEL_RENDER_SCALE = 0.68f;
+        Uint8 PIXEL_FILTER_ALPHA = 30;
 
 
         std::shared_ptr<LWindow> window;

@@ -1,10 +1,10 @@
 #include "Menu.hpp"
 #include "Button.hpp"
 
-GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game ) 
+GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game, int resolutionWidth, int resolutionHeight ) 
 : window(Window), game(game)
 {
-    wRect = {0, 0, window->getWidth(), window->getHeight()};
+    wRect = {0, 0, resolutionWidth, resolutionHeight};
 
     load_assets();
 
@@ -87,7 +87,7 @@ void GameMenu::render_settings()
 
         white->render(x, y, &rect);
         y += 48;
-        renderText("CRT Filter", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
+        renderText("Pixel Filter", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
 
         y += CHECKBOX_SIDELENGTH + 16;
         renderText("Fullscreen", x + CHECKBOX_SIDELENGTH + 16, y, window, {255,255,255,255}, arcadeClassic24, Left_aligned);
@@ -410,10 +410,11 @@ void GameMenu::update()
 
             if (fullscreen) 
             {
-                int w = window->getWidth(), h = window->getHeight(),
+                int w = window->get_mWidth(), h = window->get_mHeight(),
                     s = wRect.w * window->getScaleX();
 
-                    wRect.x = (w - s)/2; wRect.y = 0;
+
+                    wRect.x = (w - s)/(2*window->getScaleX()); wRect.y = 0;
 
                     aspectRatio = tEditor.createSolidColour(w, h, 0x000000FF, window);
             }
@@ -791,17 +792,18 @@ void GameMenu::load_assets()
 void GameMenu::create_CRT_Texture()
 {
     CRT_Tex = tEditor.createEmptyTexture(wRect.w, wRect.h, window);
-    int nx = CRT_Tex->getWidth() / CRT_Base->getWidth(), ny =( CRT_Tex->getHeight() / CRT_Base->getWidth())+2;
+    SDL_Rect rect = { 0, 0, int(CRT_Base->getWidth()*PIXEL_RENDER_SCALE), int(CRT_Base->getHeight()*PIXEL_RENDER_SCALE) };
+    int nx = CRT_Tex->getWidth() / rect.w, ny = CRT_Tex->getHeight() / rect.h;
 
     for (int i = 0; i <= nx; i++) {
-        int x = i * CRT_Base->getWidth();
+        int x = i * rect.w;
         for (int j = 0; j <= ny; j++) {
-            int y = j * CRT_Base->getHeight();
-            SDL_Rect rect = { x, y, CRT_Base->getWidth(), CRT_Base->getHeight() };
+            int y = j * rect.h;
+            rect.x = x; rect.y = y;
             tEditor.renderTextureToTexture(CRT_Tex, CRT_Base, &rect);
         }
     }
-    CRT_Tex->setAlpha(20);
+    CRT_Tex->setAlpha(PIXEL_FILTER_ALPHA);
 }
 
 bool GameMenu::is_inGame() { return state == in_game || state == game_over; }
