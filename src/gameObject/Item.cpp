@@ -210,7 +210,7 @@ void Item::handleCollisionsWithGameObjects()
                     // damage the enemy
                     other->add_HP(-dam);
                     game->bonk->play();
-                    newVel *= (float)dam;
+                    newVel *= clamp(1.0f, 3.0f, (float)dam);
                     damageTimer = damageInterval;
                     set_vel(newVel * -1.0f); set_accel(newVel);
                 }

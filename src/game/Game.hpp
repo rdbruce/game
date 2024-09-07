@@ -271,7 +271,7 @@ class Game
         // the amount of time (int seconds) it takes for birds to fly across the map
         float BIRD_FLIGHT_DURATION = 3.0f;
         // the number of times each day or night buildings take damage from water
-        int WATER_DAMAGE_INTERVAL = 24;
+        int WATER_DAMAGE_INTERVAL = 2;
         // multiplies the amount of damage taken by buildings placed in water
         float WATER_DAMAGE_MULT = 0.5f;
 
