@@ -158,7 +158,9 @@ void Game::attempt_enemy_spawn()
 
     if (isNight && g_time >= DAY_TRANSITION_TIME) 
     {
-        if (g_time - lastSpawn >= enemySpawnRate) {
+        float rate = enemySpawnRate;
+        if (currLevel != &Base) rate /= 2.0f;
+        if (g_time - lastSpawn >= rate) {
             lastSpawn = g_time;
             validAttempt = true;
         }

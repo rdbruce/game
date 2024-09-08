@@ -34,7 +34,7 @@ LWindow::LWindow(int width, int height, std::string name, bool shrinkWindowToMon
 
   if (shrinkWindowToMonitorSize)
   {
-    int dh = height-32, dw = width-32;
+    int dh = height-128, dw = width-128;
     if (mHeight < dh) {
       scaleY = (float)mHeight / dh;
     } 

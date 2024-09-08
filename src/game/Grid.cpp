@@ -315,7 +315,7 @@ void Game::update_cells( Scene *level )
                             // when planted in the base, saplings will grow every three days.
                             // otherwise they grow every day
                             if (g_time == 0.0f && !isNight) {
-                                int timer = (level == &Base)? (type&TIMER)>>26 : 2;
+                                int timer = (level != &Woods)? (type&TIMER)>>26 : 2;
                                 if (timer >= 2) {
                                     PlaceObjectInCell(currCell, TREE, false, level);
                                 } else {
