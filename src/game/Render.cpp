@@ -7,7 +7,7 @@ bool is_in_region(Vector2 p, SDL_Rect rect) {
 
 void Game::render_controls()
 {
-    SDL_Rect mRect = {0+renderOffset.x, 864+renderOffset.y, 36, 45};
+    SDL_Rect mRect = {8+renderOffset.x, 864+renderOffset.y, 36, 45};
     std::string txt;
 
     Vector2 mPos = find_mouse_pos();

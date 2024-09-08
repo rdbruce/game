@@ -45,11 +45,11 @@ void FallingTree::update()
         float step = (sideLen*10)/n, y = hitbox.y + hitbox.h;
 
         // spawn n items
-        for (int i = 1; i <= n; i++)
+        for (int i = 0; i < n; i++)
         {
             Vector2 p(hitbox.x + (step*i*dir), y);
             // spawn logs first, seeds last
-            EntityType item = (i<6)? logItem : pineConeItem;
+            EntityType item = (i<5)? logItem : pineConeItem;
             game->spawnItemStack(item, p, 1);
         }
         Destroy();
