@@ -40,7 +40,7 @@ void Game::load_gameData( std::string filename )
 
         std::istringstream iss( line );
 
-        iss >> std::dec >> isNight >> mayGatherStone;
+        iss >> std::dec >> isNight >> mayGatherStone >> enemySpawnRate;
         file.close();
     }
 }

@@ -166,8 +166,8 @@ int Game::PlaceObjectInCell(Vector2Int cell, int objType, bool playerPlacement, 
                         // remove tree from the grid
                         level->grid[cell.x][cell.y] &= 0xFF9000;
                         // spawn a falling tree in its place
-                        Vector2 pos(((float)cell.x+0.5f)*sideLen, ((float)cell.y-4.5f)*sideLen);
-                        Instantiate(fallingTree, pos, 1, level);
+                        float x = ((float)cell.x+0.5f)*(float)sideLen, y = ((float)cell.y - ((float)TREE_HEIGHT/2.0f))*(float)sideLen;
+                        Instantiate(fallingTree, Vector2(x, y), 1, level);
                         treeFalling->play();
 
                         // place a stump where the tree once stood
@@ -354,7 +354,8 @@ void Game::update_cells()
 void Game::AddTreeToOverlay( Vector2Int cell )
 {
     int sideLen = currLevel->cell_sideLen;
-    SDL_Rect rect = {(cell.x-1)*sideLen, (cell.y-9)*sideLen, sideLen*3, sideLen*10};
+    int w = TREE_WIDTH/2, h = TREE_HEIGHT-1;
+    SDL_Rect rect = {(cell.x-w)*sideLen, (cell.y-h)*sideLen, sideLen*TREE_WIDTH, sideLen*TREE_HEIGHT};
     tEditor.renderTextureToTexture(overlayTexture, treeTex, &rect);
 }
 
@@ -588,14 +589,15 @@ void Game::damageCell( Vector2Int cell, int damage, Scene *level, bool playSound
         maxHealth = (num&MAX_HEALTH)>>17;
 
     // subtract the amount of damage dealth
-    health = clamp(0, maxHealth, health-damage);
+    int newHealth = clamp(0, maxHealth, health-damage);
     // if the health is now non-positive, destroy the cell
     bool emptyFlag = false;
-    if (health <= 0) emptyFlag = true;
+    if (newHealth <= 0) emptyFlag = true;
     else if (playSound) {
         if (damage > 0) logDestruction->play();
-        else repairSound->play();
+        else if (health < maxHealth) repairSound->play();
     }
+    health = newHealth;
     // bit shift health to be in the right position
     health <<= 8;
     // reset the health bits of the cell

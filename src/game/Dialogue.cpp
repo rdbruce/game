@@ -753,7 +753,7 @@ void Player::dialogue()
 
             case fox_town_1:
             {
-                std::string txt = "1. What is this place?\n2. How did YOU make it up here?\n3. Who were all those wolves?";
+                std::string txt = "1. What is this place?\n2. How did YOU make it up here?\n3. Who are all these wolves?";
 
                 auto diag = std::make_shared<DialogueRender>(
                     txt, Vector2Int(p.x, p.y - 90),
@@ -804,7 +804,7 @@ void Player::dialogue()
                     dialogueTimer -= get_deltaTime();
                     if (dialogueTimer < 1.0f) 
                     {
-                        std::string txt = "3. Who were all those wolves?";
+                        std::string txt = "3. Who are all these wolves?";
                         auto diag = std::make_shared<DialogueRender>(
                             txt, Vector2Int(p.x, p.y - 30),
                             game->window
@@ -817,7 +817,7 @@ void Player::dialogue()
 
             case fox_town_2:
             {
-                std::string txt = "1. You could've told me that before!\n2. Do you have any advice?\n3. Can I just stay here?";
+                std::string txt = "1. You could've told me that earlier!\n2. Do you have any advice?\n3. Can I just stay here?";
 
                 auto diag = std::make_shared<DialogueRender>(
                     txt, Vector2Int(p.x, p.y - 90),
@@ -834,7 +834,7 @@ void Player::dialogue()
                     dialogueTimer -= get_deltaTime();
                     if (dialogueTimer < 1.0f) 
                     {
-                        std::string txt = "1. You could've told me that before!";
+                        std::string txt = "1. You could've told me that earlier!";
                         auto diag = std::make_shared<DialogueRender>(
                             txt, Vector2Int(p.x, p.y - 30),
                             game->window
@@ -975,7 +975,7 @@ void Player::dialogue()
 
             case bear_town_3:
             {
-                std::string txt = "1. Where do you get\nall these berries?\n2. How do you survive\nwith all these wolves?";
+                std::string txt = "1. Where do you get\nall these berries?\n2. How do you survive\nwith all the wolves?";
 
                 auto diag = std::make_shared<DialogueRender>(
                     txt, Vector2Int(p.x, p.y - 120),
@@ -1009,7 +1009,7 @@ void Player::dialogue()
                     dialogueTimer -= get_deltaTime();
                     if (dialogueTimer < 1.0f) 
                     {
-                        std::string txt = "2. How do you survive\nwith all these wolves?";
+                        std::string txt = "2. How do you survive\nwith all the wolves?";
                         auto diag = std::make_shared<DialogueRender>(
                             txt, Vector2Int(p.x, p.y - 60),
                             game->window

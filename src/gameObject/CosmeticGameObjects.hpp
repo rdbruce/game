@@ -20,6 +20,8 @@ class FallingTree : public GameObject
         std::shared_ptr<LTexture> tex;
         
         float timer = 1.0f;
+
+        float dir;
 };
 
 class GhostBuilding : public GameObject

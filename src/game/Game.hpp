@@ -215,6 +215,10 @@ class Game
 
         // tracking the time of day/night
         float g_time = 0.0f;
+        // an enemy will spawn every x seconds
+        float enemySpawnRate = 4.0f, lastSpawn = 0.0f;
+
+
         // whether or not it is currently night time
         bool isNight;
 
@@ -251,6 +255,10 @@ class Game
 
 
 
+
+
+
+
         /* --------  constants:  -------- */
 
         // the highest framerate you can achieve, -1 for uncapped
@@ -267,7 +275,9 @@ class Game
         // how much damage the bomb does upon detonation
         int BOMB_DAMAGE = 3;
         // the game will attempt an enemy spawn every x seconds
-        int ENEMY_SPAWN_RATE = 3;
+        float MAX_SPAWN_RATE = 0.5f, START_SPAWN_RATE = 4.0f;
+        // how much the spawn rate decreases each day
+        float DIFF_SCALING = 0.5f;
         // the amount of time (int seconds) it takes for birds to fly across the map
         float BIRD_FLIGHT_DURATION = 3.0f;
         // the number of times each day or night buildings take damage from water
@@ -285,6 +295,9 @@ class Game
         float ITEM_MINIMUM_DAMAGE_VELOCITY = 1.0f;
         // multiplier that alters the speed of thrown items
         float THROWN_ITEM_SPEED_MULT = 1.15f;
+
+        // dimensions of trees
+        int TREE_HEIGHT = 9, TREE_WIDTH = 3;
         
 
 

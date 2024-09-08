@@ -6,8 +6,11 @@
 /*          FALLING TREES          */
 
 FallingTree::FallingTree(Vector2 pos, int Idx, Game* game, int cellSideLen)
-:   GameObject(fallingTree, pos, Idx, 1, game, cellSideLen, false, 3*cellSideLen, 10*cellSideLen),
-    tex(game->falling_treeTex) {}
+:   GameObject(fallingTree, pos, Idx, 1, game, cellSideLen, false, game->TREE_WIDTH*cellSideLen, game->TREE_HEIGHT*cellSideLen),
+    tex(game->falling_treeTex) 
+{
+    dir = (rand()%2)? -1.0f : 1.0f;
+}
 
 void FallingTree::render(int camX, int camY, Uint8 alpha)
 {
@@ -19,7 +22,7 @@ void FallingTree::render(int camX, int camY, Uint8 alpha)
     }
     // timer is initialised to 1.0f, use it as an interpolator
     float interp = 1.0f - timer;
-    float theta = -100.0f * interp;
+    float theta = 100.0f * interp * dir;
     SDL_Point centre = { hitbox.w/2, hitbox.h };
     tex->render(p.x, p.y, &hitbox, NULL, theta, &centre);
 }
@@ -44,7 +47,7 @@ void FallingTree::update()
         // spawn n items
         for (int i = 1; i <= n; i++)
         {
-            Vector2 p(hitbox.x - step*i, y);
+            Vector2 p(hitbox.x + (step*i*dir), y);
             // spawn logs first, seeds last
             EntityType item = (i<6)? logItem : pineConeItem;
             game->spawnItemStack(item, p, 1);

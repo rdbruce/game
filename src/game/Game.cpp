@@ -156,9 +156,10 @@ void Game::attempt_enemy_spawn()
     // nothing will happen if the spawning attempt is invalid
     bool validAttempt = false;
 
-    if (isNight && g_time >= DAY_TRANSITION_TIME) {
-        // spawn an enemy every 10 seconds
-        if ((int(g_time)%ENEMY_SPAWN_RATE) == 0 && (int(g_time-deltaTime)%ENEMY_SPAWN_RATE) != 0) {
+    if (isNight && g_time >= DAY_TRANSITION_TIME) 
+    {
+        if (g_time - lastSpawn >= enemySpawnRate) {
+            lastSpawn = g_time;
             validAttempt = true;
         }
     }
@@ -481,6 +482,8 @@ void Game::dayNightCycle()
             if (!firstDay) {
                 scores.mostNightsSurvived++;
                 scores.calculate_score();
+                // increase the spawn rate of enemies
+                enemySpawnRate = clamp(MAX_SPAWN_RATE, START_SPAWN_RATE, enemySpawnRate-DIFF_SCALING);
             }
             else firstDay = false;
             // reset daily booleans
@@ -657,6 +660,7 @@ bool Game::tradeItem(int heldType, int heldHP, Vector2 mPos)
                 currLevel->held->add_HP(-requiredHP);
                 // spawn the item that was traded for
                 spawnItemStack(spawnedType, obj->get_pos(), spawnedHP);
+                repairSound->play();
                 return true;
             }
         }
@@ -817,15 +821,15 @@ void Game::save_gameData( std::string filename )
     if (!file) {
         std::cerr << "Failed to open " << filename <<std::endl;
     } else {
-        file << std::dec << isNight <<'\t'<< mayGatherStone;
+        file << std::dec << isNight <<'\t'<< mayGatherStone <<'\t' << enemySpawnRate;
         file.close();
     }
 }
 
 bool Game::is_under_tree( Vector2Int cell )
 {
-    int minY = max(cell.y, 0), maxY = min(currLevel->gridDimensions.y-1, cell.y+9),
-        minX = max(cell.x-1, 0), maxX = min(cell.x+1, currLevel->gridDimensions.x-1);
+    int minY = max(cell.y, 0), maxY = min(currLevel->gridDimensions.y-1, cell.y+(TREE_HEIGHT-1)),
+        minX = max(cell.x-(TREE_WIDTH/2), 0), maxX = min(cell.x+(TREE_WIDTH/2), currLevel->gridDimensions.x-1);
 
 
     for (int x = minX; x <= maxX; x++) 

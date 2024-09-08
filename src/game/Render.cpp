@@ -318,14 +318,14 @@ void Game::render_crafting_controls( int type, SDL_Rect *mRect, int hp )
             RMBTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w + 8;
             int w = mRect->w, h = mRect->h;
 
-            txt = "Craft 4 ";
+            txt = "Craft 4";
             controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y + 8); mRect->x += controlsTex->getWidth();
 
             mRect->w = mRect->h = 30;
             plankTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w + 8;
 
-            txt = " and 1 ";
+            txt = "and 1 ";
             controlsTex->loadFromRenderedText(txt, {255,255,255,255}, arcadeClassic24);
             controlsTex->render(mRect->x, mRect->y + 8); mRect->x += controlsTex->getWidth();
             logTex->render(mRect->x, mRect->y, mRect); mRect->x += mRect->w + 8;
