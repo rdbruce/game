@@ -170,6 +170,9 @@ class Game
         // makes game_over false
         void new_game(bool show_tutorial);
 
+        // toggles pause
+        void set_paused(bool isPaused);
+
         // stops music from playing
         void stop_music();
         // plays the current song
@@ -220,10 +223,10 @@ class Game
 
 
         // whether or not it is currently night time
-        bool isNight;
+        bool isNight, isPaused = false;
 
         // whether or not stone may be gathered from the riverbed
-        bool mayGatherStone = true;
+        bool riverDammed = false;
 
         // true when the player dies
         bool gameOver = false;

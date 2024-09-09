@@ -647,7 +647,7 @@ void Game::damRiver()
                 Vector2Int currCell(x, y);
                 removeWaterFollowingCell(currCell);
             }
-            mayGatherStone = false;
+            riverDammed = true;
             break;
         }
     }
@@ -665,7 +665,10 @@ void Game::damRiver()
             }
         }
     }
-    if (flag) splashSounds[0]->play();
+    if (flag) {
+        splashSounds[0]->play();
+        riverDammed = false;
+    }
 }
 
 bool Game::blocksRiver( Vector2Int cell )
@@ -698,7 +701,7 @@ void Game::removeWaterFollowingCell( Vector2Int cell )
 
         // chance to spawn a stone item in each riverbed cell
         // this may only be done once per day
-        if (mayGatherStone) {
+        if (!riverDammed) {
             float random = (float)rand() / RAND_MAX;
             if (random <= STONE_SPAWN_CHANCE) 
             {

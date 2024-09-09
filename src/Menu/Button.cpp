@@ -189,7 +189,6 @@ void Button::go_to_main_menu_from_gameover()
         }
         menu->highscores[idx] = newHighscore;
         menu->set_score_name = idx;
-        menu->confirmationText = "";
     }
 
     go_to_mainMenu();

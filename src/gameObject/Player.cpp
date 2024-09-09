@@ -147,7 +147,7 @@ void Player::render(int camX, int camY, Uint8 alpha)
     Vector2Int cell = get_cell();
     bool underTree = game->is_under_tree(cell), alpha255 = alpha == 255;
 
-    tex = animate(!alpha255 || (alpha255 && !underTree));
+    if (game->isPaused || tex == nullptr) tex = animate(!alpha255 || (alpha255 && !underTree));
 
     tex->setAlpha(alpha);
     tex->render(p.x, p.y, &hitbox);

@@ -28,8 +28,7 @@ Game::Game( std::shared_ptr<LWindow> Window, int resolutionWidth, int resolution
 float Game::get_time() { return g_time; }
 bool Game::game_over() { return gameOver; }
 
-void Game::new_game(bool show_tutorial) { 
-    mayGatherStone = true;
+void Game::new_game(bool show_tutorial) {
     gameOver = false;
     firstDay = true;
     showTutorial = show_tutorial && scores.mostNightsSurvived == 0;
@@ -456,6 +455,8 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
     while(dialogueRenders.size()) dialogueRenders.pop();
 }
 
+void Game::set_paused(bool is_paused) { isPaused = is_paused; }
+
 void Game::dayNightCycle()
 {
     // after x seconds
@@ -471,7 +472,7 @@ void Game::dayNightCycle()
         // autosave the game
         save_game();
         // reset g_time to 0
-        g_time = 0.0f;
+        g_time = lastSpawn = 0.0f;
         return;
 
     } 
@@ -488,8 +489,6 @@ void Game::dayNightCycle()
                 enemySpawnRate = clamp(MAX_SPAWN_RATE, START_SPAWN_RATE, enemySpawnRate-DIFF_SCALING);
             }
             else firstDay = false;
-            // reset daily booleans
-            mayGatherStone = true;
             // spawn npcs
             spawnNPCs();
 
@@ -823,7 +822,7 @@ void Game::save_gameData( std::string filename )
     if (!file) {
         std::cerr << "Failed to open " << filename <<std::endl;
     } else {
-        file << std::dec << isNight <<'\t'<< mayGatherStone <<'\t' << enemySpawnRate;
+        file << std::dec << isNight <<'\t'<< riverDammed <<'\t' << enemySpawnRate;
         file.close();
     }
 }
