@@ -62,6 +62,9 @@ class Game
         // constructor
         Game( std::shared_ptr<LWindow> Window, int resolutionWidth, int resolutionY );
 
+        // deallocate memory
+        ~Game();
+
 
         // handle events like player input
         void handle_events( SDL_Event& e );
@@ -335,34 +338,35 @@ class Game
         // background texture
         std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr;
         std::shared_ptr<LTexture> Bert = nullptr;
-        std::shared_ptr<LTexture>   logTex, damTex, waterTex, grassTex, treeTex,
-                                    stumpTex, saplingTex, playerTex, wolfTex, falling_treeTex,
-                                    pine_coneTex, plankTex, foxTex, berryTex,
-                                    shoreline0Tex, shoreline1Tex, shoreline2Tex, shoreline3Tex,
-                                    shoreline4Tex, closed_doorTex, open_doorTex, dirtTex,
-                                    berry_bushTex, empty_bushTex, heartTex,
-                                    stoneTex, LMBTex, MMBTex, RMBTex, BearTex, BirdTex, BombTex,
-                                    TargetTex, dashed_circleTex, rabbitTex;
+        std::shared_ptr<LTexture>   logTex = nullptr, damTex = nullptr, waterTex = nullptr, grassTex = nullptr, treeTex = nullptr,
+                                    stumpTex = nullptr, saplingTex = nullptr, playerTex = nullptr, wolfTex = nullptr, falling_treeTex = nullptr,
+                                    pine_coneTex = nullptr, plankTex = nullptr, foxTex = nullptr, berryTex = nullptr,
+                                    shoreline0Tex = nullptr, shoreline1Tex = nullptr, shoreline2Tex = nullptr, shoreline3Tex = nullptr,
+                                    shoreline4Tex = nullptr, closed_doorTex = nullptr, open_doorTex = nullptr, dirtTex = nullptr,
+                                    berry_bushTex = nullptr, empty_bushTex = nullptr, heartTex = nullptr,
+                                    stoneTex = nullptr, LMBTex = nullptr, MMBTex = nullptr, RMBTex = nullptr, BearTex = nullptr, BirdTex = nullptr, BombTex = nullptr,
+                                    TargetTex = nullptr, dashed_circleTex = nullptr, rabbitTex = nullptr;
 
         // animation containers
-        std::shared_ptr<Animations> playerAnimations, wolfWalkingAnimation, explosionAnimation,
-                                    splashAnimation;
+        std::shared_ptr<Animations> playerAnimations = nullptr, wolfWalkingAnimation = nullptr, 
+                                    explosionAnimation = nullptr, splashAnimation = nullptr;
 
         // all of the audio used by the game
-        std::shared_ptr<LAudio> logDestruction, treeFalling, doorToggle, leaves, pop, bonk,
-                                birdSpawn, playerDamage, healSound, gameOverSound, explosionSound,
-                                repairSound,
+        std::shared_ptr<LAudio> logDestruction = nullptr, treeFalling = nullptr, doorToggle = nullptr, leaves = nullptr, pop = nullptr, 
+                                bonk = nullptr, birdSpawn = nullptr, playerDamage = nullptr, healSound = nullptr, 
+                                gameOverSound = nullptr, explosionSound = nullptr, repairSound = nullptr,
                                 // dialogue sounds
-                                vocalDeep0, vocalDeep1, vocalMed0, vocalMed1, vocalHigh0, vocalHigh1;
+                                vocalDeep0 = nullptr, vocalDeep1 = nullptr, vocalMed0 = nullptr, 
+                                vocalMed1 = nullptr, vocalHigh0 = nullptr, vocalHigh1 = nullptr;
 
         std::shared_ptr<LAudio> wolfSpawnSounds[3], splashSounds[3];
 
         // music
-        std::shared_ptr<LAudio> nightMusic, dayMusic, deathMusic, menuMusic;
+        std::shared_ptr<LAudio> nightMusic = nullptr, dayMusic = nullptr, deathMusic = nullptr, menuMusic = nullptr;
         std::shared_ptr<LAudio> currSong = nullptr;
 
         // fonts
-        TTF_Font *sevenSegment, *arcadeClassic24, *arcadeClassic36;
+        TTF_Font *sevenSegment = nullptr, *arcadeClassic24 = nullptr, *arcadeClassic36 = nullptr;
         
         // the window the game will be rendered to
         std::shared_ptr<LWindow> window = nullptr;

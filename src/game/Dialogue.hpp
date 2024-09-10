@@ -85,6 +85,8 @@ class DialogueRender
         DialogueRender(std::string txt, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred, void (DialogueRender::*func)() = &DialogueRender::defaultTextRender, std::shared_ptr<LTexture> tex0 = nullptr, std::shared_ptr<LTexture> tex1 = nullptr);
         DialogueRender(std::vector<std::string> strings, Vector2Int pos, std::shared_ptr<LWindow> window, SDL_Color colour = {255,255,255,255}, TextOrientation orientation = Centred, void (DialogueRender::*func)() = &DialogueRender::defaultTextRender, std::shared_ptr<LTexture> tex0 = nullptr, std::shared_ptr<LTexture> tex1 = nullptr);
 
+        ~DialogueRender();
+
         void set_font(TTF_Font *Font = NULL);
 
         void render();

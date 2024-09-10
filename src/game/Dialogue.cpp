@@ -1388,6 +1388,8 @@ DialogueRender::DialogueRender(std::vector<std::string> strings, Vector2Int pos,
     bkgColour = {Uint8(colour.r/2),Uint8(colour.g/2), Uint8(colour.b/2), Uint8(colour.a-25)};
 }
 
+DialogueRender::~DialogueRender() {}
+
 void DialogueRender::set_font( TTF_Font * Font ) { font = Font; };
 
 void DialogueRender::render()

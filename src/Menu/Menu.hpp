@@ -34,6 +34,7 @@ class GameMenu
         // initialise menu
         GameMenu( std::shared_ptr<LWindow> Window, Game *game, int resolutionWidth, int resolutionHeight );
 
+        ~GameMenu();
 
         // renders the background texture
         void render_background();
@@ -100,12 +101,12 @@ class GameMenu
         std::shared_ptr<LWindow> window;
         SDL_Rect wRect;
 
-        std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex, 
-                                  CRT_Tex, CRT_Base, aspectRatio = nullptr,
-                                  titleTex;
+        std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex = nullptr, 
+                                  CRT_Tex = nullptr, CRT_Base = nullptr, aspectRatio = nullptr,
+                                  titleTex = nullptr;
 
         // the sound made when you click a button
-        std::shared_ptr<LAudio> buttonSound = nullptr, arcadeBonus, arcadeButton99;
+        std::shared_ptr<LAudio> buttonSound = nullptr, arcadeBonus = nullptr, arcadeButton99 = nullptr;
 
         // fonts
         TTF_Font *sevenSegment48, *sevenSegment24, *sevenSegment36,

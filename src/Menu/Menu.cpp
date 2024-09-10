@@ -18,6 +18,40 @@ GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game, int resolutionW
     continueButton->apply_settings();
 }
 
+GameMenu::~GameMenu()
+{
+    if (BGTexture != nullptr) BGTexture->free();
+    if (CRT_Tex != nullptr) CRT_Tex->free();
+    if (CRT_Base != nullptr) CRT_Base->free();
+    if (aspectRatio != nullptr) aspectRatio->free();
+    if (gameOverTex != nullptr) gameOverTex->free();
+    if (titleTex != nullptr) titleTex->free();
+    
+    if (buttonSound != nullptr) buttonSound->free();
+    if (arcadeBonus != nullptr) arcadeBonus->free();
+    if (arcadeButton99 != nullptr) arcadeButton99->free();
+
+    TTF_CloseFont(sevenSegment48);
+    TTF_CloseFont(sevenSegment36);
+    TTF_CloseFont(sevenSegment24);
+    TTF_CloseFont(arcadeClassic18);
+    TTF_CloseFont(arcadeClassic24);
+    TTF_CloseFont(arcadeClassic36);
+    TTF_CloseFont(arcadeClassic48);
+
+    activeSlider = nullptr;
+    for (int i = 0; i < menuButtons.size(); i++) menuButtons[i]->free();
+    for (int i = 0; i < pauseButtons.size(); i++) pauseButtons[i]->free();
+    for (int i = 0; i < confirmationButtons.size(); i++) confirmationButtons[i]->free();
+    for (int i = 0; i < gameOverButtons.size(); i++) gameOverButtons[i]->free();
+    for (int i = 0; i < settingsButtons.size(); i++) settingsButtons[i]->free();
+    menuButtons.clear();
+    pauseButtons.clear();
+    settingsButtons.clear();
+    confirmationButtons.clear();
+    gameOverButtons.clear();
+}
+
 void GameMenu::create_buttons()
 {
     confirmationText = "";

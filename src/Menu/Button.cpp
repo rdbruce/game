@@ -4,6 +4,15 @@
 Button::Button( GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)(), std::shared_ptr<LAudio> PressSound, std::shared_ptr<LTexture> AltTex )
 : menu(Menu), rect(Rect), tex(Tex), func(Func), altTex(AltTex), pressSound(PressSound) {}
 
+Button::~Button() { free(); }
+
+void Button::free()
+{
+    if (tex != nullptr) tex->free();
+    if (altTex != nullptr) altTex->free();
+}
+
+
 bool Button::isPressed( int x, int y )
 {
     int r = rect.x + rect.w, b = rect.y + rect.h;
@@ -357,6 +366,8 @@ FPSButton::FPSButton(int fps, GameMenu *Menu, SDL_Rect Rect, void (FPSButton::*F
     if (menu->settings.max_framrate == maxFPS) swap_textures();
     set_func(&FPSButton::set_max_FPS);
 }
+
+FPSButton::~FPSButton() { Button::free(); }
 
 void FPSButton::execute_function()
 {

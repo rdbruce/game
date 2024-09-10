@@ -34,6 +34,10 @@ class Scene
         Scene( std::string filePath, Game *game );
         Scene();
 
+        ~Scene();
+
+        void free();
+
 
         // saves to scene in the specified directory
         void Save( std::string directory );

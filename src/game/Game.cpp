@@ -25,6 +25,109 @@ Game::Game( std::shared_ptr<LWindow> Window, int resolutionWidth, int resolution
     play_current();
 }
 
+
+Game::~Game()
+{
+    Base.free(); Woods.free(); Town.free();
+
+    currNPC = nullptr;
+
+    while (!secondRenders.empty()) secondRenders.pop();
+    while (!dialogueRenders.empty()) dialogueRenders.pop();
+
+    if (BGTexture != nullptr) BGTexture->free();
+    if (overlayTexture != nullptr) overlayTexture->free();
+    if (Bert != nullptr) Bert->free();
+    if (logTex != nullptr) logTex->free();
+    if (damTex != nullptr) damTex->free();
+    if (waterTex != nullptr) waterTex->free();
+    if (grassTex != nullptr) grassTex->free();
+    if (treeTex != nullptr) treeTex->free();
+    if (stumpTex != nullptr) stumpTex->free();
+    if (saplingTex != nullptr) saplingTex->free();
+    if (playerTex != nullptr) playerTex->free();
+    if (wolfTex != nullptr) wolfTex->free();
+    if (falling_treeTex != nullptr) falling_treeTex->free();
+    if (pine_coneTex != nullptr) pine_coneTex->free();
+    if (plankTex != nullptr) plankTex->free();
+    if (foxTex != nullptr) foxTex->free();
+    if (berryTex != nullptr) berryTex->free();
+    if (shoreline0Tex != nullptr) shoreline0Tex->free();
+    if (shoreline1Tex != nullptr) shoreline1Tex->free();
+    if (shoreline2Tex != nullptr) shoreline2Tex->free();
+    if (shoreline3Tex != nullptr) shoreline3Tex->free();
+    if (shoreline4Tex != nullptr) shoreline4Tex->free();
+    if (closed_doorTex != nullptr) closed_doorTex->free();
+    if (open_doorTex != nullptr) open_doorTex->free();
+    if (dirtTex != nullptr) dirtTex->free();
+    if (berry_bushTex != nullptr) berry_bushTex->free();
+    if (empty_bushTex != nullptr) empty_bushTex->free();
+    if (heartTex != nullptr) heartTex->free();
+    if (stoneTex != nullptr) stoneTex->free();
+    if (LMBTex != nullptr) LMBTex->free();
+    if (MMBTex != nullptr) MMBTex->free();
+    if (RMBTex != nullptr) RMBTex->free();
+    if (BearTex != nullptr) BearTex->free();
+    if (BirdTex != nullptr) BirdTex->free();
+    if (BombTex != nullptr) BombTex->free();
+    if (TargetTex != nullptr) TargetTex->free();
+    if (dashed_circleTex != nullptr) dashed_circleTex->free();
+    if (rabbitTex != nullptr) rabbitTex->free();
+
+    if (playerAnimations != nullptr) playerAnimations->free();
+    if (wolfWalkingAnimation != nullptr) wolfWalkingAnimation->free();
+    if (explosionAnimation != nullptr) explosionAnimation->free();
+    if (splashAnimation != nullptr) splashAnimation->free();
+
+    if (logDestruction != nullptr) logDestruction->free();
+    if (treeFalling != nullptr) treeFalling->free();
+    if (doorToggle != nullptr) doorToggle->free();
+    if (leaves != nullptr) leaves->free();
+    if (pop != nullptr) pop->free();
+    if (bonk != nullptr) bonk->free();
+    if (birdSpawn != nullptr) birdSpawn->free();
+    if (playerDamage != nullptr) playerDamage->free();
+    if (healSound != nullptr) healSound->free();
+    if (gameOverSound != nullptr) gameOverSound->free();
+    if (explosionSound != nullptr) explosionSound->free();
+    if (repairSound != nullptr) repairSound->free();
+
+    if (vocalDeep0 != nullptr) vocalDeep0->free();
+    if (vocalDeep1 != nullptr) vocalDeep1->free();
+    if (vocalHigh0 != nullptr) vocalHigh0->free();
+    if (vocalHigh1 != nullptr) vocalHigh1->free();
+    if (vocalMed0 != nullptr) vocalMed0->free();
+    if (vocalMed1 != nullptr) vocalMed1->free();
+
+    for (int i = 0; i < 3; i++) {
+        auto audio = wolfSpawnSounds[i];
+        if (audio != nullptr) audio->free();
+    }
+    for (int i = 0; i < 3; i++) {
+        auto audio = splashSounds[i];
+        if (audio != nullptr) audio->free();
+    }
+
+    if (nightMusic != nullptr) nightMusic->free();
+    if (dayMusic != nullptr) dayMusic->free();
+    if (deathMusic != nullptr) deathMusic->free();
+    if (menuMusic != nullptr) menuMusic->free();
+
+    TTF_CloseFont(sevenSegment);
+    TTF_CloseFont(arcadeClassic24);
+    TTF_CloseFont(arcadeClassic36);
+
+    if (fpsTex != nullptr) fpsTex->free();
+    if (controlsTex != nullptr) controlsTex->free();
+    if (clockTex != nullptr) clockTex->free();
+
+    if (clockBackBar != nullptr) clockBackBar->free();
+    if (redBar != nullptr) redBar->free();
+    if (whiteBar != nullptr) whiteBar->free();
+    if (darknessTex != nullptr) darknessTex->free();
+}
+
+
 float Game::get_time() { return g_time; }
 bool Game::game_over() { return gameOver; }
 

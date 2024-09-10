@@ -70,6 +70,7 @@ void PlayerData::render(int x, int y, std::shared_ptr<LWindow> window, SDL_Color
             }
             rend->render(X, y); 
             X += rend->getWidth();
+            rend->free();
         }
     } 
     else {

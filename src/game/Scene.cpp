@@ -113,6 +113,18 @@ Scene::Scene( std::string filePath, Game *game ) : game(game)
 }
 Scene::Scene() {}
 
+Scene::~Scene() { free(); }
+
+void Scene::free()
+{
+    gameObjects.clear();
+    for (int i = 0; i < gridDimensions.x; i++) grid[i].clear();
+    grid.clear();
+
+    player = nullptr;
+    held = nullptr;
+}
+
 
 std::shared_ptr<GameObject> Scene::CreateGameObjectFromFile( std::istringstream *iss )
 {

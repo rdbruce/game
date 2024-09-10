@@ -37,6 +37,10 @@ class Button
 
         Button(GameMenu *Menu, SDL_Rect Rect, std::shared_ptr<LTexture> Tex, void (Button::*Func)() = &Button::doNothing, std::shared_ptr<LAudio> PressSound = nullptr, std::shared_ptr<LTexture> AltTex = nullptr);
 
+        ~Button();
+
+        void free();
+
         // updates execute func
         virtual void set_func( void (Button::*newFunc)() );
 
@@ -128,6 +132,8 @@ class FPSButton : public Button
     public:
 
         FPSButton(int fps, GameMenu *Menu, SDL_Rect Rect, void (FPSButton::*Func)() = &Button::doNothing, std::shared_ptr<LAudio> PressSound = nullptr);
+
+        ~FPSButton();
 
         virtual void execute_function();
 
