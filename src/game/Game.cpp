@@ -306,7 +306,6 @@ std::shared_ptr<GameObject> Game::spawnBird()
     return Instantiate(bird, get_playerPos(), 1);
 }
 
-
 // adds a game object and returns a pointer to it
 std::shared_ptr<GameObject> Game::Instantiate( EntityType type, Vector2 pos, int hp, Scene *level )
 {

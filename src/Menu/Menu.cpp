@@ -74,8 +74,7 @@ void GameMenu::render_background()
     if (isActive) 
     {
         bool settingsOrMenu = state == main_menu || state == settings_menu;
-        auto tex = (settingsOrMenu)? BGTexture :
-                   tEditor.createSolidColour(wRect.w, wRect.h, 180, window);
+        auto tex = (settingsOrMenu)? BGTexture : pauseTex;
         tex->render(wRect.x, wRect.y, &wRect);
 
         if (state == game_over) {
@@ -442,6 +441,7 @@ void GameMenu::update()
             create_buttons();
 
             create_CRT_Texture();
+            create_pause_texture();
             game->createDarknessTex();
 
             if (aspectRatio != nullptr) aspectRatio->free();

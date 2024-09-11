@@ -329,6 +329,7 @@ void GameMenu::load_assets()
     }
 
     create_CRT_Texture();
+    create_pause_texture();
 
     int w = wRect.x, h = wRect.h;
     aspectRatio = tEditor.createSolidColour(w, h, 0x000000FF, window);
@@ -349,4 +350,8 @@ void GameMenu::create_CRT_Texture()
         }
     }
     CRT_Tex->setAlpha(PIXEL_FILTER_ALPHA);
+}
+
+void GameMenu::create_pause_texture() {
+    pauseTex = tEditor.createSolidColour(wRect.w, wRect.h, 180, window);
 }

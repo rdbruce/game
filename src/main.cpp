@@ -1,5 +1,5 @@
 // prevents the console from opening on application startup
-#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+// #pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>

@@ -38,6 +38,7 @@ using namespace Math;
 
 
 
+
 class Game
 {
     // declare GameObject as a friend of Game, so the private members can be accessed
@@ -112,7 +113,6 @@ class Game
         Vector2 find_mouse_pos();
         // returns position of the player
         Vector2 get_playerPos();
-
         
         // adds a game object and returns a pointer to it
         std::shared_ptr<GameObject> Instantiate(EntityType type, Vector2 pos, int hp, Scene *level = NULL);

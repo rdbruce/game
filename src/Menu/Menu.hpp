@@ -103,7 +103,7 @@ class GameMenu
 
         std::shared_ptr<LTexture> BGTexture = nullptr, gameOverTex = nullptr, 
                                   CRT_Tex = nullptr, CRT_Base = nullptr, aspectRatio = nullptr,
-                                  titleTex = nullptr;
+                                  titleTex = nullptr, pauseTex = nullptr;
 
         // the sound made when you click a button
         std::shared_ptr<LAudio> buttonSound = nullptr, arcadeBonus = nullptr, arcadeButton99 = nullptr;
@@ -155,4 +155,6 @@ class GameMenu
         int new_highscore();
 
         void rename_highscore( SDL_Keycode sym );
+
+        void create_pause_texture();
 };
