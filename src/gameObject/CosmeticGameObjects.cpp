@@ -160,9 +160,8 @@ void TutorialText::render(int camX, int camY, Uint8 alpha) {
         Vector2 pos = get_pos();
         Vector2Int p( pos.x-camX, pos.y-camY );
         // not within the camera's view, don't render
-        if (p.x != clamp(game->renderOffset.x-100, game->camera.w+game->renderOffset.x+100, p.x) || p.y != clamp(game->renderOffset.y-100, game->camera.h+game->renderOffset.y+100, p.y)) {
-            return;
-        }
+        clamp(game->renderOffset.x+166, game->camera.w+game->renderOffset.x-166, &p.x);
+        clamp(game->renderOffset.y+56, game->camera.h+game->renderOffset.y-56, &p.y);
         renderText(txt, p.x, p.y, game->window, {255,255,255,255}, game->arcadeClassic24);
     }
 }
@@ -170,18 +169,27 @@ void TutorialText::render(int camX, int camY, Uint8 alpha) {
 bool TutorialText::tree_has_been_chopped()
 {
     if ((game->currLevel->grid[treeCell.x][treeCell.y]&CELL_ID) == 3) return false;
-    else return true;
+    else {
+        if (findItem(plankItem, 1, false)) return findItem(logItem);
+        return true;
+    }
 }
 
-bool TutorialText::findItem(EntityType itemType, int minHP)
+bool TutorialText::findItem(EntityType itemType, int minHP, bool assignItem)
 {
     auto vec = &game->currLevel->gameObjects;
     int n = vec->size();
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) 
+    {
         auto obj = (*vec)[i];
-        if (obj->get_type() == itemType && obj->get_HP() >= minHP) {
-            item = std::dynamic_pointer_cast<Item>(obj);
-            return item != nullptr;
+        EntityType type = obj->get_type();
+        int hp = obj->get_HP();
+        if (type == itemType && hp >= minHP) 
+        {
+            if (assignItem) {
+                item = std::dynamic_pointer_cast<Item>(obj);
+                return item != nullptr;
+            } else return true;
         }
     }
     return false;
@@ -210,7 +218,7 @@ bool TutorialText::findNearestItem()
             }
         }
     }
-    if (bestIdx > 0) item = std::dynamic_pointer_cast<Item>((*vec)[bestIdx]);
+    if (bestIdx >= 0) item = std::dynamic_pointer_cast<Item>((*vec)[bestIdx]);
     return item != nullptr;
 }
 
@@ -249,7 +257,8 @@ void TutorialText::stage_1_update()
 
 void TutorialText::stage_2_update()
 {
-    if (item == nullptr || findItem(plankItem)) 
+    if (!findItem(logItem, 1, false)) Update = &TutorialText::stage_0_update;
+    else if (item == nullptr || findItem(plankItem)) 
     {
         txt = "";
         Update = &TutorialText::stage_3_update;
@@ -268,7 +277,9 @@ void TutorialText::stage_2_update()
 
 void TutorialText::stage_3_update()
 {
-    if (item == nullptr || findItem(plankItem, 4))
+    if (!findItem(logItem, 1, false)) Update = &TutorialText::stage_0_update;
+    else if (game->currLevel->gameObjects[item->get_idx()] != item) findItem(plankItem, 1);
+    else if (item == nullptr || findItem(plankItem, 4))
     {
         txt = "";
         Update = &TutorialText::stage_4_update;
@@ -287,20 +298,24 @@ void TutorialText::stage_3_update()
 
 void TutorialText::stage_4_update()
 {
-    if (item->is_held())
-    {
-        txt = "";
-        Update = &TutorialText::stage_5_update;
-    }
-    else
-    {
-        Vector2 pos = item->get_pos();
-        pos.y -= 1.25f * get_cellSidelen();
-        set_pos(pos);
+    if (item != nullptr) {
+        if (item->is_held())
+        {
+            txt = "";
+            Update = (findItem(logItem, 1, false))? &TutorialText::stage_5_update : &TutorialText::stage_0_update;
+        }
+        else if (!findItem(logItem, 1, false)) Update = &TutorialText::stage_0_update;
+        else if (findItem(damItem)) Update = &TutorialText::stage_7_update;
+        else
+        {
+            Vector2 pos = item->get_pos();
+            pos.y -= 1.25f * get_cellSidelen();
+            set_pos(pos);
 
-        int time = game->get_time() * 0.75f;
-        txt = "pick up\n";
-        txt += (time%2)? "V" : " \nV";
+            int time = game->get_time() * 0.75f;
+            txt = "pick up\n";
+            txt += (time%2)? "V" : " \nV";
+        }
     }
 }
 
@@ -308,7 +323,7 @@ void TutorialText::stage_5_update()
 {
     if (findItem(logItem)) {
         Update = &TutorialText::stage_6_update;
-    }
+    } else Update = &TutorialText::stage_0_update;
 }
 
 void TutorialText::stage_6_update()
@@ -317,6 +332,12 @@ void TutorialText::stage_6_update()
     {
         txt = "";
         Update = &TutorialText::stage_7_update;
+    }
+    else if (!findItem(logItem, 1, false)) Update = &TutorialText::stage_0_update;
+    else if (!findItem(plankItem, 4, false)) Update = &TutorialText::stage_1_update;
+    else if (game->currLevel->held == nullptr) {
+        findItem(plankItem, 4);
+        Update = &TutorialText::stage_4_update;
     }
     else
     {
@@ -358,12 +379,7 @@ void TutorialText::stage_7_update()
 
 void TutorialText::stage_8_update()
 {
-    if (game->currLevel->held == nullptr)
-    {
-        txt = "";
-        if (findItem(damItem)) Update = &TutorialText::stage_7_update;
-        else Destroy();
-    }
+    if (game->riverDammed) Destroy();
     else
     {
         int sideLen = get_cellSidelen();
@@ -408,8 +424,7 @@ void TutorialText::night_1_update()
     }
 }
 
-void TutorialText::night_2_update()
-{
+void TutorialText::night_2_update() {
     if (!item->is_held()) Destroy();
 }
 

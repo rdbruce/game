@@ -104,5 +104,7 @@ void GameObject::halt()
 
 void GameObject::Destroy()
 {
-    game->Destroy(game->currLevel->gameObjects[get_idx()]);
+    int idx = get_idx();
+    auto vec = &game->currLevel->gameObjects;
+    if (idx >= 0 && idx < vec->size()) game->Destroy((*vec)[idx]);
 }

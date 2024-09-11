@@ -83,7 +83,7 @@ class TutorialText : public GameObject
 
         /* functions to check when to update the tutorial stage */
         bool tree_has_been_chopped();
-        bool findItem(EntityType itemType, int minHP = 1);
+        bool findItem(EntityType itemType, int minHP = 1, bool assignItem = true);
         bool findNearestItem();
 };
 

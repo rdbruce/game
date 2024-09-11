@@ -691,9 +691,9 @@ void Game::leftClickFunc()
             if (currLevel->held == nullptr && r <= interactRange)
             {
                 // check all the game objects, and see if any of them ARE items AND were clicked
-                int n = currLevel->gameObjects.size();
-                for (int i = 0; i < n; i++) {
-                    auto obj = currLevel->gameObjects[i];
+                auto vec = &currLevel->gameObjects;
+                for (int i = 0; i < vec->size(); i++) {
+                    auto obj = (*vec)[i];
 
                     if (isInRegion(mPos, obj->get_hitbox())) {
                         if (obj->is_item() && isInRegion(mPos, obj->get_hitbox()))
@@ -751,10 +751,10 @@ bool Game::tradeItem(int heldType, int heldHP, Vector2 mPos)
 
     if (heldHP < requiredHP) return false; // don't have enough of the item
 
-    int n = currLevel->gameObjects.size();
-    for (int i = 0; i < n; i++)
+    auto vec = &currLevel->gameObjects;
+    for (int i = 0; i < vec->size(); i++)
     {
-        auto obj = currLevel->gameObjects[i];
+        auto obj = (*vec)[i];
 
         if (obj->get_type() == targetType) {
             if (isInRegion(mPos, obj->get_hitbox())) {
@@ -783,10 +783,10 @@ void Game::rightClickFunc()
     if (held == nullptr)
     {
         // check to see if the player clicked on ANY entities
-        int n = currLevel->gameObjects.size();
-        for (int i = 0; i < n; i++)
+        auto vec = &currLevel->gameObjects;
+        for (int i = 0; i < vec->size(); i++)
         {
-            auto obj = currLevel->gameObjects[i];
+            auto obj = (*vec)[i];
             auto item = std::dynamic_pointer_cast<Item>(obj);
             // nothing happens when clicking on non items
             if (item == nullptr) continue;

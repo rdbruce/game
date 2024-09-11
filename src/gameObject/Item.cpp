@@ -46,9 +46,12 @@ int Item::get_damage() { return ceilToInt(damage * get_HP()); }
 float Item::get_damageMult() { return damage; }
 float Item::get_playerCollisionTimer() {return playerCollisionTimer; }
 bool Item::is_held() { 
-    if (game->currLevel->held != nullptr) {
-        return  game->currLevel->gameObjects[get_idx()]->get_idx() == 
-                game->currLevel->held->get_idx();
+    auto lvl = game->currLevel;
+    if (lvl->held != nullptr) {
+        int idx = get_idx();
+        if (idx>=0 && idx<lvl->gameObjects.size()) {
+            return  lvl->gameObjects[idx]->get_idx() == lvl->held->get_idx();
+        }
     }
     return false; 
 }
@@ -160,12 +163,12 @@ void Item::collision()
 
 void Item::handleCollisionsWithGameObjects()
 {
-    auto gameObjects = game->currLevel->gameObjects;
+    auto vec = &game->currLevel->gameObjects;
 
     // iterate through all the other game objects to find the distance between them
-    for (int i = 0; i < gameObjects.size(); i++)
+    for (int i = 0; i < vec->size(); i++)
     {
-        auto other = gameObjects[i];
+        auto other = (*vec)[i];
         // doesn't collide with itself or objects that have no collision
         if (get_idx() == i || !other->has_collision()) continue;
         // held item won't collide with player, other items won't collide with held item
@@ -190,7 +193,11 @@ void Item::handleCollisionsWithGameObjects()
             if (other->is_item()) 
             {
                 if (item->get_type() == get_type()) transferItems(item);
-                else game->craftTwoItems(std::dynamic_pointer_cast<Item>(gameObjects[get_idx()]), item);
+                else {
+                    int idx = get_idx();
+                    if (idx>=0 && idx < vec->size()) 
+                        game->craftTwoItems(std::dynamic_pointer_cast<Item>((*vec)[idx]), item);
+                }
             }
 
             // regular collision behaviour

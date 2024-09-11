@@ -264,12 +264,12 @@ void Wolf::collision()
 
 void Wolf::handleCollisionsWithGameObjects()
 {
-    auto gameObjects = game->currLevel->gameObjects;
+    auto gameObjects = &game->currLevel->gameObjects;
 
     // iterate through all the other game objects to find the distance between them
-    for (int i = 0; i < gameObjects.size(); i++)
+    for (int i = 0; i < gameObjects->size(); i++)
     {
-        auto other = gameObjects[i];
+        auto other = (*gameObjects)[i];
         // doesn't collide with itself or objects that have no collision
         if (get_idx() == i || !other->has_collision()) continue;
 
