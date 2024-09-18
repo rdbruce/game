@@ -231,13 +231,18 @@ std::shared_ptr<LTexture> TextureManipulator::createMenuButton(std::string txt, 
     auto res = createEmptyTexture(width, height, window);
 
     auto tex = std::make_unique<LTexture>(window);
-    if (!tex->loadFromRenderedText(txt, colour, font)) {
-        std::cerr << "Failed to create " << txt <<" button!" << std::endl;
-    }
-
     SDL_Renderer *renderer = window->gRenderer;
     SDL_SetRenderTarget(renderer, res->mTexture);
 
+    // if (!tex->loadFromRenderedText(txt, {colour.r,colour.g,colour.b,Uint8(colour.a*0.4)}, font)) {
+    //     std::cerr << "Failed to create " << txt <<" button!" << std::endl;
+    // }
+    // int x = (width-tex->getWidth())/2, y = (height-tex->getHeight())/2;
+    // tex->render(x-5, y+5);
+
+    if (!tex->loadFromRenderedText(txt, colour, font)) {
+        std::cerr << "Failed to create " << txt <<" button!" << std::endl;
+    }
     int x = (width-tex->getWidth())/2, y = (height-tex->getHeight())/2;
     tex->render(x, y);
 

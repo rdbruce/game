@@ -88,7 +88,7 @@ void GameMenu::render_background()
                 // std::string credits = "A Game By\nBustling Bungus\n \nWith music by\nwiredbeyongbelief\n \n \n \nThanks to the play testers:\n \npdoge, 3rd grade dropout,\nWes :), Ozi, YesISaidGaming,\nchunky monkey, and Maddy";
                 // renderText(credits, 512, 256, window, {255,255,255,255}, arcadeClassic36);
 
-                int x = 512, y = 256;
+                int x = 512+wRect.x, y = 256;
                 renderText("A game by", x, y, window, {255,255,255,255}, arcadeClassic36);
                 y += 40;
                 renderText("Bustling Bungus", x, y, window, {255,255,255,255}, arcadeClassic48);
@@ -298,7 +298,7 @@ void GameMenu::render_aspect_ratio()
         SDL_Rect rect = {0, 0, w, h};
         
         aspectRatio->render(rect.x, rect.y, &rect);
-        rect.x += rect.w + wRect.w;
+        rect.x += rect.w + wRect.w; rect.w += 32;
         aspectRatio->render(rect.x, rect.y, &rect);
     }
 }
