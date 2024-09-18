@@ -39,7 +39,7 @@ public:
   bool toggleFullscreen();
 
   // Initializes variables
-  LWindow(int width = 1280, int height = 720, std::string name = "Window", bool shrinkWindowToMonitorSize = false);
+  LWindow(int width = 1280, int height = 720, std::string name = "Window", bool shrinkWindowToMonitorSize = false, std::string iconFilename = "");
 
   // Deallocates memory
   ~LWindow();

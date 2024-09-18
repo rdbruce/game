@@ -41,7 +41,8 @@ int main(
   // Initialize SDL
   auto gHolder = std::make_shared<LWindow>(
     GAME_RESOLUTION, GAME_RESOLUTION, 
-    "A Dam Good Game", true
+    "A Dam Good Game", true,
+    "../../assets/Entities/Player/front/0.png"
   );
 
   // load the game itself

@@ -9,7 +9,7 @@
 
 #include "LWindow.hpp"
 
-LWindow::LWindow(int width, int height, std::string name, bool shrinkWindowToMonitorSize)
+LWindow::LWindow(int width, int height, std::string name, bool shrinkWindowToMonitorSize, std::string iconFilename)
 {
   // Initialize non-existant window
   gWindow = NULL;
@@ -121,6 +121,17 @@ LWindow::LWindow(int width, int height, std::string name, bool shrinkWindowToMon
   // apply the render scale
   SDL_RenderSetScale(gRenderer, scaleX, scaleY);
   SDL_RenderPresent(gRenderer);
+
+  // set the window icon
+  if (iconFilename != "") {
+    SDL_Surface *icon = IMG_Load(iconFilename.c_str());
+    if (icon != NULL) {
+      SDL_SetWindowIcon(gWindow, icon);
+    } else {
+      printf("Failed to load window icon! SDL Error: %s\n", SDL_GetError());
+    }
+    SDL_FreeSurface(icon);
+  }
 }
 
 void LWindow::handleEvent(SDL_Event &e)
