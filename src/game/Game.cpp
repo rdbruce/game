@@ -22,7 +22,7 @@ Game::Game( std::shared_ptr<LWindow> Window, int resolutionWidth, int resolution
     play_current();
 }
 
-
+// deallocate resources
 Game::~Game()
 {
     Base.free(); Woods.free(); Town.free();

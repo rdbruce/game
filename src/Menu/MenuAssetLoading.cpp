@@ -157,31 +157,37 @@ void GameMenu::create_pauseMenu_buttons()
 {
     SDL_Rect rect = {(wRect.w-BUTTON_WIDTH)/2, 128, BUTTON_WIDTH, BUTTON_HEIGHT};
 
-    showLoadMessage("creating buttons (1/5)", 512, 512, window);
+    showLoadMessage("creating buttons (1/6)", 512, 512, window);
     auto texture = tEditor.createMenuButton("RESUME", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     auto button = std::make_shared<Button>(this, rect, texture, &Button::close_pause_menu, arcadeBonus);
     pauseButtons.push_back(button);
 
-    showLoadMessage("creating buttons (2/5)", 512, 512, window);
+    showLoadMessage("creating buttons (2/6)", 512, 512, window);
+    rect.y += 175;
+    texture = tEditor.createMenuButton("SETTINGS", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
+    button = std::make_shared<Button>(this, rect, texture, &Button::go_to_settings_from_pause, arcadeButton99);
+    pauseButtons.push_back(button);
+
+    showLoadMessage("creating buttons (3/6)", 512, 512, window);
     auto MenuTexture = tEditor.createMenuButton("MAIN MENU", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic36);
     rect.y += 175;
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::exit_to_menu_confirmation, arcadeBonus);
     pauseButtons.push_back(button);
 
 
-    showLoadMessage("creating buttons (3/5)", 512, 512, window);
+    showLoadMessage("creating buttons (4/6)", 512, 512, window);
     rect.y = 256;
     texture = tEditor.createMenuButton("YES", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, arcadeBonus);
     confirmationButtons.push_back(button);
 
-    showLoadMessage("creating buttons (4/5)", 512, 512, window);
+    showLoadMessage("creating buttons (5/6)", 512, 512, window);
     rect.y += 175;
     texture = tEditor.createMenuButton("NO", BUTTON_WIDTH, BUTTON_HEIGHT, window, arcadeClassic48);
     button = std::make_shared<Button>(this, rect, texture, &Button::doNothing, arcadeButton99);
     confirmationButtons.push_back(button);
 
-    showLoadMessage("creating buttons (5/5)", 512, 512, window);
+    showLoadMessage("creating buttons (6/6)", 512, 512, window);
     rect = {(wRect.w-BUTTON_WIDTH)/2, (wRect.h/2)+175, BUTTON_WIDTH, BUTTON_HEIGHT};
     button = std::make_shared<Button>(this, rect, MenuTexture, &Button::go_to_main_menu_from_gameover, arcadeButton99);
     gameOverButtons.push_back(button);

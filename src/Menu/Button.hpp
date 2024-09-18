@@ -128,6 +128,8 @@ class Button
 
         void go_to_credits();
         void go_to_settings_from_credits();
+        void go_to_settings_from_pause();
+        void go_to_pause_from_settings();
 };
 
 class FPSButton : public Button

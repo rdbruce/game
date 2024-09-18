@@ -199,6 +199,24 @@ void Button::go_to_mainMenu()
     apply_settings();
 }
 
+void Button::go_to_settings_from_pause()
+{
+    menu->prevSettings = menu->settings;
+    menu->state = settings_menu;
+    menu->isActive = true;
+    menu->currButtons = &menu->settingsButtons;
+    menu->confirmationText = "";
+    menu->settingsButtons[3]->set_func(&Button::go_to_pause_from_settings);
+}
+
+void Button::go_to_pause_from_settings()
+{
+    menu->state = in_game;
+    menu->currButtons = &menu->pauseButtons;
+    menu->confirmationText = "";
+    set_func(&Button::go_to_mainMenu);
+}
+
 void Button::go_to_main_menu_from_gameover()
 {
     menu->highscores[0] = menu->game->scores;
