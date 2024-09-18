@@ -257,3 +257,11 @@ std::shared_ptr<LTexture> TextureManipulator::createFPSButton(int fps, int width
     auto res = createMenuButton(txt, width, height, window, font, colour);
     return res;
 }
+
+void showLoadMessage(std::string txt, int x, int y, std::shared_ptr<LWindow> window, SDL_Color bkgColour, SDL_Color txtColour)
+{
+    SDL_SetRenderDrawColor(window->gRenderer, bkgColour.r, bkgColour.g, bkgColour.b, bkgColour.a);
+    SDL_RenderClear(window->gRenderer);
+    renderText(txt, x, y, window, txtColour);
+    SDL_RenderPresent(window->gRenderer);
+}

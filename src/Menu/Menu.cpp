@@ -4,12 +4,12 @@
 GameMenu::GameMenu( std::shared_ptr<LWindow> Window, Game *game, int resolutionWidth, int resolutionHeight ) 
 : window(Window), game(game)
 {
+    // show that the menu is loading
+    showLoadMessage("loading menu", 512, 512, window);
+
     wRect = {0, 0, resolutionWidth, resolutionHeight};
-
     load_assets();
-
     load_data();
-
     // create buttons
     create_buttons();
 
@@ -73,17 +73,37 @@ void GameMenu::render_background()
 {
     if (isActive) 
     {
-        bool settingsOrMenu = state == main_menu || state == settings_menu;
-        auto tex = (settingsOrMenu)? BGTexture : pauseTex;
+        bool showMenuBG = state == main_menu || state == settings_menu || state == credits;
+        auto tex = (showMenuBG)? BGTexture : pauseTex;
         tex->render(wRect.x, wRect.y, &wRect);
 
         if (state == game_over) {
             SDL_Rect rect = {(wRect.w-GAMEOVER_TXT_WIDTH)/2 + wRect.x, 128, GAMEOVER_TXT_WIDTH, GAMEOVER_TEX_HEIGHT};
             gameOverTex->render(rect.x, rect.y, &rect);
         } 
-        else if (state == main_menu && confirmationText == "") {
+        else if ((state == main_menu || state == credits) && confirmationText == "") {
             SDL_Rect rect = {64 + wRect.x, 32 + wRect.y, 896, 192};
             titleTex->render(rect.x, rect.y, &rect);
+            if (state == credits) {
+                // std::string credits = "A Game By\nBustling Bungus\n \nWith music by\nwiredbeyongbelief\n \n \n \nThanks to the play testers:\n \npdoge, 3rd grade dropout,\nWes :), Ozi, YesISaidGaming,\nchunky monkey, and Maddy";
+                // renderText(credits, 512, 256, window, {255,255,255,255}, arcadeClassic36);
+
+                int x = 512, y = 256;
+                renderText("A game by", x, y, window, {255,255,255,255}, arcadeClassic36);
+                y += 40;
+                renderText("Bustling Bungus", x, y, window, {255,255,255,255}, arcadeClassic48);
+                y += 120;
+                renderText("With music by", x, y, window, {255,255,255,255}, arcadeClassic36);
+                y += 40;
+                renderText("wiredbeyondbelief", x, y, window, {255,255,255,255}, arcadeClassic48);
+                y += 160;
+                renderText("Thanks to the play testers...", x, y, window, {255,255,255,255}, arcadeClassic24);
+                y += 80;
+                renderText(
+                    "pdoge, chunky monkey,\n3rd grade dropout, Wes :),\nYesISaidGaming, Ozi,\nand Maddy",
+                    x, y, window, {255,255,255,255}, arcadeClassic36
+                );
+            }
         }
     }
 }
@@ -331,7 +351,7 @@ bool GameMenu::handle_events( SDL_Event &e, bool *menuActive )
             break;
         
         case SDL_MOUSEBUTTONDOWN:
-            if (e.button.button == SDL_BUTTON_LEFT) leftClickFunc();
+            if (e.button.button == SDL_BUTTON_LEFT && input_cooldown <= 0.0f) leftClickFunc();
         
         default:
             if (activeSlider != nullptr && state == settings_menu) {
@@ -399,6 +419,7 @@ void GameMenu::get_mousePos( int *x, int *y)
 
 void GameMenu::leftClickFunc()
 {
+    input_cooldown = inputCooldownTime;
     if (isActive && !set_score_name) 
     {
         // find the coordinates of the mouse click
@@ -419,6 +440,7 @@ void GameMenu::leftClickFunc()
                 // when pressed, execute the button's function
                 b->execute_function();
                 b->play_sound();
+                break;
             }
         }
     }
@@ -465,6 +487,7 @@ void GameMenu::update()
             sizeChange = 0;
         } else sizeChange++;
     }
+    input_cooldown -= game->get_deltaTime();
 }
 
 

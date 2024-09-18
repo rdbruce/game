@@ -36,6 +36,8 @@ class TextureManipulator
 };
 
 
+// renders white text on a black screen to show what is being loaded
+void showLoadMessage(std::string txt, int x, int y, std::shared_ptr<LWindow> window, SDL_Color bkgColour = {0,0,0,255}, SDL_Color txtColour = {255,255,255,255});
 
 
 // creates an empty surface object with desired dimensions

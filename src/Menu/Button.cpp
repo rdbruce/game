@@ -46,6 +46,22 @@ int Button::get_height() { return rect.h; }
 
 void Button::doNothing() {}
 
+void Button::go_to_credits()
+{
+    menu->state = credits;
+    menu->isActive = true;
+    menu->currButtons = &menu->creditsButtons;
+    menu->confirmationText = "";
+}
+
+void Button::go_to_settings_from_credits()
+{
+    menu->state = settings_menu;
+    menu->isActive = true;
+    menu->currButtons = &menu->settingsButtons;
+    menu->confirmationText = "";
+}
+
 void Button::volume_slider()
 {
     int x, y;
@@ -171,7 +187,7 @@ void Button::exit_decline()
 
 void Button::go_to_mainMenu()
 {
-    if (!(menu->state == main_menu || menu->state == settings_menu)) {
+    if (!(menu->state == main_menu || menu->state == settings_menu || menu->state == credits)) {
         menu->game->play_current(true);
     }
     menu->state = main_menu;

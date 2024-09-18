@@ -168,6 +168,7 @@ class Game
 
         // returns g_time
         float get_time();
+        float get_deltaTime();
         // returns gameOver
         bool game_over();
         // makes game_over false
@@ -337,7 +338,6 @@ class Game
 
         // background texture
         std::shared_ptr<LTexture> BGTexture = nullptr, overlayTexture = nullptr;
-        std::shared_ptr<LTexture> Bert = nullptr;
         std::shared_ptr<LTexture>   logTex = nullptr, damTex = nullptr, waterTex = nullptr, grassTex = nullptr, treeTex = nullptr,
                                     stumpTex = nullptr, saplingTex = nullptr, playerTex = nullptr, wolfTex = nullptr, falling_treeTex = nullptr,
                                     pine_coneTex = nullptr, plankTex = nullptr, foxTex = nullptr, berryTex = nullptr,

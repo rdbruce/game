@@ -111,7 +111,7 @@ LWindow::LWindow(int width, int height, std::string name, bool shrinkWindowToMon
   }
 
   // Open the default font
-  gFont = TTF_OpenFont("../../assets/Fonts/lazy.ttf", 36);
+  gFont = TTF_OpenFont("../../assets/Fonts/ARCADECLASSIC.TTF", 18);
   if (gFont == NULL)
   {
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());

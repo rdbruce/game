@@ -257,7 +257,7 @@ void TutorialText::stage_1_update()
 
 void TutorialText::stage_2_update()
 {
-    if (!findItem(logItem, 1, false)) Update = &TutorialText::stage_0_update;
+    if (!findItem(logItem)) Update = &TutorialText::stage_0_update;
     else if (item == nullptr || findItem(plankItem)) 
     {
         txt = "";
@@ -360,7 +360,7 @@ void TutorialText::stage_7_update()
         Update = &TutorialText::stage_8_update;
     }
     // in case the player uncrafts the dam
-    else if (game->currLevel->gameObjects[item->get_idx()]->get_type() != damItem)
+    else if (!findItem(damItem))
     {
         txt = "";
         Update = &TutorialText::stage_5_update;
@@ -384,7 +384,6 @@ void TutorialText::stage_8_update()
     {
         int sideLen = get_cellSidelen();
         Vector2 pos(treeCell.x*sideLen, treeCell.y*sideLen);
-        
         
         int time = game->get_time() * 0.75f;
         if (time%2) {

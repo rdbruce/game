@@ -21,6 +21,7 @@ enum State
     Quit,
     game_over,
     settings_menu,
+    credits
 };
 
 
@@ -120,12 +121,14 @@ class GameMenu
                                              pauseButtons, // pause menu
                                              confirmationButtons, // yes/no
                                              gameOverButtons, // play again/main menu
-                                             settingsButtons; // edit game settings
+                                             settingsButtons, // edit game settings
+                                             creditsButtons;
 
         bool isActive = true;
         int sizeChange = 0;
         bool fullscreen = false;
         bool mayContinue = false;
+        float input_cooldown = 0.0f, inputCooldownTime = 0.1f;
 
         // which volume slider is currently being interacted with
         std::shared_ptr<Button> activeSlider = nullptr;

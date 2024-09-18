@@ -1,5 +1,5 @@
 // prevents the console from opening on application startup
-// #pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
@@ -44,16 +44,16 @@ int main(
     "A Dam Good Game", true
   );
 
+  // load the game itself
   Game game(gHolder, GAME_RESOLUTION, GAME_RESOLUTION);
+  // load the menu
   GameMenu menu(gHolder, &game, GAME_RESOLUTION, GAME_RESOLUTION);
 
   // Event handler
   SDL_Event e;
 
-  // Main loop flag
   bool quit = false;
   bool inMenu = true;
-
   // While application is running
   while (!quit)
   {
@@ -68,7 +68,7 @@ int main(
 
       // Handle window events
       gHolder->handleEvent(e);
-      quit = menu.handle_events(e, &inMenu);
+      if (!quit) quit = menu.handle_events(e, &inMenu);
       if (!inMenu) game.handle_events(e);
     }
 
@@ -77,14 +77,10 @@ int main(
     game.set_paused(!inMenu);
     if (!inMenu) 
     {
-      // std::cout << "updating game objects\n";
       game.update_gameobjects();
       // call update_cells first
-      // std::cout << "updating cells\n";
       game.update_cells();
-      // std::cout << "updating day/night\n";
       game.dayNightCycle();
-      // std::cout << "attempting enemy spawn\n";
       game.attempt_enemy_spawn();
     }
 
@@ -98,21 +94,14 @@ int main(
       // Render background
       if (menu.is_inGame()) 
       {
-        // std::cout << "centring camera\n";
         game.center_camera_on_player();
-        // std::cout << "rendering background\n";
         game.render_background();
-        // std::cout << "rendering gameobjects\n";
         game.render_gameobjects();
-        // std::cout << "rendering overlay\n";
         game.render_overlay();
-        // std::cout << "rendering objects under trees\n";
         game.render_gameobjects_under_trees();
-        // std::cout << "rendering darkness\n";
         game.render_darkness();
 
         // UI rendering
-        // std::cout << "rendering cell health\n";
         game.render_cell_health();
         game.render_dialogue();
         game.render_player_health();
@@ -136,5 +125,10 @@ int main(
       SDL_RenderPresent(gHolder->gRenderer);
     }
   }
+
+  // wait for a couple seconds
+  // clock_t t = clock(), curr_t = t;
+  // while (curr_t - t < 5000) curr_t = clock();
+
   return 0;
 }

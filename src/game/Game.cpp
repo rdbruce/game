@@ -5,11 +5,8 @@
 Game::Game( std::shared_ptr<LWindow> Window, int resolutionWidth, int resolutionHeight ) 
 : window(Window)
 {
-    // for testing
-    Bert = std::make_shared<LTexture>(window);
-    if (!Bert->loadFromFile("../../assets/Bert.png")) {
-        printf("Failed to load background texture!\n");
-    }
+    // show that the game is loading
+    showLoadMessage("loading game", 512, 512, window);
 
     // do this first!!!
     load_textures();
@@ -37,7 +34,6 @@ Game::~Game()
 
     if (BGTexture != nullptr) BGTexture->free();
     if (overlayTexture != nullptr) overlayTexture->free();
-    if (Bert != nullptr) Bert->free();
     if (logTex != nullptr) logTex->free();
     if (damTex != nullptr) damTex->free();
     if (waterTex != nullptr) waterTex->free();
@@ -129,6 +125,7 @@ Game::~Game()
 
 
 float Game::get_time() { return g_time; }
+float Game::get_deltaTime() { return deltaTime; }
 bool Game::game_over() { return gameOver; }
 
 void Game::new_game(bool show_tutorial) {
@@ -207,11 +204,15 @@ void Game::handle_events( SDL_Event& e )
 void Game::update_gameobjects()
 {
     auto vec = &currLevel->gameObjects;
-    for (int i = 0; i < vec->size(); i++) {
+    for (int i = 0; i < vec->size(); i++) 
+    {
+        // std::cout << "Updating entity: "<< i <<'\t'<< "Number of objects: "<< vec->size() <<'\n';
+        auto obj = (*vec)[i];
+        if (obj != nullptr) obj->update();
+        // if there is a secene switch, exit the loop
         if (switching_scenes) {
             switching_scenes = false; return;
         }
-        (*vec)[i]->update();
     }
 }
 
@@ -535,6 +536,7 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
         Destroy(currLevel->held);
     }
 
+    // std::cout << "creating a new player!\n";
     auto newPlayer = Instantiate(player, newPlayerPos, currLevel->player->get_HP(), level);
     level->player = std::dynamic_pointer_cast<Player>(newPlayer);
     Destroy(currLevel->player);
@@ -555,6 +557,7 @@ void Game::movePlayerToLevel( Scene *level, Vector2 newPlayerPos )
 
     while(secondRenders.size()) secondRenders.pop();
     while(dialogueRenders.size()) dialogueRenders.pop();
+    // std::cout << "finished switching scenes!\n";
 }
 
 void Game::set_paused(bool is_paused) { isPaused = is_paused; }
@@ -743,7 +746,7 @@ bool Game::tradeItem(int heldType, int heldHP, Vector2 mPos)
             targetType = rabbitNPC;
             requiredHP = 1;
             spawnedType = stoneItem;
-            spawnedHP = 1;
+            spawnedHP = 2;
             break;
 
         default: return false; // not holding a tradable item

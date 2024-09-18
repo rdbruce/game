@@ -125,6 +125,9 @@ class Button
         void toggle_FPS();
 
         void toggle_instructions();
+
+        void go_to_credits();
+        void go_to_settings_from_credits();
 };
 
 class FPSButton : public Button
