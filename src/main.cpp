@@ -127,9 +127,5 @@ int main(
     }
   }
 
-  // wait for a couple seconds
-  // clock_t t = clock(), curr_t = t;
-  // while (curr_t - t < 5000) curr_t = clock();
-
   return 0;
 }
